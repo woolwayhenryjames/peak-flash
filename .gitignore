@@ -1,0 +1,16 @@
+.DS_Store
+.eslintcache
+.env
+.env.*
+/node_modules/
+/scripts/templates/
+
+# React Router
+/.react-router/
+/build/
+
+/.well-known/appspecific/com.chrome.devtools.json
+*storybook.log
+storybook-static
+
+/.vscode/mcp.json
