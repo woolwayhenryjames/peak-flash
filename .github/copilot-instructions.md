@@ -8,6 +8,18 @@ applyTo: "**/*.{ts,tsx,js,jsx}"
 3. Follow the rules below strictly
 4. Validate accessibility requirements
 
+## Linter Auto-Fixable Issues to Ignore
+The AI should ignore the following auto-fixable linter issues that can be handled by automated tools:
+- CSS property order and organization
+- Import statement order and sorting
+- Missing closing tags or self-closing tag formats
+- Trailing commas, semicolons, and punctuation
+- Indentation and whitespace formatting
+- Quote style consistency (single vs double quotes)
+- Line ending formats
+- Unused imports that can be automatically removed
+- Basic formatting issues that prettier/biome can fix
+
 ## Rules
 
 ### Accessibility (a11y)
@@ -329,6 +341,11 @@ applyTo: "**/*.{ts,tsx,js,jsx}"
 - Project uses Vite for development and building.
 - TypeScript configuration is in `tsconfig.json`.
 - Use path aliases like `~/` for imports from the app directory.
+
+#### Asset Management
+- Store component-specific icons and assets in a local `assets` folder within the component directory.
+- Use ES module import syntax for images instead of placing them in the public folder.
+- Example: `import iconName from './assets/icon-name.svg'` instead of `src="/icons/icon-name.svg"`.
 
 ## Example: Error Handling
 ```typescript

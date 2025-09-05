@@ -9,12 +9,34 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
 }
+
+html {
+  @apply text-base bg-gradient-to-b from-[25%] from-black to-[#9595FF] to-[125%];
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply antialiased container mx-auto min-h-screen;
+  /* Prevent iOS Safari from bouncing when scrolling past the top/bottom */
+  overscroll-behavior: none;
+}
 code {
   white-space: pre-wrap;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
 }
