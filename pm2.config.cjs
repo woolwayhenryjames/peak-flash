@@ -2,10 +2,9 @@
 module.exports = {
   apps: [
     {
-      name: 'website',
+      name: 'peak.ai',
       script: './node_modules/@react-router/serve/bin.js',
       args: './build/server/index.js',
-      interpreter: 'bun',
       env: {
         PORT: 9092,
       },
