@@ -7,10 +7,10 @@ module.exports = {
       args: './build/server/index.js',
       interpreter: 'bun',
       env: {
-        PORT: 8604,
+        PORT: 9092,
       },
-      max_memory_restart: '8000M',
-      node_args: ['--max_old_space_size=8000'],
+      max_memory_restart: '4000M',
+      node_args: ['--max_old_space_size=4000'],
     },
   ],
 };

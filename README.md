@@ -1,8 +1,8 @@
-# Infinity Ground Website
+# PEAK.AI Website
 
-A modern, full-stack web application for Infinity Ground, built with React Router and Prisma for database management.
+A modern, full-stack web application for PEAK.AI, built with React Router and Prisma for database management.
 
-一个现代化的全栈网络应用程序，为 Infinity Ground 构建，使用 React Router 并使用 Prisma 进行数据库管理。
+一个现代化的全栈网络应用程序，为 PEAK.AI 构建，使用 React Router 并使用 Prisma 进行数据库管理。
 
 ## Features | 功能特点
 
