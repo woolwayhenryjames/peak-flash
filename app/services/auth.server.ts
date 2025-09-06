@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { err, ok } from 'neverthrow';
 import { db } from './db.server';
 
 export const auth = betterAuth({
@@ -18,3 +19,30 @@ export const auth = betterAuth({
     },
   },
 });
+
+export const getSessionUser = async (request: Request) => {
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+  if (!session) {
+    return err('Unauthorized');
+  }
+  return ok(session.user);
+};
+
+export const getDbUser = async (request: Request) => {
+  const user = await getSessionUser(request);
+  if (user.isErr()) {
+    return err(user.error);
+  }
+  const dbUser = await db.user.findUnique({
+    where: { id: user.value.id },
+    include: {
+      campaignUsers: true,
+    },
+  });
+  if (!dbUser) {
+    return err('User not found');
+  }
+  return ok(dbUser);
+};

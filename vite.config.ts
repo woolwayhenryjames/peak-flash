@@ -37,9 +37,6 @@ export default defineConfig(({ command }) => ({
         : undefined,
   },
   server: {
-    warmup: {
-      clientFiles: ['./app/routes/_index/index.tsx'],
-    },
     allowedHosts: true,
   },
 }));

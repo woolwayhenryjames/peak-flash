@@ -1,8 +1,9 @@
-import ctaSvg from './assets/cta.svg';
+import { Link } from 'react-router';
+import GlowContainer from '../GlowContainer';
 
 export default function StartEarningSection() {
   return (
-    <div className="flex w-full flex-col gap-4 rounded-2xl border border-slate-700 bg-gradient-to-b from-slate-900 to-slate-800 p-6 backdrop-blur-sm">
+    <div className="flex w-full flex-col gap-4 rounded-2xl border border-slate-700 bg-gradient-to-b from-[#0f1118] to-[#212636] p-6 backdrop-blur-sm">
       {/* Header Section */}
       <div className="flex flex-col gap-3">
         <h3 className="bg-gradient-to-r from-slate-500 via-white to-slate-600 bg-clip-text font-medium text-transparent text-xl leading-tight">
@@ -13,49 +14,32 @@ export default function StartEarningSection() {
         </p>
       </div>
 
-      {/* Stats Card */}
-      <div className="flex flex-col gap-3 rounded-lg border border-slate-700 bg-slate-900/80 p-4">
-        {/* Today's available rewards */}
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-white">Today's available rewards</div>
-          <div className="flex items-end gap-1">
-            <span className="font-medium text-2xl text-purple-400 md:text-3xl">
-              500
-            </span>
-            <span className="pb-1 text-slate-400 text-sm">tokens</span>
-          </div>
-        </div>
-
-        {/* Divider Line */}
-        <div className="h-px w-full bg-slate-700" />
-
-        {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div className="flex flex-col gap-1">
-            <div className="font-medium text-lg text-white">3</div>
-            <div className="text-slate-400 text-xs">Active Tasks</div>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <div className="font-medium text-lg text-white">$2.5K</div>
-            <div className="text-slate-400 text-xs">Total Pool</div>
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <div className="font-medium text-lg text-white">24h</div>
-            <div className="text-slate-400 text-xs">Auto Detect</div>
-          </div>
-        </div>
-      </div>
-
       {/* CTA Button */}
-      <button className="w-full" type="button">
-        <img
-          alt="Call to Action"
-          className="mx-auto aspect-323/110 w-full max-w-md object-cover"
-          src={ctaSvg}
-        />
-      </button>
+      <Link
+        className="relative flex w-full justify-between gap-3 border border-[#b7b7b7]/50 bg-gradient-to-b from-[#d9d9d9]/20 to-white/0 px-3 py-5"
+        to="/ascent"
+      >
+        <div className="-left-0.5 -top-0.5 absolute size-1 bg-[#D9D9D9]" />
+        <div className="-right-0.5 -top-0.5 absolute size-1 bg-[#D9D9D9]" />
+        <div className="-left-0.5 -bottom-0.5 absolute size-1 bg-[#D9D9D9]" />
+        <div className="-right-0.5 -bottom-0.5 absolute size-1 bg-[#D9D9D9]" />
+        <div className="flex flex-col text-start">
+          <div className="font-semibold text-[#faff9b]">
+            join ascent hub now
+          </div>
+          <div className="text-[#acacac] text-sm">
+            Post TikTok videos, AI auto-detects rewards
+          </div>
+        </div>
+        <GlowContainer className="h-fit w-fit self-end overflow-hidden rounded-md px-6 py-1">
+          <span className="text-sm text-white">&gt;</span>
+          {/* Shimmer effect */}
+          <div
+            className="-skew-x-12 absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            style={{ filter: 'blur(4px)' }}
+          />
+        </GlowContainer>
+      </Link>
     </div>
   );
 }

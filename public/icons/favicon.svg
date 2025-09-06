@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="66" height="66"><svg width="66" height="66" viewBox="0 0 66 66" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M55.7793 1H10.2207C5.12824 1 1 5.12824 1 10.2207V55.7793C1 60.8718 5.12824 65 10.2207 65H55.7793C60.8718 65 65 60.8718 65 55.7793V10.2207C65 5.12824 60.8718 1 55.7793 1Z" fill="black" fill-opacity="0.8" stroke="#333333" stroke-miterlimit="10"></path>
-<path d="M55.9462 55.5278H10.162V10.1881H55.9462V55.5278ZM54.5727 11.5483H18.0552V47.7112H54.5727V11.5483Z" fill="#EDE8E6"></path>
-<path d="M52.7403 38.5599H26.8379V12.909H52.7403V38.5599ZM50.9364 14.3848H35.6422V29.5305H50.9364V14.3848Z" fill="#EDE8E6"></path>
-</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="142" height="142"><svg width="142" height="142" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M65.744 35.994L89.032 71.7l6.752-9.646-23.32-35.756-6.72 9.695zM29.983 105.855l36.83-51.556-12.33-1.42-37.267 52.041 12.767.935z" fill="#fff"></path>
+  <path d="M82.744 79.994l23.288 35.707 6.752-9.646-23.32-35.756-6.72 9.695z" fill="#fff"></path>
+  <path d="M53.744 53.994L77.032 89.7l6.752-9.646-23.32-35.756-6.72 9.695zM94.744 61.994L118.032 97.7l6.752-9.646-23.32-35.756-6.72 9.695z" fill="#fff"></path>
+</svg><style>@media (prefers-color-scheme: light) { :root { filter: contrast(1) brightness(0.1); } }
 @media (prefers-color-scheme: dark) { :root { filter: none; } }
 </style></svg>

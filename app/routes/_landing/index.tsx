@@ -1,4 +1,5 @@
-import { Outlet, redirect, useLocation } from 'react-router';
+import type { User } from 'better-auth';
+import { Outlet, redirect, useLocation, useOutletContext } from 'react-router';
 import BottomNav from '~/components/BottomNav';
 import { auth } from '~/services/auth.server';
 import type { Route } from './+types/index';
@@ -13,6 +14,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   return session.user;
 }
 
+type ContextType = { user: User | null };
+
+export function useUser() {
+  return useOutletContext<ContextType>();
+}
+
 export default function Layout({ loaderData }: Route.ComponentProps) {
   const location = useLocation();
   const pageName = getPageName(location.pathname);
@@ -20,7 +27,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
   return (
     <div>
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#12121E] px-4 py-3 shadow-sm">
+      <header className="sticky top-0 z-50 bg-radial from-[#12121e] to-[#0f1012] px-4 py-3 shadow-sm">
         <div className="mx-auto flex max-w-screen-xl items-center justify-between">
           <h1 className="font-semibold text-[#f9f9fb] text-lg">{pageName}</h1>
           {loaderData?.image && (
@@ -32,7 +39,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
           )}
         </div>
       </header>
-      <Outlet />
+      <Outlet context={{ user: loaderData } satisfies ContextType} />
       <BottomNav />
     </div>
   );

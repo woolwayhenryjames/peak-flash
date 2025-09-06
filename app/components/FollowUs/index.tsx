@@ -1,3 +1,4 @@
+import GlowContainer from '../GlowContainer';
 import sunIcon from './assets/sun-icon.svg';
 import tiktokBg from './assets/tiktok-bg.svg';
 import tiktokIcon from './assets/tiktok-icon.svg';
@@ -22,9 +23,9 @@ export default function FollowUs() {
   };
 
   return (
-    <div className="mx-auto w-full p-4 sm:p-6">
+    <div className="mt-18 w-full">
       {/* Header */}
-      <div className="mb-12 flex items-center justify-center gap-2 sm:mb-16">
+      <div className="mb-7 flex items-center gap-1">
         <img alt="" className="h-6 w-6 flex-shrink-0" src={sunIcon} />
         <h3 className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text font-semibold text-transparent text-xl">
           Follow Us
@@ -62,13 +63,7 @@ export default function FollowUs() {
 
             {/* Follow Button */}
             <div className="relative">
-              <button
-                className="flex items-center justify-center gap-2 rounded-[10px] border border-[#B8B8B8]/50 bg-transparent px-6 py-3 transition-colors hover:border-white/20 hover:bg-white/5 active:scale-95"
-                onClick={handleTikTokFollow}
-                type="button"
-              >
-                <span className="font-normal text-sm text-white">Follow</span>
-              </button>
+              <GlowContainer onClick={handleTikTokFollow}>Follow</GlowContainer>
               {/* Subtle glow effect */}
               <div
                 className="pointer-events-none absolute inset-0 rounded-[10px] opacity-20 blur-sm"
@@ -81,7 +76,7 @@ export default function FollowUs() {
           </div>
 
           {/* Vertical Divider - Hidden on mobile, shown on desktop */}
-          <div className="hidden min-h-[120px] w-px self-stretch bg-[#2D3338]/50 sm:block" />
+          <div className="min-h-[120px] w-px bg-[#2D3338]/50" />
 
           {/* Twitter Section */}
           <div className="mx-auto flex max-w-[140px] flex-1 flex-col items-center gap-6">
@@ -107,13 +102,9 @@ export default function FollowUs() {
 
             {/* Follow Button */}
             <div className="relative">
-              <button
-                className="flex items-center justify-center gap-2 rounded-[10px] border border-[#B8B8B8]/50 bg-transparent px-6 py-3 transition-colors hover:border-white/20 hover:bg-white/5 active:scale-95"
-                onClick={handleTwitterFollow}
-                type="button"
-              >
-                <span className="font-normal text-sm text-white">Follow</span>
-              </button>
+              <GlowContainer onClick={handleTwitterFollow}>
+                Follow
+              </GlowContainer>
               {/* Subtle glow effect */}
               <div
                 className="pointer-events-none absolute inset-0 rounded-[10px] opacity-20 blur-sm"
@@ -125,9 +116,6 @@ export default function FollowUs() {
             </div>
           </div>
         </div>
-
-        {/* Bottom Divider */}
-        <div className="w-full border-[#2D3338]/50 border-t" />
       </div>
     </div>
   );

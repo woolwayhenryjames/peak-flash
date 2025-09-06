@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(dbgenerated("uuid()"))
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -24,18 +24,27 @@ model User {
   email         String
   emailVerified Boolean
   image         String?   @db.Text
+  kindleScore   Int       @default(0)
   sessions      Session[]
   accounts      Account[]
 
   @@unique([email])
   @@index([id])
+  @@index([kindleScore])
 }
 
 model Campaign {
-  id        String   @id @default(uuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  id              String   @id @default(dbgenerated("uuid()"))
+  name            String
+  image           String?  @db.Text
+  poolSize        Int      @default(0)
+  isActive        Boolean  @default(true)
+  startDate       DateTime
+  endDate         DateTime
+  description     String?  @db.Text
+  joinRequirement String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
 
   campaignUsers CampaignUser[]
 

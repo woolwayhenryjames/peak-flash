@@ -1,11 +1,12 @@
+import GlowContainer from '../GlowContainer';
 import diamondIcon from './assets/diamond-icon.svg';
 import usersIcon from './assets/users-icon.svg';
 
 export default function QuickActions() {
   return (
-    <div className="w-full">
+    <div className="mt-18 w-full">
       {/* Header with diamond icon */}
-      <div className="mb-7 flex items-center gap-1">
+      <div className="mb-8 flex items-center gap-1">
         <img alt="" className="h-6 w-6 flex-shrink-0" src={diamondIcon} />
         <h3 className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text font-semibold text-transparent text-xl">
           Quick Actions
@@ -32,38 +33,22 @@ export default function QuickActions() {
           <div className="h-px w-full bg-[#2D3338]" />
 
           {/* Invite Link Section */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8 lg:gap-12">
-            <div className="min-w-0 flex-1 space-y-1.5">
+          <div className="flex items-center gap-4">
+            <div className="w-full space-y-1.5">
               <div className="text-[#E8E8E8] text-xs">Invite Link</div>
               <div className="break-all text-[#858585] text-xs">
                 https://distant.app/invite/10000
               </div>
             </div>
 
-            <div className="relative flex-shrink-0">
-              <button
-                className="rounded border border-gray-500/50 bg-gradient-to-b from-[#D9D9D9] to-transparent px-3 py-1.5 text-sm text-white shadow-[0px_10px_25px_0px_rgba(63,107,255,0.57),0px_9px_10.4px_0px_rgba(243,120,120,0.25)] sm:px-1 sm:py-0.5"
-                style={{ filter: 'blur(0.5px)' }}
-                type="button"
-              >
-                Copy
-              </button>
-            </div>
+            <GlowContainer>Copy</GlowContainer>
           </div>
 
           {/* Divider */}
           <div className="h-px w-full bg-[#2D3338]" />
 
           {/* Share Button */}
-          <div className="relative">
-            <button
-              className="w-full rounded-[10px] border border-gray-500/50 py-3 text-sm text-white shadow-[0px_10px_25px_0px_rgba(63,107,255,0.57),0px_9px_10.4px_0px_rgba(243,120,120,0.25)] transition-colors hover:bg-white/5"
-              style={{ filter: 'blur(0.5px)' }}
-              type="button"
-            >
-              Share
-            </button>
-          </div>
+          <GlowContainer>Share</GlowContainer>
         </div>
       </div>
     </div>
