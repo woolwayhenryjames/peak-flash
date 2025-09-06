@@ -48,8 +48,17 @@ export async function getCampaignsWithUserRanks(
     WHERE cu.campaignId IN (${Prisma.join(campaignIds.map((id) => Prisma.sql`${id}`))})
       AND cu.userId = ${user.id}
   `;
-
-  const ranksResult = await db.$queryRaw<UserRankQueryResult[]>(sqlQuery);
+  let ranksResult: UserRankQueryResult[] = [];
+  try {
+    ranksResult = await db.$queryRaw<UserRankQueryResult[]>(sqlQuery);
+  } catch (error) {
+    console.error('Failed to get user campaign ranks:', error);
+    return campaigns.map((campaign) => ({
+      ...campaign,
+      userRank: null,
+      isParticipating: campaignIds.includes(campaign.id),
+    }));
+  }
 
   // Create a lookup map for ranks (convert bigint to number)
   // TypeScript now knows campaignId is definitely a string due to our type definition

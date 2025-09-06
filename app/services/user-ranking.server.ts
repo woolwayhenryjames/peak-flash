@@ -10,20 +10,25 @@ export interface UserWithKindleRank extends User {
  * Uses an optimized query with MySQL's RANK() window function
  */
 export async function getUserKindleRank(userId: string): Promise<number> {
-  const result = await db.$queryRaw<Array<{ user_rank: bigint }>>`
-    SELECT 
-      user_rank
-    FROM (
+  try {
+    const result = await db.$queryRaw<Array<{ user_rank: bigint }>>`
       SELECT 
-        id,
-        kindleScore,
-        RANK() OVER (ORDER BY kindleScore DESC) as user_rank
-      FROM User
-    ) ranked_users
-    WHERE id = ${userId}
-  `;
+        user_rank
+      FROM (
+        SELECT 
+          id,
+          kindleScore,
+          RANK() OVER (ORDER BY kindleScore DESC) as user_rank
+        FROM User
+      ) ranked_users
+      WHERE id = ${userId}
+    `;
 
-  return result.length > 0 ? Number(result[0].user_rank) : 1;
+    return result.length > 0 ? Number(result[0].user_rank) : 1;
+  } catch (error) {
+    console.error('Failed to get user kindle rank:', error);
+    return 1; // Return default rank on error
+  }
 }
 
 /**
