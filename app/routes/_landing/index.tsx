@@ -1,6 +1,13 @@
 import type { User } from 'better-auth';
-import { Outlet, redirect, useLocation, useOutletContext } from 'react-router';
+import {
+  Outlet,
+  redirect,
+  useLocation,
+  useNavigate,
+  useOutletContext,
+} from 'react-router';
 import BottomNav from '~/components/BottomNav';
+import GlowContainer from '~/components/GlowContainer';
 import { auth } from '~/services/auth.server';
 import type { Route } from './+types/index';
 
@@ -22,14 +29,54 @@ export function useUser() {
 
 export default function Layout({ loaderData }: Route.ComponentProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const pageName = getPageName(location.pathname);
+
+  // Check if there are more than one segments (excluding empty strings)
+  const segments = location.pathname.split('/').filter(Boolean);
+  const showBackButton = segments.length > 1;
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-radial from-[#12121e] to-[#0f1012] px-4 py-3 shadow-sm">
         <div className="mx-auto flex max-w-screen-xl items-center justify-between">
-          <h1 className="font-semibold text-[#f9f9fb] text-lg">{pageName}</h1>
+          <div className="flex items-center gap-3">
+            {showBackButton ? (
+              <button
+                aria-label="Go back"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-[#f9f9fb] transition-colors hover:bg-white/10"
+                onClick={handleBackClick}
+                type="button"
+              >
+                <GlowContainer className="rounded-sm px-2 py-1" noShimmer>
+                  <svg
+                    aria-hidden="true"
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <title>Back arrow</title>
+                    <path
+                      d="M15 19l-7-7 7-7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                    />
+                  </svg>
+                </GlowContainer>
+              </button>
+            ) : (
+              <h1 className="font-semibold text-[#f9f9fb] text-lg">
+                {pageName}
+              </h1>
+            )}
+          </div>
           {loaderData?.image && (
             <img
               alt={loaderData.name || 'User avatar'}

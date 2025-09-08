@@ -231,9 +231,9 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
               y1="-69.5"
               y2="72"
             >
-              <stop stop-color="#6D7077" />
-              <stop offset=".495" stop-color="#C4C4C4" />
-              <stop offset="1" stop-color="#000101" />
+              <stop stopColor="#6D7077" />
+              <stop offset=".495" stopColor="#C4C4C4" />
+              <stop offset="1" stopColor="#000101" />
             </linearGradient>
           </defs>
         </svg>

@@ -1,4 +1,5 @@
 import type { Campaign } from '@prisma/client';
+import { Link } from 'react-router';
 import GlowContainer from '../GlowContainer';
 
 interface CampaignWithParticipation
@@ -56,7 +57,7 @@ export default function ActiveCampaigns({
         <div className="relative">
           <a
             className="border-[#505050] border-b pb-0.5 text-[#AEAEAE] text-xs hover:text-white"
-            href="/campaigns"
+            href="/ascent"
           >
             View All
           </a>
@@ -75,9 +76,10 @@ export default function ActiveCampaigns({
             const status = getStatusDisplay(campaign);
 
             return (
-              <div
+              <Link
                 className="rounded-2xl border border-[#2D3338] bg-gradient-to-br from-[#20202D] to-[#101013] px-4 py-2.5"
                 key={campaign.id}
+                to={`/campaigns/${campaign.id}`}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-[60%]">
@@ -124,7 +126,7 @@ export default function ActiveCampaigns({
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })
         )}
