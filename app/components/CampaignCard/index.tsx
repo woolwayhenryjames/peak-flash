@@ -7,7 +7,7 @@ interface CampaignWithParticipation extends Campaign {
   isParticipating: boolean;
   userRank?: number | null;
   // Display property not in the base Campaign model
-  participants: string;
+  participants: number;
 }
 
 interface CampaignCardProps extends CampaignWithParticipation {
@@ -138,9 +138,11 @@ export default function CampaignCard({
               </div>
 
               {/* Rank Badge */}
-              <GlowContainer className="w-fit rounded-md py-1 text-white text-xs">
-                #{userRank}&nbsp;&gt;
-              </GlowContainer>
+              {userRank && (
+                <GlowContainer className="w-fit rounded-md py-1 text-white text-xs">
+                  #{userRank}&nbsp;&gt;
+                </GlowContainer>
+              )}
             </div>
 
             {/* View Details Button */}

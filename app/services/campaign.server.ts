@@ -5,6 +5,7 @@ import { db } from './db.server';
 export interface CampaignWithUserRank extends Campaign {
   userRank: number | null;
   isParticipating: boolean;
+  participants: number;
 }
 
 export interface PaginatedCampaignsResult {
@@ -30,7 +31,7 @@ type UserRankQueryResult = {
 };
 
 /**
- * Calculate user ranks for campaigns using an optimized single query approach.
+ * Calculate user ranks and participant counts for campaigns using optimized queries.
  * Uses MySQL's RANK() window function for efficient ranking calculation.
  */
 export async function getCampaignsWithUserRanks(
@@ -40,12 +41,41 @@ export async function getCampaignsWithUserRanks(
   // Get campaign IDs for the query
   const campaignIds = campaigns.map((c) => c.id);
 
-  // If no campaigns or user has no participations, skip rank calculation
-  if (campaignIds.length === 0 || !user.campaignUsers.length) {
+  // If no campaigns, return empty campaigns with zero participants
+  if (campaignIds.length === 0) {
     return campaigns.map((campaign) => ({
       ...campaign,
       userRank: null,
       isParticipating: false,
+      participants: 0,
+    }));
+  }
+
+  // Get participant counts for all campaigns
+  const participantCounts = await db.campaignUser.groupBy({
+    by: ['campaignId'],
+    where: {
+      campaignId: {
+        in: campaignIds,
+      },
+    },
+    _count: {
+      userId: true,
+    },
+  });
+
+  // Create a lookup map for participant counts
+  const participantCountsMap = new Map<string, number>(
+    participantCounts.map((result) => [result.campaignId, result._count.userId])
+  );
+
+  // If user has no participations, return campaigns with participant counts but no ranks
+  if (!user.campaignUsers.length) {
+    return campaigns.map((campaign) => ({
+      ...campaign,
+      userRank: null,
+      isParticipating: false,
+      participants: participantCountsMap.get(campaign.id) ?? 0,
     }));
   }
 
@@ -69,6 +99,7 @@ export async function getCampaignsWithUserRanks(
       ...campaign,
       userRank: null,
       isParticipating: campaignIds.includes(campaign.id),
+      participants: participantCountsMap.get(campaign.id) ?? 0,
     }));
   }
 
@@ -78,11 +109,12 @@ export async function getCampaignsWithUserRanks(
     ranksResult.map((result) => [result.campaignId, Number(result.user_rank)])
   );
 
-  // Add user ranks and participation status to campaigns
+  // Add user ranks, participation status, and participant counts to campaigns
   return campaigns.map((campaign) => ({
     ...campaign,
     userRank: userRanksMap.get(campaign.id) ?? null,
     isParticipating: userRanksMap.has(campaign.id),
+    participants: participantCountsMap.get(campaign.id) ?? 0,
   }));
 }
 
