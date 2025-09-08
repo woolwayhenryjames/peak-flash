@@ -41,7 +41,7 @@ export default function SignIn() {
 
         {/* Sign In Button */}
         <div className="mt-14 w-full">
-          <button className="w-[50vw]" onClick={signIn} type="button">
+          <button onClick={signIn} type="button">
             <GlowContainer>
               {/* TikTok Icon */}
               <img alt="TikTok" className="h-6 w-6" src={tiktokIcon} />
