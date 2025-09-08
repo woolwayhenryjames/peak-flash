@@ -1,6 +1,8 @@
 import { redirect } from 'react-router';
 import ActiveCampaigns from '~/components/ActiveCampaigns';
+import FirstOpenHomeDialog from '~/components/Dialogs/FirstOpenHomeDialog';
 import FollowUs from '~/components/FollowUs';
+import { HomeSeparator } from '~/components/HomeSeperator';
 import KindleScoreCard from '~/components/KindleScoreCard';
 import QuickActions from '~/components/QuickActions';
 import StartEarningSection from '~/components/StartEarningSection';
@@ -28,15 +30,21 @@ export default function Home({
   loaderData: { user, campaigns },
 }: Route.ComponentProps) {
   return (
-    <div className="space-y-6 px-6 py-6">
-      <KindleScoreCard
-        rank={user?.kindleRank ?? 1}
-        score={user?.kindleScore ?? 0}
-      />
-      <StartEarningSection />
-      <ActiveCampaigns campaigns={campaigns} />
-      <QuickActions />
-      <FollowUs />
-    </div>
+    <>
+      <div className="space-y-6 px-6 pt-6">
+        <KindleScoreCard
+          rank={user?.kindleRank ?? 1}
+          score={user?.kindleScore ?? 0}
+        />
+        <StartEarningSection />
+      </div>
+      <HomeSeparator />
+      <div className="space-y-6 bg-gradient-to-b from-[#090917] to-black px-6">
+        <ActiveCampaigns campaigns={campaigns} />
+        <QuickActions />
+        <FollowUs />
+      </div>
+      <FirstOpenHomeDialog score={user?.kindleScore ?? 0} />
+    </>
   );
 }

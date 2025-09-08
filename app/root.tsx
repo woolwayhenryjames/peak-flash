@@ -61,7 +61,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <path d="M1 0 H0.068 C0.434 0.127 0.804 0.096 0.895 0.247 C0.934 0.152 0.938 0.116 1 0 Z" />
             </clipPath>
             <filter
-              color-interpolation-filters="sRGB"
+              colorInterpolationFilters="sRGB"
               filterUnits="objectBoundingBox"
               height="100%"
               id="prefix__prefix__filter1_ddf_134_3428"
@@ -69,7 +69,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               x="0"
               y="0"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feColorMatrix
                 in="SourceAlpha"
                 result="hardAlpha"
