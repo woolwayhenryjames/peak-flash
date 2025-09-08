@@ -70,7 +70,7 @@ export const InfinityGround: Story = {
     name: 'Infinity Ground',
     description: 'AI-powered gaming platform',
     poolSize: 50_000,
-    participants: '1,234',
+    participants: 1234,
     userRank: 8,
     isParticipating: true,
     startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // Started 10 days ago (active)
@@ -89,7 +89,7 @@ export const ZeroGCampaign: Story = {
     name: '0G Campaign',
     description: 'Decentralized storage network',
     poolSize: 30_000,
-    participants: '856',
+    participants: 856,
     userRank: 15,
     isParticipating: true,
     startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // Started 10 days ago
@@ -109,7 +109,7 @@ export const KaitoAI: Story = {
     name: 'Kaito AI',
     description: 'AI-powered crypto analysis',
     poolSize: 75_000,
-    participants: '234',
+    participants: 234,
     userRank: 15,
     isParticipating: true,
     startDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // Started 3 days ago (new)
@@ -129,7 +129,7 @@ export const Galxe: Story = {
     name: 'Galxe',
     description: 'Web3 credential data network',
     poolSize: 100_000,
-    participants: '2,156',
+    participants: 2156,
     userRank: 15,
     isParticipating: true,
     startDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // Started 15 days ago (active)
@@ -150,7 +150,7 @@ export const LongContent: Story = {
     description:
       'This is a much longer description that demonstrates how the card handles extended content and text wrapping in the description area',
     poolSize: 999_999,
-    participants: '50,000',
+    participants: 50_000,
     userRank: 999,
     isParticipating: true,
     startDate: new Date(Date.now() - 40 * 24 * 60 * 60 * 1000), // Started 40 days ago
@@ -177,7 +177,7 @@ export const MinimalData: Story = {
     name: 'Test',
     description: 'Short',
     poolSize: 100,
-    participants: '1',
+    participants: 1,
     userRank: 1,
     isParticipating: false,
     startDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // Started 2 days ago (new)

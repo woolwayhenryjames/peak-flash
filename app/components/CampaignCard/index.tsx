@@ -57,7 +57,7 @@ export default function CampaignCard({
           {/* Header Section */}
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex min-w-0 flex-1 flex-col gap-3">
+              <div className="flex flex-grow-0 flex-col gap-3">
                 {/* Title and Logo */}
                 <div className="flex items-center gap-2">
                   {image && (
@@ -67,11 +67,9 @@ export default function CampaignCard({
                       src={image}
                     />
                   )}
-                  <div className="min-w-0 flex-1">
-                    <h3 className="white-gradient-text truncate font-medium text-xl leading-tight">
-                      {name}
-                    </h3>
-                  </div>
+                  <h3 className="white-gradient-text font-medium text-xl leading-tight">
+                    {name}
+                  </h3>
                 </div>
                 {/* Description */}
                 <p className="text-white text-xs leading-relaxed">
