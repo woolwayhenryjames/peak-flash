@@ -18,6 +18,12 @@ export const auth = betterAuth({
       clientKey: process.env.TIKTOK_CLIENT_KEY as string,
     },
   },
+  trustedOrigins: [
+    'http://localhost:5173',
+    'https://staging.peakboom.ai',
+    'https://www.peakboom.ai',
+    'https://peakboom.ai',
+  ],
 });
 
 export const getSessionUser = async (request: Request) => {

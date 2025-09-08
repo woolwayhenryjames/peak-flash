@@ -323,16 +323,17 @@ The AI should ignore the following auto-fixable linter issues that can be handle
 - Wrap components needing providers (QueryClient, Router) in decorators.
 
 #### Tailwind CSS
-- Use Tailwind CSS utility classes for styling.
+- Use Tailwind CSS v4 utility classes for styling.
 - Prefer Tailwind classes over inline styles or CSS modules.
 - Use arbitrary values sparingly (e.g., `w-[137px]`).
 - Group related utilities with responsive prefixes (e.g., `sm:`, `md:`, `lg:`).
 - Always use `cn()` utility for conditional classes.
-- Avoid `@apply` in CSS files unless absolutely necessary.
 
 #### Styling Best Practices
 - Sort CSS classes alphabetically or by logical groups.
 - Use consistent spacing utilities (prefer `gap` over margins for flex/grid).
+- Never use static width height or absolute positioning unless absolutely necessary.
+- Use flexbox and grid layouts for responsiveness.
 - Use semantic color classes when available.
 - Maintain consistent border radius values across the app.
 - Use CSS variables for theme values when needed.

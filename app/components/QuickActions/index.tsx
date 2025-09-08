@@ -8,7 +8,7 @@ export default function QuickActions() {
       {/* Header with diamond icon */}
       <div className="mb-8 flex items-center gap-1">
         <img alt="" className="h-6 w-6 flex-shrink-0" src={diamondIcon} />
-        <h3 className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text font-semibold text-transparent text-xl">
+        <h3 className="white-gradient-text font-semibold text-xl">
           Quick Actions
         </h3>
       </div>
@@ -41,7 +41,12 @@ export default function QuickActions() {
               </div>
             </div>
 
-            <GlowContainer>Copy</GlowContainer>
+            <GlowContainer
+              className="w-fit rounded-sm px-3 py-1 text-sm"
+              noShimmer
+            >
+              Copy
+            </GlowContainer>
           </div>
 
           {/* Divider */}

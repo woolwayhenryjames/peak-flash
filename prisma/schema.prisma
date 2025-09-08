@@ -28,9 +28,15 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  // Invitation relationships
+  inviterId String?
+  inviter   User?   @relation("UserInvitations", fields: [inviterId], references: [id], onDelete: SetNull)
+  invitees  User[]  @relation("UserInvitations")
+
   @@unique([email])
   @@index([id])
   @@index([kindleScore])
+  @@index([inviterId])
 }
 
 model Campaign {
@@ -38,7 +44,6 @@ model Campaign {
   name            String
   image           String?  @db.Text
   poolSize        Int      @default(0)
-  isActive        Boolean  @default(true)
   startDate       DateTime
   endDate         DateTime
   description     String?  @db.Text
@@ -55,7 +60,9 @@ model CampaignUser {
   id         Int      @id @default(autoincrement())
   userId     String
   campaignId String
-  score      Int      @default(0)
+  baseScore  Int      @default(0) // User's own earned score
+  bonusScore Int      @default(0) // 10% bonus from invited users
+  score      Int      @default(0) // Computed column
   joinedAt   DateTime @default(now())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
@@ -67,6 +74,7 @@ model CampaignUser {
   @@index([userId])
   @@index([campaignId])
   @@index([campaignId, score])
+  @@index([campaignId, baseScore])
 }
 
 model Session {

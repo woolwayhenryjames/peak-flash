@@ -6,30 +6,12 @@ import twitterBg from './assets/twitter-bg.svg';
 import twitterIcon from './assets/twitter-icon.svg';
 
 export default function FollowUs() {
-  const handleTikTokFollow = () => {
-    window.open(
-      'https://www.tiktok.com/@distant',
-      '_blank',
-      'noopener,noreferrer'
-    );
-  };
-
-  const handleTwitterFollow = () => {
-    window.open(
-      'https://twitter.com/distantapp',
-      '_blank',
-      'noopener,noreferrer'
-    );
-  };
-
   return (
     <div className="mt-18 w-full">
       {/* Header */}
       <div className="mb-7 flex items-center gap-1">
         <img alt="" className="h-6 w-6 flex-shrink-0" src={sunIcon} />
-        <h3 className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text font-semibold text-transparent text-xl">
-          Follow Us
-        </h3>
+        <h3 className="white-gradient-text font-semibold text-xl">Follow Us</h3>
       </div>
 
       {/* Social Links Container */}
@@ -56,23 +38,20 @@ export default function FollowUs() {
                   Follow on TikTok
                 </div>
                 <div className="font-normal text-[#A7A7A7] text-xs">
-                  @distant
+                  @peak.ai
                 </div>
               </div>
             </div>
 
             {/* Follow Button */}
-            <div className="relative">
-              <GlowContainer onClick={handleTikTokFollow}>Follow</GlowContainer>
-              {/* Subtle glow effect */}
-              <div
-                className="pointer-events-none absolute inset-0 rounded-[10px] opacity-20 blur-sm"
-                style={{
-                  background:
-                    'linear-gradient(134deg, rgba(255, 255, 255, 0.1) 34%, rgba(255, 255, 255, 0.02) 99%)',
-                }}
-              />
-            </div>
+            <a
+              className="w-full"
+              href="https://www.tiktok.com/@peak.ai"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <GlowContainer>Follow</GlowContainer>
+            </a>
           </div>
 
           {/* Vertical Divider - Hidden on mobile, shown on desktop */}
@@ -95,25 +74,20 @@ export default function FollowUs() {
                   Follow on Twitter
                 </div>
                 <div className="font-normal text-[#A7A7A7] text-xs">
-                  @distant
+                  @peakboom_ai
                 </div>
               </div>
             </div>
 
             {/* Follow Button */}
-            <div className="relative">
-              <GlowContainer onClick={handleTwitterFollow}>
-                Follow
-              </GlowContainer>
-              {/* Subtle glow effect */}
-              <div
-                className="pointer-events-none absolute inset-0 rounded-[10px] opacity-20 blur-sm"
-                style={{
-                  background:
-                    'linear-gradient(134deg, rgba(255, 255, 255, 0.1) 34%, rgba(255, 255, 255, 0.02) 99%)',
-                }}
-              />
-            </div>
+            <a
+              className="w-full"
+              href="https://twitter.com/peakboom_ai"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <GlowContainer>Follow</GlowContainer>
+            </a>
           </div>
         </div>
       </div>

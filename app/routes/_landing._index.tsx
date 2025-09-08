@@ -7,7 +7,7 @@ import KindleScoreCard from '~/components/KindleScoreCard';
 import QuickActions from '~/components/QuickActions';
 import StartEarningSection from '~/components/StartEarningSection';
 import { getDbUser } from '~/services/auth.server';
-import { getActiveCampaignsForUser } from '~/services/campaign.server';
+import { getCampaignsForUser } from '~/services/campaign.server';
 import { getUserWithKindleRank } from '~/services/user-ranking.server';
 import type { Route } from './+types/_landing._index';
 
@@ -20,10 +20,10 @@ export async function loader({ request }: Route.LoaderArgs) {
   // Get user with kindle rank and active campaigns with user participation
   const [userWithRank, campaigns] = await Promise.all([
     getUserWithKindleRank(user.value.id),
-    getActiveCampaignsForUser(user.value, 3),
+    getCampaignsForUser(user.value, { endDate: { gte: new Date() } }, 1, 3),
   ]);
 
-  return { user: userWithRank, campaigns };
+  return { user: userWithRank, campaigns: campaigns.campaigns };
 }
 
 export default function Home({

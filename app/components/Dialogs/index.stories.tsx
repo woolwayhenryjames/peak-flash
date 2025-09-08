@@ -5,7 +5,7 @@ import DialogWithCloseButton from './DialogWithCloseButton';
 import Dialog, { type DialogProps } from './index';
 
 const meta = {
-  title: 'Components/Dialog',
+  title: 'Dialogs',
   component: Dialog,
   parameters: {
     layout: 'centered',

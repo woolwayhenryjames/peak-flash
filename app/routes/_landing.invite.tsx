@@ -24,7 +24,7 @@ export default function Invite() {
           </div>
 
           {/* Title */}
-          <h1 className="mb-4 bg-gradient-to-r from-gray-400 via-white to-gray-600 bg-clip-text font-bold text-3xl text-transparent">
+          <h1 className="white-gradient-text mb-4 font-bold text-3xl">
             Invite
           </h1>
 

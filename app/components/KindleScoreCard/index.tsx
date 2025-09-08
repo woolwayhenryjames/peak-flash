@@ -14,7 +14,7 @@ export default function KindleScoreCard({
         <div className="flex items-center justify-between gap-5">
           <div className="flex flex-col gap-3">
             <div>
-              <h2 className="mb-2 bg-gradient-to-r from-gray-400 via-white to-gray-600 bg-clip-text font-medium text-lg text-transparent">
+              <h2 className="white-gradient-text mb-2 font-medium text-lg">
                 Kindle Score
               </h2>
               <p className="text-gray-400 text-xs leading-relaxed">
@@ -41,13 +41,8 @@ export default function KindleScoreCard({
           {/* Stats Row */}
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-400">This week +0.3</span>
-            <GlowContainer className="w-fit overflow-hidden rounded-md py-1">
+            <GlowContainer className="w-fit rounded-md py-1">
               <span className="text-white text-xs">#{rank}&nbsp;&gt;</span>
-              {/* Shimmer effect */}
-              <div
-                className="-skew-x-12 absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                style={{ filter: 'blur(4px)' }}
-              />
             </GlowContainer>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import type { Campaign } from '@prisma/client';
 import GlowContainer from '../GlowContainer';
 
-interface CampaignWithParticipation extends Campaign {
+interface CampaignWithParticipation
+  extends Omit<Campaign, 'createdAt' | 'updatedAt'> {
   isParticipating: boolean;
   userRank?: number | null;
 }
@@ -13,8 +14,6 @@ interface ActiveCampaignsProps {
 export default function ActiveCampaigns({
   campaigns = [],
 }: ActiveCampaignsProps) {
-  const activeCampaigns = campaigns.filter((campaign) => campaign.isActive);
-
   return (
     <>
       <div className="mb-10 flex items-center justify-between">
@@ -50,7 +49,7 @@ export default function ActiveCampaigns({
             </defs>
           </svg>
 
-          <h3 className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text font-medium text-transparent text-xl">
+          <h3 className="white-gradient-text font-medium text-xl">
             Active Campaigns
           </h3>
         </div>
@@ -65,14 +64,14 @@ export default function ActiveCampaigns({
       </div>
 
       <div className="space-y-2.5">
-        {activeCampaigns.length === 0 ? (
+        {campaigns.length === 0 ? (
           <div className="rounded-2xl border border-[#2D3338] bg-gradient-to-br from-[#20202D] to-[#101013] px-4 py-6 text-center">
             <p className="text-[#878788] text-sm">
               No active campaigns available
             </p>
           </div>
         ) : (
-          activeCampaigns.map((campaign) => {
+          campaigns.map((campaign) => {
             const status = getStatusDisplay(campaign);
 
             return (
@@ -111,15 +110,10 @@ export default function ActiveCampaigns({
                       </span>
                       <div className="flex flex-col items-end">
                         {campaign.isParticipating && campaign.userRank ? (
-                          <GlowContainer className="w-fit overflow-hidden rounded-md py-1">
+                          <GlowContainer className="w-fit rounded-md py-1">
                             <span className="text-white text-xs">
                               #{campaign.userRank}&nbsp;&gt;
                             </span>
-                            {/* Shimmer effect */}
-                            <div
-                              className="-skew-x-12 absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                              style={{ filter: 'blur(4px)' }}
-                            />
                           </GlowContainer>
                         ) : (
                           <p className="text-right font-light text-[#888888] text-xs">
@@ -155,7 +149,7 @@ function calculateRemainingDays(endDate: string | Date): string {
 }
 
 function getStatusDisplay(campaign: CampaignWithParticipation) {
-  if (!campaign.isActive) {
+  if (!campaign.endDate || new Date(campaign.endDate) < new Date()) {
     return {
       text: 'Ended',
       gradient: 'from-[#878788] to-[#575655]',

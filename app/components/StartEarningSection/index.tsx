@@ -6,7 +6,7 @@ export default function StartEarningSection() {
     <div className="flex w-full flex-col gap-4 rounded-2xl border border-slate-700 bg-gradient-to-b from-[#0f1118] to-[#212636] p-6 backdrop-blur-sm">
       {/* Header Section */}
       <div className="flex flex-col gap-3">
-        <h3 className="bg-gradient-to-r from-slate-500 via-white to-slate-600 bg-clip-text font-medium text-transparent text-xl leading-tight">
+        <h3 className="white-gradient-text font-medium text-xl leading-tight">
           Start Earning!
         </h3>
         <p className="text-slate-400 text-sm leading-relaxed">
@@ -25,19 +25,14 @@ export default function StartEarningSection() {
         <div className="-right-0.5 -bottom-0.5 absolute size-1 bg-[#D9D9D9]" />
         <div className="flex flex-col text-start">
           <div className="font-semibold text-[#faff9b]">
-            join ascent hub now
+            join ASCENT hub now!
           </div>
           <div className="text-[#acacac] text-sm">
             Post TikTok videos, AI auto-detects rewards
           </div>
         </div>
-        <GlowContainer className="h-fit w-fit self-end overflow-hidden rounded-md px-6 py-1">
+        <GlowContainer className="h-fit w-fit self-end rounded-md px-6 py-1">
           <span className="text-sm text-white">&gt;</span>
-          {/* Shimmer effect */}
-          <div
-            className="-skew-x-12 absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"
-            style={{ filter: 'blur(4px)' }}
-          />
         </GlowContainer>
       </Link>
     </div>

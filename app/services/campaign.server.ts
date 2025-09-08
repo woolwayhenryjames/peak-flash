@@ -7,6 +7,18 @@ export interface CampaignWithUserRank extends Campaign {
   isParticipating: boolean;
 }
 
+export interface PaginatedCampaignsResult {
+  campaigns: CampaignWithUserRank[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
 /**
  * Type definition for user rank query results
  */
@@ -75,17 +87,48 @@ export async function getCampaignsWithUserRanks(
 }
 
 /**
- * Get active campaigns with user participation and ranking information.
+ * Get active campaigns with user participation and ranking information with pagination.
  */
-export async function getActiveCampaignsForUser(
+export async function getCampaignsForUser(
   user: User & { campaignUsers: Array<{ campaignId: string; score: number }> },
-  limit = 3
-): Promise<CampaignWithUserRank[]> {
-  const campaigns = await db.campaign.findMany({
-    where: { isActive: true },
-    orderBy: { createdAt: 'desc' },
-    take: limit,
+  where: Prisma.CampaignWhereInput = {},
+  page = 1,
+  limit = 10
+): Promise<PaginatedCampaignsResult> {
+  // Ensure page and limit are positive integers
+  const normalizedPage = Math.max(1, Math.floor(page));
+  const normalizedLimit = Math.max(1, Math.min(10, Math.floor(limit)));
+  const offset = (normalizedPage - 1) * normalizedLimit;
+
+  // Get total count of active campaigns
+  const totalCount = await db.campaign.count({
+    where,
   });
 
-  return getCampaignsWithUserRanks(campaigns, user);
+  // Get paginated campaigns
+  const campaigns = await db.campaign.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
+    skip: offset,
+    take: normalizedLimit,
+  });
+
+  // Calculate pagination metadata
+  const totalPages = Math.ceil(totalCount / normalizedLimit);
+  const hasNextPage = normalizedPage < totalPages;
+  const hasPreviousPage = normalizedPage > 1;
+
+  const campaignsWithRanks = await getCampaignsWithUserRanks(campaigns, user);
+
+  return {
+    campaigns: campaignsWithRanks,
+    pagination: {
+      page: normalizedPage,
+      limit: normalizedLimit,
+      total: totalCount,
+      totalPages,
+      hasNextPage,
+      hasPreviousPage,
+    },
+  };
 }

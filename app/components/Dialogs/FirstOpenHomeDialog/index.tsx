@@ -25,7 +25,7 @@ export default function FirstOpenHomeDialog({ score }: { score: number }) {
 
   return (
     <DialogWithCloseButton
-      className="rounded-2xl border border-[#84a0ff] opacity-90! shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
+      className="rounded-2xl border border-[#84a0ff] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
       setShow={handleDismiss}
       show={show}
       style={{
@@ -46,10 +46,10 @@ export default function FirstOpenHomeDialog({ score }: { score: number }) {
 
           {/* Welcome Text */}
           <div className="flex w-full flex-col items-center gap-3">
-            <h1 className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text text-center font-medium text-transparent text-xl leading-6">
+            <h1 className="white-gradient-text text-center font-medium text-xl leading-6">
               Welcome to Peak.AI!
             </h1>
-            <p className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text text-center text-transparent text-xs leading-5">
+            <p className="white-gradient-text text-center text-xs leading-5">
               Your Web3 TikTok rewards journey starts here
             </p>
           </div>
@@ -66,7 +66,7 @@ export default function FirstOpenHomeDialog({ score }: { score: number }) {
           {/* Score Info */}
           <div className="flex flex-col items-center gap-4">
             <div className="flex w-full items-center gap-7">
-              <span className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text font-medium text-base text-transparent leading-6">
+              <span className="white-gradient-text font-medium text-base leading-6">
                 KINDLE Score
               </span>
               <span className="font-semibold text-2xl text-[#67C9DA] leading-7">
@@ -86,7 +86,7 @@ export default function FirstOpenHomeDialog({ score }: { score: number }) {
 
         {/* Features List */}
         <div className="flex w-full flex-col gap-3">
-          <h2 className="bg-gradient-to-r from-[#6D7077] via-[#FEFEFE] to-[#3C4041] bg-clip-text font-medium text-base text-transparent leading-6">
+          <h2 className="white-gradient-text font-medium text-base leading-6">
             Ready to Earn?
           </h2>
 
@@ -107,14 +107,15 @@ export default function FirstOpenHomeDialog({ score }: { score: number }) {
           </div>
         </div>
 
-        <GlowContainer className="w-fit self-end overflow-hidden">
-          <span className="text-white">Start</span>
-          {/* Shimmer effect */}
-          <div
-            className="-skew-x-12 absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"
-            style={{ filter: 'blur(4px)' }}
-          />
-        </GlowContainer>
+        <button
+          className="w-1/2 self-end"
+          onClick={() => setShow(false)}
+          type="button"
+        >
+          <GlowContainer>
+            <span className="text-white">Start</span>
+          </GlowContainer>
+        </button>
       </div>
     </DialogWithCloseButton>
   );
