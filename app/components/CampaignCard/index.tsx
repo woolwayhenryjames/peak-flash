@@ -6,12 +6,13 @@ import GlowContainer from '../GlowContainer';
 interface CampaignWithParticipation extends Campaign {
   isParticipating: boolean;
   userRank?: number | null;
-  // Display property not in the base Campaign model
   participants: number;
 }
 
-interface CampaignCardProps extends CampaignWithParticipation {
+interface CampaignCardProps {
+  type: 'invite' | 'detail';
   className?: string;
+  campaign: CampaignWithParticipation;
 }
 
 const statusConfig = {
@@ -33,17 +34,27 @@ const statusConfig = {
   },
 } as const;
 
+const gradientByType = {
+  invite:
+    'bg-linear-[114deg] from-[#ffa44a] from-[12.87%] to-[#69D7FF] to-[51.12%]',
+  detail:
+    'bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%]',
+} as const;
+
 export default function CampaignCard({
-  id,
-  name,
-  description,
-  image,
-  poolSize,
-  participants,
-  userRank,
-  endDate,
-  startDate,
+  campaign: {
+    id,
+    name,
+    description,
+    image,
+    poolSize,
+    participants,
+    userRank,
+    endDate,
+    startDate,
+  },
   className,
+  type,
 }: CampaignCardProps) {
   const { status, daysLeftText } = getRemainingDays(startDate, endDate);
   const statusStyle = statusConfig[status];
@@ -77,23 +88,37 @@ export default function CampaignCard({
                 </p>
               </div>
               {/* Status Badge */}
-              <div className="flex-shrink-0">
-                <div
-                  className={cn(
-                    'min-w-18 rounded-xl px-2 py-1 text-center font-normal text-[#010101] text-sm',
-                    statusStyle.bgColor
-                  )}
-                >
-                  {statusStyle.label}
+              {type === 'detail' && (
+                <div className="flex-shrink-0">
+                  <div
+                    className={cn(
+                      'min-w-18 rounded-xl px-2 py-1 text-center font-normal text-[#010101] text-sm',
+                      statusStyle.bgColor
+                    )}
+                  >
+                    {statusStyle.label}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
+            {type === 'invite' && (
+              <div className="flex items-center gap-4 text-[#9D9D9D] text-xs">
+                <DaysLeft daysLeftText={daysLeftText} />
+                <div className="size-1 rounded-full bg-[#9D9D9D]" />
+                {statusStyle.label}
+              </div>
+            )}
 
             {/* Stats Section */}
             <div className="grid grid-cols-2 gap-4">
               {/* Token Pool */}
               <div className="flex flex-col gap-2 rounded-lg border border-[#9c9c9c]/20 p-3">
-                <div className="bg-linear-[69.39deg] from-[#694AFF] to-[#69D7FF] bg-clip-text font-medium text-transparent text-xl leading-tight">
+                <div
+                  className={cn(
+                    'bg-clip-text font-medium text-transparent text-xl leading-tight',
+                    gradientByType[type]
+                  )}
+                >
                   {poolSize.toLocaleString()}
                 </div>
                 <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
@@ -103,7 +128,12 @@ export default function CampaignCard({
 
               {/* Participants */}
               <div className="flex flex-col gap-2 rounded-lg border border-[#9c9c9c]/20 p-3">
-                <div className="bg-linear-[69.39deg] from-[#694AFF] to-[#69D7FF] bg-clip-text font-medium text-transparent text-xl leading-tight">
+                <div
+                  className={cn(
+                    'bg-clip-text font-medium text-transparent text-xl leading-tight',
+                    gradientByType[type]
+                  )}
+                >
                   {participants}
                 </div>
                 <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
@@ -114,44 +144,56 @@ export default function CampaignCard({
           </div>
 
           {/* Footer Section */}
-          <div className="flex flex-col gap-4">
-            {/* Days Left and Rank */}
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <svg
-                  className="h-5 w-5 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.4}
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <title>Clock icon</title>
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 6v6l4 2" />
-                </svg>
-                <span className="text-white text-xs leading-relaxed">
-                  {daysLeftText}
-                </span>
+          {type === 'detail' ? (
+            <div className="flex flex-col gap-4">
+              {/* Days Left and Rank */}
+              <div className="flex items-center justify-between gap-4 text-white">
+                <DaysLeft daysLeftText={daysLeftText} />
+
+                {/* Rank Badge */}
+                {userRank && (
+                  <GlowContainer className="w-fit rounded-md py-1 text-white text-xs">
+                    #{userRank}&nbsp;&gt;
+                  </GlowContainer>
+                )}
               </div>
 
-              {/* Rank Badge */}
-              {userRank && (
-                <GlowContainer className="w-fit rounded-md py-1 text-white text-xs">
-                  #{userRank}&nbsp;&gt;
+              {/* View Details Button */}
+              <Link to={`/campaigns/${id}`}>
+                <GlowContainer className="text-sm text-white">
+                  View Details
                 </GlowContainer>
-              )}
+              </Link>
             </div>
-
-            {/* View Details Button */}
-            <Link to={`/campaigns/${id}`}>
-              <GlowContainer className="text-sm text-white">
-                View Details
+          ) : (
+            <button className="flex justify-end" type="button">
+              <GlowContainer className="w-1/2 text-sm text-white">
+                Invite
               </GlowContainer>
-            </Link>
-          </div>
+            </button>
+          )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function DaysLeft({ daysLeftText }: { daysLeftText: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <svg
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.4}
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <title>Clock icon</title>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+      <span className="text-xs leading-relaxed">{daysLeftText}</span>
     </div>
   );
 }

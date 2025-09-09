@@ -279,7 +279,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
               <div key={campaign.id}>
                 <div className="mb-8 h-px w-[300px] bg-gradient-to-r from-transparent via-gray-600/50 to-transparent" />
                 <div className="w-full rounded-xl border border-[#2D3338] pt-4 pl-4">
-                  <CampaignCard {...campaign} />
+                  <CampaignCard campaign={campaign} type="detail" />
                 </div>
               </div>
             ))}
