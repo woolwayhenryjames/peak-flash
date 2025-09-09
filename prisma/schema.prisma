@@ -47,7 +47,7 @@ model Campaign {
   startDate       DateTime
   endDate         DateTime
   description     String?  @db.Text
-  joinRequirement String?  @db.Text
+  joinRequirement Json?    @db.Json
   createdAt       DateTime @default(now())
   updatedAt       DateTime @default(now()) @updatedAt
 
