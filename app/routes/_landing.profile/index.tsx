@@ -69,7 +69,7 @@ export default function Profile({
       </div>
 
       {/* Stats Card */}
-      <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 px-3 py-1">
+      <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 px-3 py-4 pt-1">
         {/* Logo placeholder */}
         <svg
           className="h-8 w-12"
