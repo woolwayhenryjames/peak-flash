@@ -15,7 +15,14 @@ export async function loader({ request }: Route.LoaderArgs) {
   // Get user with kindle rank and their campaigns
   const [kindleRank, userCampaigns] = await Promise.all([
     getUserKindleRank(user.value.id),
-    getCampaignsForUser(user.value, {}, 1, 10),
+    getCampaignsForUser(
+      user.value,
+      {
+        id: { in: user.value.campaignUsers.map((cu) => cu.campaignId) },
+      },
+      1,
+      10
+    ),
   ]);
 
   return {
@@ -130,7 +137,7 @@ export default function Profile({
           </div>
         </div>
 
-        <CampaignList campaigns={campaigns} />
+        <CampaignList campaigns={campaigns} type="spark-points" />
       </div>
     </div>
   );

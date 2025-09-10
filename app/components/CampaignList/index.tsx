@@ -6,13 +6,24 @@ interface CampaignWithParticipation
   extends Omit<Campaign, 'createdAt' | 'updatedAt'> {
   isParticipating: boolean;
   userRank?: number | null;
+  userPoints?: number;
+  videoCount?: number;
 }
 
 interface CampaignListProps {
   campaigns?: CampaignWithParticipation[];
+  type?: 'default' | 'spark-points';
 }
 
-export default function CampaignList({ campaigns = [] }: CampaignListProps) {
+const formatter = new Intl.NumberFormat('en', {
+  notation: 'compact',
+  compactDisplay: 'short',
+});
+
+export default function CampaignList({
+  campaigns = [],
+  type = 'default',
+}: CampaignListProps) {
   return (
     <div className="space-y-2.5">
       {campaigns.length === 0 ? (
@@ -49,17 +60,36 @@ export default function CampaignList({ campaigns = [] }: CampaignListProps) {
                       {campaign.name}
                     </h4>
                   </div>
-                  <p className="text-[#878788] text-xs">
-                    Pool: {campaign.poolSize.toLocaleString()} Tokens
-                  </p>
+                  {type === 'default' ? (
+                    <p className="text-[#878788] text-xs">
+                      Pool: {formatter.format(campaign.poolSize)} Tokens
+                    </p>
+                  ) : (
+                    <p className="text-[#878788] text-xs">
+                      <span>
+                        {formatter.format(campaign.videoCount || 0)} videos
+                      </span>
+                      {' • '}
+                      <span>
+                        Spark Points:{' '}
+                        {formatter.format(campaign.userPoints || 0)}
+                      </span>
+                    </p>
+                  )}
                 </div>
                 <div className="w-[40%] border-[#2D3338] border-l pl-3">
                   <div className="text-right">
-                    <span
-                      className={`bg-gradient-to-r ${status.gradient} bg-clip-text font-normal text-transparent text-xs`}
-                    >
-                      {status.text}
-                    </span>
+                    {type === 'default' ? (
+                      <span
+                        className={`bg-gradient-to-r ${status.gradient} bg-clip-text font-normal text-transparent text-xs`}
+                      >
+                        {status.text}
+                      </span>
+                    ) : (
+                      <p className="text-[#878788] text-xs">
+                        {formatter.format(campaign.poolSize)} Tokens
+                      </p>
+                    )}
                     <div className="flex flex-col items-end">
                       {campaign.isParticipating && campaign.userRank ? (
                         <GlowContainer className="w-fit rounded-md py-1">
