@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import ActiveCampaigns from './index';
+import CampaignList from './index';
 
 const meta = {
-  title: 'Components/ActiveCampaigns',
-  component: ActiveCampaigns,
+  title: 'Components/CampaignList',
+  component: CampaignList,
   parameters: {
     layout: 'centered',
     backgrounds: {
@@ -15,7 +15,7 @@ const meta = {
       description: 'Array of campaign objects to display',
     },
   },
-} satisfies Meta<typeof ActiveCampaigns>;
+} satisfies Meta<typeof CampaignList>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -30,26 +30,3 @@ export async function getUserKindleRank(userId: string): Promise<number> {
     return 1; // Return default rank on error
   }
 }
-
-/**
- * Get a user with their kindle rank
- */
-export async function getUserWithKindleRank(
-  userId: string
-): Promise<UserWithKindleRank | null> {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    include: { campaignUsers: true },
-  });
-
-  if (!user) {
-    return null;
-  }
-
-  const kindleRank = await getUserKindleRank(userId);
-
-  return {
-    ...user,
-    kindleRank,
-  };
-}
