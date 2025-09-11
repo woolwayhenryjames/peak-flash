@@ -41,6 +41,7 @@ export default function CampaignList({
               className="block rounded-2xl border border-[#2D3338] bg-gradient-to-br from-[#20202D] to-[#101013] px-4 py-2.5"
               key={campaign.id}
               to={`/campaigns/${campaign.id}`}
+              viewTransition
             >
               <div className="flex items-center gap-3">
                 <div className="w-[60%]">

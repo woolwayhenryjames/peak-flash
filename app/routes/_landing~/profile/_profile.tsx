@@ -3,7 +3,7 @@ import CampaignList from '~/components/CampaignList';
 import { getDbUser } from '~/services/auth.server';
 import { getCampaignsForUser } from '~/services/campaign.server';
 import { getUserKindleRank } from '~/services/user-ranking.server';
-import type { Route } from './+types/index';
+import type { Route } from './+types/_profile';
 import starIcon from './assets/star-icon.svg';
 
 export async function loader({ request }: Route.LoaderArgs) {

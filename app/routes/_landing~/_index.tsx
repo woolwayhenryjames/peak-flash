@@ -9,7 +9,7 @@ import StartEarningSection from '~/components/StartEarningSection';
 import { getDbUser } from '~/services/auth.server';
 import { getCampaignsForUser } from '~/services/campaign.server';
 import { getUserKindleRank } from '~/services/user-ranking.server';
-import type { Route } from './+types/_landing._index';
+import type { Route } from './+types/_index';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);

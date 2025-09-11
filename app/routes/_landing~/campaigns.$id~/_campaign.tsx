@@ -7,7 +7,7 @@ import { cn } from '~/lib/utils';
 import { getDbUser } from '~/services/auth.server';
 import { getCampaignsWithUserRanks } from '~/services/campaign.server';
 import { db } from '~/services/db.server';
-import type { Route } from './+types/index';
+import type { Route } from './+types/_campaign';
 import profileIcon from './assets/profile.svg';
 import videoIcon from './assets/video.svg';
 
@@ -428,6 +428,7 @@ export default function CampaignDetails({
               <Link
                 className="mx-auto w-[90%]"
                 to={`/campaigns/${campaign.id}/leaderboard`}
+                viewTransition
               >
                 <GlowContainer>View Full Leaderboard</GlowContainer>
               </Link>

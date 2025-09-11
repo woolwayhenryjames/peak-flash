@@ -3,11 +3,19 @@ import GlowContainer from '~/components/GlowContainer';
 import DialogWithCloseButton from '../DialogWithCloseButton';
 import flower from './assets/flower.svg';
 
-export default function FirstOpenHomeDialog({ score }: { score: number }) {
-  const [show, setShow] = useState(false);
+export default function FirstOpenHomeDialog({
+  score,
+  forceShow = false,
+}: {
+  score: number;
+  forceShow?: boolean;
+}) {
+  const [show, setShow] = useState(forceShow);
 
   useEffect(() => {
-    const lastDismissed = sessionStorage.getItem('firstOpenDialogDismissed');
+    const lastDismissed = sessionStorage.getItem(
+      `${FirstOpenHomeDialog.name}Dismissed`
+    );
     if (!lastDismissed) {
       const timer = setTimeout(() => {
         setShow(true);
@@ -19,7 +27,10 @@ export default function FirstOpenHomeDialog({ score }: { score: number }) {
 
   // Handle dismissing the dialog
   const handleDismiss = (state: boolean) => {
-    sessionStorage.setItem('firstOpenDialogDismissed', Date.now().toString());
+    sessionStorage.setItem(
+      `${FirstOpenHomeDialog.name}Dismissed`,
+      Date.now().toString()
+    );
     setShow(state);
   };
 
@@ -109,7 +120,7 @@ export default function FirstOpenHomeDialog({ score }: { score: number }) {
 
         <button
           className="w-1/2 self-end"
-          onClick={() => setShow(false)}
+          onClick={() => handleDismiss(false)}
           type="button"
         >
           <GlowContainer>

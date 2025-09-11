@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import FirstOpenHomeDialog from './index';
+import FirstOpenCampainDetailsDialog from './index';
 
 const meta = {
-  title: 'Dialogs/FirstOpenHomeDialog',
-  component: FirstOpenHomeDialog,
+  title: 'Dialogs/FirstOpenCampainDetailsDialog',
+  component: FirstOpenCampainDetailsDialog,
   parameters: {
     layout: 'centered',
     backgrounds: {
@@ -11,20 +11,25 @@ const meta = {
     },
   },
   argTypes: {
-    score: {
-      control: 'number',
-      description: 'The KINDLE score to display in the dialog',
+    tags: {
+      control: 'object',
+      description: 'The tags to display in the dialog',
     },
     forceShow: {
       control: 'boolean',
       description: 'Force the dialog to show (useful for Storybook)',
     },
+    id: {
+      control: 'text',
+      description: 'The ID of the campaign',
+    },
   },
   args: {
-    score: 87,
+    tags: ['AI', 'Web3', 'TikTok'],
     forceShow: true,
+    id: 'campaign-1',
   },
-} satisfies Meta<typeof FirstOpenHomeDialog>;
+} satisfies Meta<typeof FirstOpenCampainDetailsDialog>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

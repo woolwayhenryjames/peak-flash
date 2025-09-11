@@ -159,7 +159,7 @@ export default function CampaignCard({
               </div>
 
               {/* View Details Button */}
-              <Link to={`/campaigns/${id}`}>
+              <Link to={`/campaigns/${id}`} viewTransition>
                 <GlowContainer className="text-sm text-white">
                   View Details
                 </GlowContainer>

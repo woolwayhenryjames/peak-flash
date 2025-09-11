@@ -9,7 +9,7 @@ import {
 import BottomNav from '~/components/BottomNav';
 import GlowContainer from '~/components/GlowContainer';
 import { auth } from '~/services/auth.server';
-import type { Route } from './+types/index';
+import type { Route } from './+types/_layout';
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await auth.api.getSession({

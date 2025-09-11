@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import GlowContainer from '../GlowContainer';
 
 export default function KindleScoreCard({
@@ -8,7 +9,11 @@ export default function KindleScoreCard({
   rank: number;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-700/50 bg-gradient-to-b from-gray-900/90 to-gray-800/90 p-6 backdrop-blur-sm">
+    <Link
+      className="rounded-2xl border border-gray-700/50 bg-gradient-to-b from-gray-900/90 to-gray-800/90 p-6 backdrop-blur-sm"
+      to="/leaderboard"
+      viewTransition
+    >
       <div className="flex flex-col gap-6">
         {/* Header and Score Section */}
         <div className="flex items-center justify-between gap-5">
@@ -47,6 +52,6 @@ export default function KindleScoreCard({
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

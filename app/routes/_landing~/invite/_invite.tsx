@@ -1,0 +1,272 @@
+import { useState } from 'react';
+import GlowContainer from '~/components/GlowContainer';
+import fb from './assets/fb.svg';
+import gitBranchIcon from './assets/git-branch.svg';
+import head from './assets/head.svg';
+import ins from './assets/ins.png';
+import starsIcon from './assets/stars.svg';
+import tg from './assets/tg.svg';
+import tiktok from './assets/tiktok.svg';
+import whatsapp from './assets/whatsapp.png';
+import x from './assets/x.svg';
+
+export default function Invite() {
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const inviteLink = 'https://distant.app/invite/10000';
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+    }
+  };
+
+  const socialPlatforms = [
+    { name: 'Twitter', icon: x },
+    { name: 'TikTok', icon: tiktok },
+    { name: 'Telegram', icon: tg },
+    { name: 'WhatsApp', icon: whatsapp },
+    { name: 'Facebook', icon: fb },
+    {
+      name: 'Instagram',
+      icon: ins,
+    },
+  ];
+
+  const inviteRecords = [
+    {
+      id: 1,
+      username: '@alice_crypto',
+      displayName: '@alice_crypto',
+      timeAgo: '3 days ago',
+      avatar: '👩‍💼',
+    },
+    {
+      id: 2,
+      username: '@bob_trader',
+      displayName: '@bob_trader',
+      timeAgo: '1 weeks ago',
+      avatar: '👨‍💻',
+    },
+    {
+      id: 3,
+      username: '@crypto_king',
+      displayName: 'Crypto King',
+      timeAgo: '2 weeks ago',
+      avatar: '👑',
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24">
+      {/* Smart Reminder Header */}
+      <div
+        className="w-full"
+        style={{
+          backgroundImage:
+            'linear-gradient(to bottom right, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #02030D 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #02030D 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #02030D 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #02030D 50%) top right / 50% 50% no-repeat',
+        }}
+      >
+        <h1 className="white-gradient-text font-medium tracking-tight">
+          Smart Reminder
+        </h1>
+      </div>
+
+      <div className="mt-4 space-y-6 px-5">
+        {/* Invite & Earn Business Card */}
+        <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-10">
+          <div className="space-y-12 text-center">
+            {/* Header Section */}
+            <div className="space-y-5">
+              {/* Icon */}
+              <img alt="Head icon" className="mx-auto size-14" src={head} />
+
+              {/* Title and Description */}
+              <div className="space-y-3">
+                <h2 className="bg-gradient-to-r from-[#6d7077] via-[#fefefe] via-[32%] to-[#3c4041] bg-clip-text font-medium text-transparent text-xl">
+                  Invite & Earn
+                </h2>
+                <p className="mx-auto max-w-xs bg-gradient-to-r from-[#6d7077] via-[#fefefe] via-[54%] to-[#3c4041] bg-clip-text text-center text-transparent text-xs leading-relaxed">
+                  Invite friends to join campaigns and get 10% of their score
+                  rewards
+                </p>
+              </div>
+            </div>
+
+            {/* Stats Section */}
+            <div className="flex justify-center gap-10">
+              <div className="text-center">
+                <div className="mb-1 font-semibold text-2xl text-white">
+                  10%
+                </div>
+                <div className="font-light text-[#c0c0c0] text-xs">
+                  Reward Rate
+                </div>
+              </div>
+              <div className="h-14 w-px bg-[#5d5d5d]" />
+              <div className="text-center">
+                <div className="mb-1 font-semibold text-2xl text-white">8</div>
+                <div className="font-light text-[#c0c0c0] text-xs">Invites</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="h-px w-full bg-gray-600/30" />
+
+        {/* Profile Invite Link Section */}
+        <div className="space-y-7">
+          {/* Header */}
+          <div className="flex items-center gap-1">
+            <img
+              alt="Git branch icon"
+              className="h-6 w-6"
+              src={gitBranchIcon}
+            />
+            <h3 className="bg-gradient-to-r from-[#6d7077] via-[#fefefe] via-[47%] to-[#3c4041] bg-clip-text font-medium text-transparent text-xl">
+              Profile Invite Link
+            </h3>
+          </div>
+
+          {/* Important Notice */}
+          <div className="flex items-start gap-3 p-4">
+            <div className="mt-0.5">
+              <svg
+                aria-hidden="true"
+                height="13"
+                viewBox="0 0 13 13"
+                width="13"
+              >
+                <title>Sparkle icon</title>
+                <path
+                  d="M6.5 0L8.1 2.8L11.3 1.7L10.2 4.9L13 6.5L10.2 8.1L11.3 11.3L8.1 10.2L6.5 13L4.9 10.2L1.7 11.3L2.8 8.1L0 6.5L2.8 4.9L1.7 1.7L4.9 2.8L6.5 0Z"
+                  fill="url(#sparkGradient)"
+                  stroke="url(#sparkGradient)"
+                  strokeWidth="0.5"
+                />
+                <defs>
+                  <linearGradient
+                    id="sparkGradient"
+                    x1="0%"
+                    x2="100%"
+                    y1="0%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="#df99f7" />
+                    <stop offset="100%" stopColor="#ffdbb0" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <p className="text-[#dddddd] text-xs leading-relaxed">
+              Important: Earn 10% bonus from invitee's Spark Points only when
+              you both join the same campaign with non-zero Spark Points.
+            </p>
+          </div>
+
+          {/* Invite Link Input */}
+          <div className="rounded-2xl border border-[#343035] bg-transparent p-6">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1 space-y-1.5">
+                <div className="text-[#f2f2f2] text-xs">Invite Link</div>
+                <div className="break-all text-[#a4a4a4] text-xs">
+                  {inviteLink}
+                </div>
+              </div>
+              <button
+                className="flex-shrink-0"
+                onClick={handleCopyLink}
+                type="button"
+              >
+                <GlowContainer className="rounded bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] px-3 py-2 text-sm">
+                  {copiedLink ? 'Copied!' : 'Copy'}
+                </GlowContainer>
+              </button>
+            </div>
+          </div>
+
+          {/* Social Share Buttons */}
+          <div className="grid grid-cols-2 gap-2">
+            {socialPlatforms.map((platform) => (
+              <button key={platform.name} type="button">
+                <GlowContainer
+                  className="flex items-center justify-center gap-3 rounded-xl py-3"
+                  noShimmer
+                >
+                  <img
+                    alt={`${platform.name} icon`}
+                    className="size-6"
+                    src={platform.icon}
+                  />
+                  <span className="font-normal text-sm text-white">
+                    {platform.name}
+                  </span>
+                </GlowContainer>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="h-px w-full bg-gray-600/30" />
+
+        {/* Invite Records Section */}
+        <div className="space-y-7">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1">
+              <img alt="Stars icon" className="h-6 w-6" src={starsIcon} />
+              <h3 className="bg-gradient-to-r from-[#6d7077] via-[#fefefe] via-[53%] to-[#3c4041] bg-clip-text font-semibold text-transparent text-xl">
+                Invite Records
+              </h3>
+            </div>
+            <div className="text-right">
+              <button
+                className="text-[#acacac] text-sm underline"
+                type="button"
+              >
+                View All
+              </button>
+            </div>
+          </div>
+
+          {/* Records List */}
+          <div className="space-y-6">
+            {inviteRecords.map((record) => (
+              <div key={record.id}>
+                <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      {/* Avatar */}
+                      <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#f9f9fb] text-lg">
+                        <span>{record.avatar}</span>
+                      </div>
+
+                      {/* User Info */}
+                      <div className="space-y-1">
+                        <div className="font-medium text-base text-white leading-tight">
+                          {record.displayName}
+                        </div>
+                        <div className="text-[#979797] text-xs">
+                          {record.username}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Time */}
+                    <div className="text-[#979797] text-[10px] leading-relaxed">
+                      {record.timeAgo}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

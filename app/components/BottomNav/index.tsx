@@ -55,6 +55,7 @@ export default function BottomNav() {
                 }`}
                 key={item.href}
                 to={item.href}
+                viewTransition
               >
                 <img
                   alt={`${item.label} icon`}
