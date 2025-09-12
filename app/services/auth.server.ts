@@ -18,6 +18,7 @@ export const auth = betterAuth({
       clientId: process.env.TIKTOK_CLIENT_ID as string,
       clientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
       clientKey: process.env.TIKTOK_CLIENT_KEY as string,
+      scope: ['user.info.basic', 'user.info.profile', 'user.info.stats'],
     },
   },
   hooks: {

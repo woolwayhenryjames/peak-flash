@@ -1,0 +1,188 @@
+import { useEffect } from 'react';
+import { useFetcher } from 'react-router';
+import GlowContainer from '~/components/GlowContainer';
+
+interface TikTokProfile {
+  open_id: string;
+  union_id: string;
+  avatar_url: string;
+  avatar_url_100: string;
+  avatar_url_200: string;
+  display_name: string;
+  bio_description: string;
+  profile_deep_link: string;
+  is_verified: boolean;
+  stats?: {
+    follower_count: number;
+    following_count: number;
+    likes_count: number;
+    video_count: number;
+  };
+}
+
+interface ApiResponse {
+  success: boolean;
+  data?: TikTokProfile;
+  error?: string;
+}
+
+const formatter = new Intl.NumberFormat('en', {
+  notation: 'compact',
+  compactDisplay: 'short',
+});
+
+export default function ExpandedUserProfile({
+  user,
+}: {
+  user: { id: string };
+}) {
+  const fetcher = useFetcher<ApiResponse>();
+
+  useEffect(() => {
+    console.log(
+      'Fetching TikTok profile for user.id:',
+      user.id,
+      fetcher.state,
+      fetcher.data
+    );
+    if (user.id && fetcher.state === 'idle' && !fetcher.data) {
+      fetcher.load(`/api/tiktok-profile/${user.id}`);
+    }
+  }, [user.id, fetcher]);
+
+  const isLoading = fetcher.state === 'loading';
+  const profile = fetcher.data?.data;
+  const hasError =
+    fetcher.data?.error || (!profile && fetcher.data?.success === false);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center justify-center p-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent" />
+        </div>
+      </div>
+    );
+  }
+
+  if (hasError || !profile) {
+    return (
+      <div className="flex flex-col gap-8">
+        <div className="flex items-center justify-center p-8">
+          <p className="text-red-400 text-sm">
+            {fetcher.data?.error || 'Failed to load TikTok profile'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-8">
+      {/* Profile Section */}
+      <div className="flex items-center gap-3">
+        {/* Avatar with verified badge */}
+        <div className="relative">
+          <div className="h-14 w-14 overflow-hidden rounded-full bg-gray-600">
+            <img
+              alt="User avatar"
+              className="h-full w-full object-cover"
+              src={
+                profile.avatar_url_200 ||
+                profile.avatar_url_100 ||
+                profile.avatar_url
+              }
+            />
+          </div>
+          {/* Verified badge */}
+          {profile.is_verified && (
+            <div className="-bottom-1 -right-1 absolute flex h-4 w-4 items-center justify-center rounded-full border border-white bg-gradient-to-b from-[#37edb9] to-[#4725df]">
+              <svg
+                className="h-2 w-2 text-white"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <title>Verified</title>
+                <path
+                  clipRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  fillRule="evenodd"
+                />
+              </svg>
+            </div>
+          )}
+        </div>
+
+        {/* User info */}
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-0.5">
+            <h3 className="font-medium text-base text-white tracking-tight">
+              {profile.display_name}
+            </h3>
+            <p className="font-normal text-[#979797] text-[10px]">
+              @{profile.open_id}
+            </p>
+          </div>
+          <p className="font-normal text-[#bdbdbd] text-xs">
+            {profile.bio_description || '💎 NFT Collector | DeFi Explorer'}
+          </p>
+        </div>
+      </div>
+
+      {/* Statistics Grid */}
+      <div className="flex flex-col gap-5">
+        {/* First row */}
+        <div className="flex gap-4">
+          <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
+            <div className="flex flex-col items-end gap-2">
+              <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
+                {formatter.format(profile.stats?.follower_count || 0)}
+              </p>
+              <p className="font-light text-[#a7a7a7] text-xs">Followers</p>
+            </div>
+          </div>
+          <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
+            <div className="flex flex-col items-end gap-2">
+              <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
+                {formatter.format(profile.stats?.following_count || 0)}
+              </p>
+              <p className="font-light text-[#a7a7a7] text-xs">Following</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Second row */}
+        <div className="flex gap-4">
+          <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
+            <div className="flex flex-col items-end gap-2">
+              <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
+                {formatter.format(profile.stats?.likes_count || 0)}
+              </p>
+              <p className="font-light text-[#a7a7a7] text-xs">Likes</p>
+            </div>
+          </div>
+          <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
+            <div className="flex flex-col items-end gap-2">
+              <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
+                {formatter.format(profile.stats?.video_count || 0)}
+              </p>
+              <p className="font-light text-[#a7a7a7] text-xs">Videos</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Visit Profile Button */}
+      <a
+        className="ml-auto w-2/3"
+        href={profile.profile_deep_link}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <GlowContainer className="rounded-lg px-8 py-3 font-normal text-sm text-white">
+          Visit profile
+        </GlowContainer>
+      </a>
+    </div>
+  );
+}

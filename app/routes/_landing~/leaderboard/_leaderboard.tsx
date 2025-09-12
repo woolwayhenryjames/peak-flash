@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { Link, redirect, useFetcher } from 'react-router';
 import GlowContainer from '~/components/GlowContainer';
 import { cn } from '~/lib/utils';
+import ExpandedUserProfile from '~/routes/_landing~/leaderboard/ExpandedUserProfile';
 import { getDbUser } from '~/services/auth.server';
 import {
   getGlobalLeaderboard,
@@ -192,8 +193,8 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
             </thead>
             <tbody className="divide-y divide-[#3c3c3d]">
               {users.map((user) => (
-                <>
-                  <tr key={user.id}>
+                <Fragment key={user.id}>
+                  <tr>
                     <td className="whitespace-nowrap py-4 text-center">
                       {user.rank}
                     </td>
@@ -237,113 +238,11 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
                   {expandedUserId === user.id && (
                     <tr>
                       <td className="px-4 pb-4" colSpan={3}>
-                        <div className="flex flex-col gap-8">
-                          {/* Profile Section */}
-                          <div className="flex items-center gap-3">
-                            {/* Avatar with verified badge */}
-                            <div className="relative">
-                              <div className="h-14 w-14 overflow-hidden rounded-full bg-gray-600">
-                                <img
-                                  alt="User avatar"
-                                  className="h-full w-full object-cover"
-                                  src={user.image || ''}
-                                />
-                              </div>
-                              {/* Verified badge */}
-                              <div className="-bottom-1 -right-1 absolute flex h-4 w-4 items-center justify-center rounded-full border border-white bg-gradient-to-b from-[#37edb9] to-[#4725df]">
-                                <svg
-                                  className="h-2 w-2 text-white"
-                                  fill="currentColor"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <title>Verified</title>
-                                  <path
-                                    clipRule="evenodd"
-                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                    fillRule="evenodd"
-                                  />
-                                </svg>
-                              </div>
-                            </div>
-
-                            {/* User info */}
-                            <div className="flex flex-col gap-2">
-                              <div className="flex flex-col gap-0.5">
-                                <h3 className="font-medium text-base text-white tracking-tight">
-                                  {user.name}
-                                </h3>
-                                <p className="font-normal text-[#979797] text-[10px]">
-                                  @{user.email}
-                                </p>
-                              </div>
-                              <p className="font-normal text-[#bdbdbd] text-xs">
-                                💎 NFT Collector | DeFi Explorer
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Statistics Grid */}
-                          <div className="flex flex-col gap-5">
-                            {/* First row */}
-                            <div className="flex gap-4">
-                              <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
-                                <div className="flex flex-col items-end gap-2">
-                                  <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                                    56.1K
-                                  </p>
-                                  <p className="font-light text-[#a7a7a7] text-xs">
-                                    Followers
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
-                                <div className="flex flex-col items-end gap-2">
-                                  <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                                    5.8K
-                                  </p>
-                                  <p className="font-light text-[#a7a7a7] text-xs">
-                                    Following
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Second row */}
-                            <div className="flex gap-4">
-                              <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
-                                <div className="flex flex-col items-end gap-2">
-                                  <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                                    159.0K
-                                  </p>
-                                  <p className="font-light text-[#a7a7a7] text-xs">
-                                    Likes
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
-                                <div className="flex flex-col items-end gap-2">
-                                  <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                                    62
-                                  </p>
-                                  <p className="font-light text-[#a7a7a7] text-xs">
-                                    Videos (last 3 months)
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Visit Profile Button */}
-                          <button className="ml-auto w-2/3" type="button">
-                            <GlowContainer className="rounded-lg px-8 py-3 font-normal text-sm text-white">
-                              Visit profile
-                            </GlowContainer>
-                          </button>
-                        </div>
+                        <ExpandedUserProfile user={user} />
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>
