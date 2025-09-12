@@ -54,7 +54,7 @@ export const getSessionUser = async ({ headers }: Request) => {
   const session = await auth.api.getSession({
     headers,
   });
-  if (!session) {
+  if (!session?.user) {
     return err('Unauthorized');
   }
   return ok(session.user);
