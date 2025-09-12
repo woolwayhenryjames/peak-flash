@@ -1,3 +1,4 @@
+import { useSearchParams } from 'react-router';
 import GlowContainer from '~/components/GlowContainer';
 import { authClient } from '~/lib/auth-client';
 import bg from './assets/bg.avif';
@@ -5,10 +6,24 @@ import tiktokIcon from './assets/tiktok-icon.svg';
 import FeatureItems from './components/FeatureItems';
 
 export default function SignIn() {
+  const [searchParams] = useSearchParams();
+
   const signIn = async () => {
-    await authClient.signIn.social({
-      provider: 'tiktok',
-    });
+    const inviterId = searchParams.get('inviter');
+    const headers: Record<string, string> = {};
+
+    if (inviterId) {
+      headers['X-Inviter-ID'] = inviterId;
+    }
+
+    await authClient.signIn.social(
+      {
+        provider: 'tiktok',
+      },
+      {
+        headers,
+      }
+    );
   };
 
   return (
@@ -41,6 +56,18 @@ export default function SignIn() {
             Create content,earn real tokens
           </p>
         </div>
+
+        {/* Invite Banner */}
+        {searchParams.get('inviter') && (
+          <div className="mx-auto mt-4 max-w-sm rounded-lg border border-purple-500/30 bg-gradient-to-r from-purple-900/20 to-pink-900/20 p-3">
+            <p className="text-center text-purple-200 text-sm">
+              🎉 You've been invited to join Peak.AI!
+            </p>
+            <p className="text-center text-purple-300 text-xs">
+              Sign up to earn bonus rewards
+            </p>
+          </div>
+        )}
 
         {/* Sign In Button */}
         <div className="mt-14 w-full">

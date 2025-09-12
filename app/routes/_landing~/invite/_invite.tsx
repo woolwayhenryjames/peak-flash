@@ -1,8 +1,15 @@
 import { useState } from 'react';
 import GlowContainer from '~/components/GlowContainer';
+import { getDbUser } from '~/services/auth.server';
+import {
+  getUserInviteRecords,
+  getUserInviteStats,
+} from '~/services/user.server';
+import type { Route } from './+types/_invite';
 import fb from './assets/fb.svg';
 import gitBranchIcon from './assets/git-branch.svg';
 import head from './assets/head.svg';
+import bg from './assets/header-bg.avif';
 import ins from './assets/ins.png';
 import starsIcon from './assets/stars.svg';
 import tg from './assets/tg.svg';
@@ -10,10 +17,45 @@ import tiktok from './assets/tiktok.svg';
 import whatsapp from './assets/whatsapp.png';
 import x from './assets/x.svg';
 
-export default function Invite() {
-  const [copiedLink, setCopiedLink] = useState(false);
+const socialPlatforms = [
+  { name: 'Twitter', icon: x },
+  { name: 'TikTok', icon: tiktok },
+  { name: 'Telegram', icon: tg },
+  { name: 'WhatsApp', icon: whatsapp },
+  { name: 'Facebook', icon: fb },
+  {
+    name: 'Instagram',
+    icon: ins,
+  },
+];
 
-  const inviteLink = 'https://distant.app/invite/10000';
+export async function loader({ request }: Route.LoaderArgs) {
+  const userResult = await getDbUser(request);
+  if (userResult.isErr()) {
+    throw new Response('Unauthorized', { status: 401 });
+  }
+
+  const user = userResult.value;
+  const [inviteRecords, inviteStats] = await Promise.all([
+    getUserInviteRecords(user.id),
+    getUserInviteStats(user.id),
+  ]);
+
+  return {
+    user,
+    inviteRecords,
+    inviteStats,
+  };
+}
+
+export default function Invite({
+  loaderData: { user, inviteRecords, inviteStats },
+}: Route.ComponentProps) {
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedTikTok, setCopiedTikTok] = useState(false);
+  const [copiedInstagram, setCopiedInstagram] = useState(false);
+
+  const inviteLink = `${import.meta.env.VITE_ORIGIN}invite/${user?.id}`;
 
   const handleCopyLink = async () => {
     try {
@@ -25,54 +67,59 @@ export default function Invite() {
     }
   };
 
-  const socialPlatforms = [
-    { name: 'Twitter', icon: x },
-    { name: 'TikTok', icon: tiktok },
-    { name: 'Telegram', icon: tg },
-    { name: 'WhatsApp', icon: whatsapp },
-    { name: 'Facebook', icon: fb },
-    {
-      name: 'Instagram',
-      icon: ins,
-    },
-  ];
+  const handleSocialShare = (platform: string) => {
+    const shareText =
+      'Join me on PEAK.AI and start earning rewards! Use my invite link:';
+    const fullText = `${shareText} ${inviteLink}`;
 
-  const inviteRecords = [
-    {
-      id: 1,
-      username: '@alice_crypto',
-      displayName: '@alice_crypto',
-      timeAgo: '3 days ago',
-      avatar: '👩‍💼',
-    },
-    {
-      id: 2,
-      username: '@bob_trader',
-      displayName: '@bob_trader',
-      timeAgo: '1 weeks ago',
-      avatar: '👨‍💻',
-    },
-    {
-      id: 3,
-      username: '@crypto_king',
-      displayName: 'Crypto King',
-      timeAgo: '2 weeks ago',
-      avatar: '👑',
-    },
-  ];
+    const shareUrls = {
+      Twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullText)}`,
+      TikTok: inviteLink, // TikTok doesn't have direct URL sharing, so we'll copy the link
+      Telegram: `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`,
+      WhatsApp: `https://wa.me/?text=${encodeURIComponent(fullText)}`,
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(inviteLink)}`,
+      Instagram: inviteLink, // Instagram doesn't have direct URL sharing, so we'll copy the link
+    };
+
+    const url = shareUrls[platform as keyof typeof shareUrls];
+
+    if (platform === 'TikTok') {
+      // For TikTok, copy the link to clipboard and show TikTok-specific feedback
+      navigator.clipboard
+        .writeText(inviteLink)
+        .then(() => {
+          setCopiedTikTok(true);
+          setTimeout(() => setCopiedTikTok(false), 2000);
+        })
+        .catch((err) => {
+          console.error('Failed to copy link:', err);
+        });
+    } else if (platform === 'Instagram') {
+      // For Instagram, copy the link to clipboard and show Instagram-specific feedback
+      navigator.clipboard
+        .writeText(inviteLink)
+        .then(() => {
+          setCopiedInstagram(true);
+          setTimeout(() => setCopiedInstagram(false), 2000);
+        })
+        .catch((err) => {
+          console.error('Failed to copy link:', err);
+        });
+    } else {
+      // Open sharing URL in new window
+      window.open(url, '_blank');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24">
       {/* Smart Reminder Header */}
       <div
-        className="w-full"
-        style={{
-          backgroundImage:
-            'linear-gradient(to bottom right, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #02030D 50%) bottom right / 50% 50% no-repeat, linear-gradient(to bottom left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #02030D 50%) bottom left / 50% 50% no-repeat, linear-gradient(to top left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #02030D 50%) top left / 50% 50% no-repeat, linear-gradient(to top right, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #02030D 50%) top right / 50% 50% no-repeat',
-        }}
+        className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover"
+        style={{ backgroundImage: `url(${bg})` }}
       >
-        <h1 className="white-gradient-text font-medium tracking-tight">
-          Smart Reminder
+        <h1 className="white-gradient-text pl-10 font-medium text-2xl tracking-tight">
+          Smart <br /> Reminder
         </h1>
       </div>
 
@@ -101,7 +148,7 @@ export default function Invite() {
             <div className="flex justify-center gap-10">
               <div className="text-center">
                 <div className="mb-1 font-semibold text-2xl text-white">
-                  10%
+                  {inviteStats.rewardRate}%
                 </div>
                 <div className="font-light text-[#c0c0c0] text-xs">
                   Reward Rate
@@ -109,7 +156,9 @@ export default function Invite() {
               </div>
               <div className="h-14 w-px bg-[#5d5d5d]" />
               <div className="text-center">
-                <div className="mb-1 font-semibold text-2xl text-white">8</div>
+                <div className="mb-1 font-semibold text-2xl text-white">
+                  {inviteStats.inviteCount}
+                </div>
                 <div className="font-light text-[#c0c0c0] text-xs">Invites</div>
               </div>
             </div>
@@ -127,44 +176,38 @@ export default function Invite() {
               className="h-6 w-6"
               src={gitBranchIcon}
             />
-            <h3 className="bg-gradient-to-r from-[#6d7077] via-[#fefefe] via-[47%] to-[#3c4041] bg-clip-text font-medium text-transparent text-xl">
+            <h3 className="white-gradient-text font-medium text-xl">
               Profile Invite Link
             </h3>
           </div>
 
           {/* Important Notice */}
-          <div className="flex items-start gap-3 p-4">
-            <div className="mt-0.5">
-              <svg
-                aria-hidden="true"
-                height="13"
-                viewBox="0 0 13 13"
-                width="13"
-              >
-                <title>Sparkle icon</title>
-                <path
-                  d="M6.5 0L8.1 2.8L11.3 1.7L10.2 4.9L13 6.5L10.2 8.1L11.3 11.3L8.1 10.2L6.5 13L4.9 10.2L1.7 11.3L2.8 8.1L0 6.5L2.8 4.9L1.7 1.7L4.9 2.8L6.5 0Z"
-                  fill="url(#sparkGradient)"
-                  stroke="url(#sparkGradient)"
-                  strokeWidth="0.5"
-                />
-                <defs>
-                  <linearGradient
-                    id="sparkGradient"
-                    x1="0%"
-                    x2="100%"
-                    y1="0%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="#df99f7" />
-                    <stop offset="100%" stopColor="#ffdbb0" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
+          <div className="flex items-start gap-3">
+            <svg className="size-6" viewBox="0 0 13 13">
+              <title>Sparkle icon</title>
+              <path
+                d="M6.5 0L8.1 2.8L11.3 1.7L10.2 4.9L13 6.5L10.2 8.1L11.3 11.3L8.1 10.2L6.5 13L4.9 10.2L1.7 11.3L2.8 8.1L0 6.5L2.8 4.9L1.7 1.7L4.9 2.8L6.5 0Z"
+                fill="url(#sparkGradient)"
+                stroke="url(#sparkGradient)"
+                strokeWidth="0.5"
+              />
+              <defs>
+                <linearGradient
+                  id="sparkGradient"
+                  x1="0%"
+                  x2="100%"
+                  y1="0%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="#df99f7" />
+                  <stop offset="100%" stopColor="#ffdbb0" />
+                </linearGradient>
+              </defs>
+            </svg>
             <p className="text-[#dddddd] text-xs leading-relaxed">
-              Important: Earn 10% bonus from invitee's Spark Points only when
-              you both join the same campaign with non-zero Spark Points.
+              <span className="text-yellow-500">Important</span>: Earn 10% bonus
+              from invitee's Spark Points only when you both join the same
+              campaign with non-zero Spark Points.
             </p>
           </div>
 
@@ -191,23 +234,33 @@ export default function Invite() {
 
           {/* Social Share Buttons */}
           <div className="grid grid-cols-2 gap-2">
-            {socialPlatforms.map((platform) => (
-              <button key={platform.name} type="button">
-                <GlowContainer
-                  className="flex items-center justify-center gap-3 rounded-xl py-3"
-                  noShimmer
+            {socialPlatforms.map((platform) => {
+              const isCopied =
+                (platform.name === 'TikTok' && copiedTikTok) ||
+                (platform.name === 'Instagram' && copiedInstagram);
+
+              return (
+                <button
+                  key={platform.name}
+                  onClick={() => handleSocialShare(platform.name)}
+                  type="button"
                 >
-                  <img
-                    alt={`${platform.name} icon`}
-                    className="size-6"
-                    src={platform.icon}
-                  />
-                  <span className="font-normal text-sm text-white">
-                    {platform.name}
-                  </span>
-                </GlowContainer>
-              </button>
-            ))}
+                  <GlowContainer
+                    className="flex items-center justify-center gap-3 rounded-xl py-3"
+                    noShimmer
+                  >
+                    <img
+                      alt={`${platform.name} icon`}
+                      className="size-6"
+                      src={platform.icon}
+                    />
+                    <span className="font-normal text-sm text-white">
+                      {isCopied ? 'Copied!' : platform.name}
+                    </span>
+                  </GlowContainer>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -216,54 +269,62 @@ export default function Invite() {
         {/* Invite Records Section */}
         <div className="space-y-7">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1">
-              <img alt="Stars icon" className="h-6 w-6" src={starsIcon} />
-              <h3 className="bg-gradient-to-r from-[#6d7077] via-[#fefefe] via-[53%] to-[#3c4041] bg-clip-text font-semibold text-transparent text-xl">
-                Invite Records
-              </h3>
-            </div>
-            <div className="text-right">
-              <button
-                className="text-[#acacac] text-sm underline"
-                type="button"
-              >
-                View All
-              </button>
-            </div>
+          <div className="flex items-center gap-1">
+            <img alt="Stars icon" className="h-6 w-6" src={starsIcon} />
+            <h3 className="white-gradient-text font-semibold text-xl">
+              Invite Records
+            </h3>
           </div>
 
           {/* Records List */}
           <div className="space-y-6">
-            {inviteRecords.map((record) => (
-              <div key={record.id}>
-                <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      {/* Avatar */}
-                      <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#f9f9fb] text-lg">
-                        <span>{record.avatar}</span>
+            {inviteRecords.length === 0 ? (
+              <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-8 text-center">
+                <p className="text-[#979797] text-sm">
+                  No invites yet. Share your link to start earning!
+                </p>
+              </div>
+            ) : (
+              inviteRecords.map((record) => (
+                <div key={record.id}>
+                  <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        {/* Avatar */}
+                        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#f9f9fb] text-lg">
+                          {record.avatar.startsWith('http') ? (
+                            <img
+                              alt={`${record.name} avatar`}
+                              className="h-full w-full object-cover"
+                              src={record.avatar}
+                            />
+                          ) : (
+                            <span className="font-semibold text-gray-600">
+                              {record.avatar}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* User Info */}
+                        <div className="space-y-1">
+                          <div className="font-medium text-base text-white leading-tight">
+                            {record.name}
+                          </div>
+                          <div className="text-[#979797] text-xs">
+                            @{record.email}
+                          </div>
+                        </div>
                       </div>
 
-                      {/* User Info */}
-                      <div className="space-y-1">
-                        <div className="font-medium text-base text-white leading-tight">
-                          {record.displayName}
-                        </div>
-                        <div className="text-[#979797] text-xs">
-                          {record.username}
-                        </div>
+                      {/* Time */}
+                      <div className="text-[#979797] text-[10px] leading-relaxed">
+                        {record.timeAgo}
                       </div>
-                    </div>
-
-                    {/* Time */}
-                    <div className="text-[#979797] text-[10px] leading-relaxed">
-                      {record.timeAgo}
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -38,5 +38,8 @@ export default defineConfig(({ command }) => ({
   },
   server: {
     allowedHosts: true,
+    watch: {
+      usePolling: true,
+    },
   },
 }));

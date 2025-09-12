@@ -1,6 +1,8 @@
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { createAuthMiddleware } from 'better-auth/api';
 import { err, ok } from 'neverthrow';
+import { processInviteSignup } from '~/services/user.server';
 import { db } from './db.server';
 
 export const auth = betterAuth({
@@ -17,6 +19,16 @@ export const auth = betterAuth({
       clientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
       clientKey: process.env.TIKTOK_CLIENT_KEY as string,
     },
+  },
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      console.log(ctx.headers);
+      const inviterId = ctx.headers?.get?.('X-Inviter-ID');
+      const newSession = ctx.context.newSession;
+      if (inviterId && newSession) {
+        await processInviteSignup(newSession.user.id, inviterId);
+      }
+    }),
   },
   trustedOrigins: [
     'http://localhost:5173',
