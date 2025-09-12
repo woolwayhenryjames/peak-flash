@@ -1,5 +1,4 @@
 import { err, ok, type Result } from 'neverthrow';
-import { createSearchParams } from 'react-router';
 import { auth } from '~/services/auth.server';
 
 export interface TikTokUserInfo {
@@ -39,25 +38,22 @@ export async function getUserInfo(
       userId,
     },
   });
-  console.log('Retrieved accessToken for userId:', userId, accessToken);
 
   try {
     const response = await fetch(
-      `${BASE_URL}/user/info/?${createSearchParams({
-        fields: [
-          'open_id',
-          'union_id',
-          'avatar_large_url',
-          'display_name',
-          'bio_description',
-          'profile_deep_link',
-          'is_verified',
-          'follower_count',
-          'following_count',
-          'likes_count',
-          'video_count',
-        ],
-      })}`,
+      `${BASE_URL}/user/info/?fields=${[
+        'open_id',
+        'union_id',
+        'avatar_large_url',
+        'display_name',
+        'bio_description',
+        'profile_deep_link',
+        'is_verified',
+        'follower_count',
+        'following_count',
+        'likes_count',
+        'video_count',
+      ].join(',')}}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

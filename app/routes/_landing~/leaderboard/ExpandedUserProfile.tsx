@@ -5,19 +5,15 @@ import GlowContainer from '~/components/GlowContainer';
 interface TikTokProfile {
   open_id: string;
   union_id: string;
-  avatar_url: string;
-  avatar_url_100: string;
-  avatar_url_200: string;
+  avatar_large_url: string;
   display_name: string;
   bio_description: string;
   profile_deep_link: string;
   is_verified: boolean;
-  stats?: {
-    follower_count: number;
-    following_count: number;
-    likes_count: number;
-    video_count: number;
-  };
+  follower_count: number;
+  following_count: number;
+  likes_count: number;
+  video_count: number;
 }
 
 interface ApiResponse {
@@ -34,7 +30,7 @@ const formatter = new Intl.NumberFormat('en', {
 export default function ExpandedUserProfile({
   user,
 }: {
-  user: { id: string };
+  user: { id: string; email: string };
 }) {
   const fetcher = useFetcher<ApiResponse>();
 
@@ -87,11 +83,7 @@ export default function ExpandedUserProfile({
             <img
               alt="User avatar"
               className="h-full w-full object-cover"
-              src={
-                profile.avatar_url_200 ||
-                profile.avatar_url_100 ||
-                profile.avatar_url
-              }
+              src={profile.avatar_large_url}
             />
           </div>
           {/* Verified badge */}
@@ -120,11 +112,11 @@ export default function ExpandedUserProfile({
               {profile.display_name}
             </h3>
             <p className="font-normal text-[#979797] text-[10px]">
-              @{profile.open_id}
+              @{user.email}
             </p>
           </div>
           <p className="font-normal text-[#bdbdbd] text-xs">
-            {profile.bio_description || '💎 NFT Collector | DeFi Explorer'}
+            {profile.bio_description}
           </p>
         </div>
       </div>
@@ -136,7 +128,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col items-end gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile.stats?.follower_count || 0)}
+                {formatter.format(profile?.follower_count || 0)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Followers</p>
             </div>
@@ -144,7 +136,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col items-end gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile.stats?.following_count || 0)}
+                {formatter.format(profile?.following_count || 0)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Following</p>
             </div>
@@ -156,7 +148,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col items-end gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile.stats?.likes_count || 0)}
+                {formatter.format(profile?.likes_count || 0)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Likes</p>
             </div>
@@ -164,7 +156,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col items-end gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile.stats?.video_count || 0)}
+                {formatter.format(profile?.video_count || 0)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Videos</p>
             </div>

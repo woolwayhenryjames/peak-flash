@@ -31,6 +31,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   // Return profile data with scope information
   return Response.json({
     success: true,
-    data: profile,
+    data: profile.value,
   });
 }

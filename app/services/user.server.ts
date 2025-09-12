@@ -1,4 +1,8 @@
 import { err, ok } from 'neverthrow';
+import {
+  cleanupOldUserAvatars,
+  uploadImageFromUrl,
+} from '~/services/aws-s3.server';
 import { db } from './db.server';
 
 export const getUserInviteRecords = async (userId: string) => {
@@ -70,6 +74,17 @@ function getInitials(name: string): string {
     .substring(0, 2);
 }
 
+// Helper function to check if an image URL needs to be persisted to S3
+function isExternalImageUrl(imageUrl: string): boolean {
+  return (
+    imageUrl.includes('tiktok') ||
+    imageUrl.includes('muscdn.com') ||
+    imageUrl.includes('bytedns.net') ||
+    // Add other external image domains that have expiration
+    !imageUrl.startsWith('/')
+  );
+}
+
 // Invite-related functions
 export const validateInviteCode = async (inviterId: string) => {
   try {
@@ -99,4 +114,42 @@ export const processInviteSignup = async (
     console.error('Error processing invite signup:', error);
     return err(error);
   }
+};
+
+export const persistUserImage = async (user: {
+  id: string;
+  image?: string | null;
+}) => {
+  if (user.image) {
+    try {
+      let imageUrl = user.image;
+
+      // Check if the image URL is from external source with expiration
+      if (isExternalImageUrl(user.image)) {
+        try {
+          // Upload the TikTok avatar to S3 and get the permanent URL
+          imageUrl = await uploadImageFromUrl(user.image, user.id);
+
+          // Cleanup old avatars (keep latest 3) - don't await to avoid blocking
+          cleanupOldUserAvatars(user.id, 3).catch((cleanupError) =>
+            console.error('Failed to cleanup old avatars:', cleanupError)
+          );
+        } catch (uploadError) {
+          console.error('Failed to upload TikTok avatar to S3:', uploadError);
+          // Continue with the original URL if S3 upload fails
+          // This ensures the function doesn't fail completely
+        }
+      }
+
+      await db.user.update({
+        where: { id: user.id },
+        data: { image: imageUrl },
+      });
+      return ok(true);
+    } catch (error) {
+      console.error('Error persisting user image:', error);
+      return err(error as Error);
+    }
+  }
+  return ok(false);
 };

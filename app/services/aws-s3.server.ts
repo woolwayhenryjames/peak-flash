@@ -206,3 +206,77 @@ export const deleteFilesFromS3 = async (keys: string[]) => {
   });
   await storage.send(command);
 };
+
+export const uploadImageFromUrl = async (
+  imageUrl: string,
+  userId: string
+): Promise<string> => {
+  try {
+    // Fetch the image from the URL
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.statusText}`);
+    }
+
+    // Get the image buffer
+    const imageBuffer = await response.arrayBuffer();
+
+    // Get content type from response or default to image/jpeg
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+
+    // Generate a unique filename with timestamp
+    const timestamp = Date.now();
+    const extension = contentType.includes('png') ? 'png' : 'jpg';
+    const fileName = `${userId}/${timestamp}.${extension}`;
+
+    // Upload to S3
+    const upload = await new Upload({
+      client: storage,
+      leavePartsOnError: false,
+      params: {
+        Bucket: AWS_S3_BUCKET_NAME,
+        Key: `peakai/userAvatar/${fileName}`,
+        Body: Buffer.from(imageBuffer),
+        ContentType: contentType,
+      },
+    }).done();
+
+    if (upload.$metadata.httpStatusCode !== 200) {
+      throw new Error('Failed to upload avatar to S3');
+    }
+
+    return `/${fileName}`;
+  } catch (error) {
+    console.error('Error uploading image from URL:', error);
+    throw error;
+  }
+};
+
+export const cleanupOldUserAvatars = async (userId: string, keepLatest = 3) => {
+  try {
+    const prefix = `peakai/userAvatar/${userId}/`;
+    const objects = await listFilesInS3Folder(prefix);
+
+    if (objects.length <= keepLatest) {
+      return; // Nothing to clean up
+    }
+
+    // Sort by key name (which includes timestamp) and keep only the latest
+    const sortedObjects = objects
+      .filter((key) => key.startsWith(prefix))
+      .sort()
+      .reverse(); // Most recent first
+
+    const objectsToDelete = sortedObjects.slice(keepLatest);
+
+    if (objectsToDelete.length > 0) {
+      await deleteFilesFromS3(objectsToDelete);
+      console.log(
+        `Cleaned up ${objectsToDelete.length} old avatar files for user ${userId}`
+      );
+    }
+  } catch (error) {
+    console.error('Error cleaning up old user avatars:', error);
+    // Don't throw - cleanup failure shouldn't break the main flow
+  }
+};

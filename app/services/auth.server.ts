@@ -2,13 +2,19 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware } from 'better-auth/api';
 import { err, ok } from 'neverthrow';
-import { processInviteSignup } from '~/services/user.server';
+import { persistUserImage, processInviteSignup } from '~/services/user.server';
 import { db } from './db.server';
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: 'mysql',
   }),
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ['tiktok'],
+    },
+  },
   emailAndPassword: {
     enabled: false,
   },
@@ -22,13 +28,18 @@ export const auth = betterAuth({
     },
   },
   hooks: {
-    after: createAuthMiddleware(async (ctx) => {
+    after: createAuthMiddleware((ctx) => {
       console.log(ctx.headers);
-      const inviterId = ctx.headers?.get?.('X-Inviter-ID');
+
       const newSession = ctx.context.newSession;
-      if (inviterId && newSession) {
-        await processInviteSignup(newSession.user.id, inviterId);
+      if (newSession) {
+        persistUserImage(newSession.user);
+        const inviterId = ctx.headers?.get?.('X-Inviter-ID');
+        if (inviterId) {
+          processInviteSignup(newSession.user.id, inviterId);
+        }
       }
+      return Promise.resolve(ok(true));
     }),
   },
   trustedOrigins: [
