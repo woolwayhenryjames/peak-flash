@@ -273,7 +273,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
 
       {/* Campaign Cards */}
       {campaigns.length > 0 && (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 md:flex-row md:flex-wrap">
           {campaigns.map((campaign) => (
             <div key={campaign.id}>
               <div className="mb-8 h-px w-full bg-gradient-to-r from-transparent via-gray-600/50 to-transparent" />

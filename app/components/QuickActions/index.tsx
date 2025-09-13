@@ -1,8 +1,22 @@
+import { useUser } from '~/routes/_landing~/_layout';
 import GlowContainer from '../GlowContainer';
 import diamondIcon from './assets/diamond-icon.svg';
 import usersIcon from './assets/users-icon.svg';
 
 export default function QuickActions() {
+  const { user } = useUser();
+
+  const inviteLink = `https://distant.app/invite/${user?.id}`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      // You might want to show a toast notification here
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+    }
+  };
+
   return (
     <div className="mt-18 w-full">
       {/* Header with diamond icon */}
@@ -37,13 +51,14 @@ export default function QuickActions() {
             <div className="w-full space-y-1.5">
               <div className="text-[#E8E8E8] text-xs">Invite Link</div>
               <div className="break-all text-[#858585] text-xs">
-                https://distant.app/invite/10000
+                {inviteLink}
               </div>
             </div>
 
             <GlowContainer
-              className="w-fit rounded-sm px-3 py-1 text-sm"
+              className="w-fit cursor-pointer rounded-sm px-3 py-1 text-sm"
               noShimmer
+              onClick={handleCopyLink}
             >
               Copy
             </GlowContainer>
@@ -53,7 +68,9 @@ export default function QuickActions() {
           <div className="h-px w-full bg-[#2D3338]" />
 
           {/* Share Button */}
-          <GlowContainer>Share</GlowContainer>
+          <GlowContainer className="cursor-pointer" onClick={handleCopyLink}>
+            Share
+          </GlowContainer>
         </div>
       </div>
     </div>

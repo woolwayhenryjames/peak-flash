@@ -13,7 +13,7 @@ export const HomeSeparator = () => {
   }));
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full md:hidden">
       <svg
         className="w-full"
         viewBox="0 0 390 184"

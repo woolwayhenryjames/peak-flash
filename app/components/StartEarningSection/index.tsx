@@ -3,7 +3,7 @@ import GlowContainer from '../GlowContainer';
 
 export default function StartEarningSection() {
   return (
-    <div className="flex w-full flex-col gap-4 rounded-2xl border border-slate-700 bg-gradient-to-b from-[#0f1118] to-[#212636] p-6 backdrop-blur-sm">
+    <div className="flex flex-col gap-4 rounded-2xl border border-slate-700 bg-gradient-to-b from-[#0f1118] to-[#212636] p-6 backdrop-blur-sm">
       {/* Header Section */}
       <div className="flex flex-col gap-3">
         <h3 className="white-gradient-text font-medium text-xl leading-tight">
