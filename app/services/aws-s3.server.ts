@@ -52,7 +52,7 @@ export const uploadHandler = async (fileUpload: FileUpload) => {
     leavePartsOnError: false,
     params: {
       Bucket: AWS_S3_BUCKET_NAME,
-      Key: `production_remote/template/${fileName}`,
+      Key: `peakai/${fileName}`,
       Body: fileUpload.stream(),
     },
   }).done();
@@ -67,7 +67,7 @@ export const uploadHandler = async (fileUpload: FileUpload) => {
 export const getAsset = async (s3Key: string) => {
   const command = new GetObjectCommand({
     Bucket: AWS_S3_BUCKET_NAME,
-    Key: `production_remote/template/${s3Key}`,
+    Key: `peakai/${s3Key}`,
   });
 
   try {
@@ -227,7 +227,7 @@ export const uploadImageFromUrl = async (
     // Generate a unique filename with timestamp
     const timestamp = Date.now();
     const extension = contentType.includes('png') ? 'png' : 'jpg';
-    const fileName = `${userId}/${timestamp}.${extension}`;
+    const fileName = `userAvatar/${userId}/${timestamp}.${extension}`;
 
     // Upload to S3
     const upload = await new Upload({
@@ -235,7 +235,7 @@ export const uploadImageFromUrl = async (
       leavePartsOnError: false,
       params: {
         Bucket: AWS_S3_BUCKET_NAME,
-        Key: `peakai/userAvatar/${fileName}`,
+        Key: `peakai/${fileName}`,
         Body: Buffer.from(imageBuffer),
         ContentType: contentType,
       },
@@ -245,7 +245,7 @@ export const uploadImageFromUrl = async (
       throw new Error('Failed to upload avatar to S3');
     }
 
-    return `/${fileName}`;
+    return `/assets/${fileName}`;
   } catch (error) {
     console.error('Error uploading image from URL:', error);
     throw error;

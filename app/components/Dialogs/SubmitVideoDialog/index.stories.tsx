@@ -11,13 +11,13 @@ const meta = {
     },
   },
   argTypes: {
-    tags: {
-      control: 'object',
-      description: 'The tags to display in the dialog',
-    },
-    forceShow: {
+    show: {
       control: 'boolean',
-      description: 'Force the dialog to show (useful for Storybook)',
+      description: 'Whether the dialog is visible',
+    },
+    setShow: {
+      action: 'setShow',
+      description: 'Callback to change the dialog visibility',
     },
     id: {
       control: 'text',
@@ -25,13 +25,15 @@ const meta = {
     },
   },
   args: {
-    tags: ['AI', 'Web3', 'TikTok'],
-    forceShow: true,
     id: 'campaign-1',
+    show: true,
+    setShow: () => {
+      /* noop */
+    },
   },
 } satisfies Meta<typeof component>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const FirstOpenCampainDetailsDialog: Story = {};
+export const SubmitVideoDialog: Story = {};

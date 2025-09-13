@@ -49,14 +49,9 @@ export default function FirstOpenCampainDetailsDialog({
 
   return (
     <DialogWithCloseButton
-      className="max-w-md rounded-2xl border border-[#84a0ff] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
+      className="max-w-md"
       setShow={handleDismiss}
       show={show}
-      style={{
-        background:
-          'linear-gradient(-18deg, rgba(0, 0, 0, 1) 43%, rgba(42, 38, 89, 1) 90%, rgba(53, 93, 191, 1) 100%)',
-      }}
-      type="black"
     >
       <div className="flex flex-col gap-8 p-8">
         {/* Header Section */}

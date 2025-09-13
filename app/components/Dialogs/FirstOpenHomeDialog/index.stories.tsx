@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import FirstOpenHomeDialog from './index';
+import component from './index';
 
 const meta = {
-  title: 'Dialogs/FirstOpenHomeDialog',
-  component: FirstOpenHomeDialog,
+  title: 'Dialogs',
+  component,
   parameters: {
     layout: 'centered',
     backgrounds: {
@@ -24,9 +24,9 @@ const meta = {
     score: 87,
     forceShow: true,
   },
-} satisfies Meta<typeof FirstOpenHomeDialog>;
+} satisfies Meta<typeof component>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const FirstOpenHomeDialog: Story = {};

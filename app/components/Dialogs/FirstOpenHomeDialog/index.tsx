@@ -36,14 +36,12 @@ export default function FirstOpenHomeDialog({
 
   return (
     <DialogWithCloseButton
-      className="rounded-2xl border border-[#84a0ff] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]"
       setShow={handleDismiss}
       show={show}
       style={{
         background:
           'linear-gradient(-12deg,#000 21%, #2A2659 76.3362%, #355DBF 100%)',
       }}
-      type="black"
     >
       <div className="flex flex-col items-center gap-9">
         {/* Header Section */}

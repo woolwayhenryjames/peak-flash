@@ -39,7 +39,7 @@ export const auth = betterAuth({
           processInviteSignup(newSession.user.id, inviterId);
         }
       }
-      return Promise.resolve(ok(true));
+      return Promise.resolve();
     }),
   },
   trustedOrigins: [

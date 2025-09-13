@@ -4,6 +4,7 @@ import { db } from './db.server';
 
 export interface CampaignWithUserRank extends Campaign {
   userRank: number | null;
+  userScore: number | null;
   isParticipating: boolean;
   participants: number;
 }
@@ -46,6 +47,7 @@ export async function getCampaignsWithUserRanks(
     return campaigns.map((campaign) => ({
       ...campaign,
       userRank: null,
+      userScore: null,
       isParticipating: false,
       participants: 0,
     }));
@@ -74,6 +76,7 @@ export async function getCampaignsWithUserRanks(
     return campaigns.map((campaign) => ({
       ...campaign,
       userRank: null,
+      userScore: null,
       isParticipating: false,
       participants: participantCountsMap.get(campaign.id) ?? 0,
     }));
@@ -98,6 +101,7 @@ export async function getCampaignsWithUserRanks(
     return campaigns.map((campaign) => ({
       ...campaign,
       userRank: null,
+      userScore: null,
       isParticipating: campaignIds.includes(campaign.id),
       participants: participantCountsMap.get(campaign.id) ?? 0,
     }));
@@ -113,6 +117,9 @@ export async function getCampaignsWithUserRanks(
   return campaigns.map((campaign) => ({
     ...campaign,
     userRank: userRanksMap.get(campaign.id) ?? null,
+    userScore:
+      user.campaignUsers.find((cu) => cu.campaignId === campaign.id)?.score ??
+      null,
     isParticipating: userRanksMap.has(campaign.id),
     participants: participantCountsMap.get(campaign.id) ?? 0,
   }));

@@ -40,7 +40,7 @@ export default function Dialog({
     >
       <div
         className={cn(
-          'modal-box flex max-h-[80vh] w-auto max-w-[80vh] flex-col gap-4 bg-[#414442] p-4 md:bg-[#202020] lg:px-12 lg:py-10',
+          'modal-box flex max-h-[80vh] w-auto max-w-[80vh] flex-col gap-4 bg-[#414442] p-7 md:bg-[#202020]',
           className
         )}
         {...props}
