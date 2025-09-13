@@ -42,7 +42,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="mx-auto min-h-screen max-w-4xl bg-black">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-radial from-[#12121e] to-[#0f1012] px-4 py-3 shadow-sm">
         <div className="mx-auto flex max-w-screen-xl items-center justify-between">

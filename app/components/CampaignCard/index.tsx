@@ -60,7 +60,7 @@ export default function CampaignCard({
   const statusStyle = statusConfig[status];
 
   return (
-    <div className={cn('w-full max-w-sm', className)}>
+    <div className={cn('w-full', className)}>
       {/* Card Container with Gradient Border */}
       <div className="rounded-xl border border-[#2D3338] p-6 md:p-7">
         {/* Inner Container */}
