@@ -8,6 +8,7 @@ import {
 } from 'react-router';
 import BottomNav from '~/components/BottomNav';
 import GlowContainer from '~/components/GlowContainer';
+import ProfileDetails from '~/components/ProfileDetails';
 import { auth } from '~/services/auth.server';
 import type { Route } from './+types/_layout';
 
@@ -77,13 +78,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
               </h1>
             )}
           </div>
-          {loaderData?.image && (
-            <img
-              alt={loaderData.name || 'User avatar'}
-              className="h-8 w-8 rounded-full object-cover"
-              src={loaderData.image}
-            />
-          )}
+          <ProfileDetails user={loaderData} />
         </div>
       </header>
       <Outlet context={{ user: loaderData } satisfies ContextType} />
