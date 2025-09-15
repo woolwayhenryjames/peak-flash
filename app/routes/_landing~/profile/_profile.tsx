@@ -36,13 +36,15 @@ export async function loader({ request }: Route.LoaderArgs) {
   };
 }
 
+const showCampaignsLimit = 3;
+
 export default function Profile({
   loaderData: { user, campaigns, totalVideos },
 }: Route.ComponentProps) {
   const [showAllCampaigns, setShowAllCampaigns] = useState(false);
   const displayedCampaigns = showAllCampaigns
     ? campaigns
-    : campaigns.slice(0, 5);
+    : campaigns.slice(0, showCampaignsLimit);
   return (
     <div className="flex flex-col gap-6 p-4">
       {/* Header Profile Info */}
@@ -143,7 +145,7 @@ export default function Profile({
         </div>
 
         <CampaignList campaigns={displayedCampaigns} type="spark-points" />
-        {campaigns.length > 5 && (
+        {campaigns.length > showCampaignsLimit && (
           <button
             className="mx-auto text-[#ababab] text-sm underline"
             onClick={() => setShowAllCampaigns(!showAllCampaigns)}
