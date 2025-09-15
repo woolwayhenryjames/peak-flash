@@ -43,7 +43,7 @@ export default function SignIn() {
             src="/icons/favicon.svg"
           />
           <h1 className="white-gradient-text font-poppins font-semibold text-[32px] leading-[48px]">
-            Peak.AI
+            Peak AI
           </h1>
         </div>
 
@@ -61,7 +61,7 @@ export default function SignIn() {
         {searchParams.get('inviter') && (
           <div className="mx-auto mt-4 max-w-sm rounded-lg border border-purple-500/30 bg-gradient-to-r from-purple-900/20 to-pink-900/20 p-3">
             <p className="text-center text-purple-200 text-sm">
-              🎉 You've been invited to join Peak.AI!
+              🎉 You've been invited to join Peak AI!
             </p>
             <p className="text-center text-purple-300 text-xs">
               Sign up to earn bonus rewards
@@ -92,7 +92,7 @@ export default function SignIn() {
         {/* Title with underline effect */}
         <div className="mb-12 text-center">
           <h2 className="mb-2 font-medium font-poppins text-lg text-white">
-            Why choose Peak.AI ?
+            Why choose Peak AI ?
           </h2>
           <div className="flex items-center justify-center gap-2">
             <div className="h-px w-1 bg-white shadow-[0_0_0.91px_0_rgba(255,255,255,1),0_0_1.82px_0_rgba(255,255,255,1),0_0_6.38px_0_rgba(255,255,255,1),0_0_12.75px_0_rgba(255,255,255,1),0_0_21.86px_0_rgba(255,255,255,1),0_0_38.25px_0_rgba(255,255,255,1)]" />

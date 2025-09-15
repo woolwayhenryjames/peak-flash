@@ -45,8 +45,9 @@ code {
   @apply bg-clip-text text-transparent;
   background-image: linear-gradient(
     to left,
-    #ececec 0%,
-    #ffffff 43%,
-    #d5d5d5 100%
+    #ffffff70 0%,
+    #ffffff 35%,
+    #ffffff 65%,
+    #ffffff70 100%
   );
 }

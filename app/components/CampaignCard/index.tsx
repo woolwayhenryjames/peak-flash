@@ -166,11 +166,11 @@ export default function CampaignCard({
               </Link>
             </div>
           ) : (
-            <button className="flex justify-end" type="button">
+            <Link className="flex justify-end" to="/invite" viewTransition>
               <GlowContainer className="w-1/2 text-sm text-white">
                 Invite
               </GlowContainer>
-            </button>
+            </Link>
           )}
         </div>
       </div>

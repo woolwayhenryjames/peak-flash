@@ -125,7 +125,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
       >
         <div className="">
           <div className="white-gradient-text font-medium text-2xl tracking-tight">
-            Peekaboos(Top 100)
+            Peekaboos&nbsp;&nbsp;(Top 100)
           </div>
           <div className="font-normal text-[#d7d7d7] text-xs">
             Global Peekaboos
@@ -177,7 +177,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
 
         {/* User Cards */}
         {users.length > 0 && (
-          <table className="w-full table-fixed divide-y divide-[#3c3c3d]">
+          <table className="w-full table-fixed divide-y divide-[#3c3c3d] text-white!">
             <thead>
               <tr>
                 <th className="w-18" />

@@ -165,8 +165,8 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
   const filterTabs = [
     { key: 'all' as const, label: 'All' },
     { key: 'active' as const, label: 'Active' },
-    { key: 'ended' as const, label: 'Ended' },
     { key: 'new' as const, label: 'New' },
+    { key: 'ended' as const, label: 'Ended' },
   ];
 
   return (
@@ -178,7 +178,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
         viewBox="0 0 339 75"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <title>PEAK.AI</title>
+        <title>PEAK AI</title>
         <path
           d="M338.104.8v72.7h-12.099V.8h12.099zm-10.099 70.7h8.099V2.8h-8.099v68.7z"
           fill="url(#prefix__paint0_linear_217_2533)"

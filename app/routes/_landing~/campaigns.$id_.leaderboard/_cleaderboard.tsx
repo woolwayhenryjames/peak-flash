@@ -158,14 +158,17 @@ export default function Leaderboard({
               <h3 className="white-gradient-text font-medium">
                 @{loaderData.user?.email || 'User'}
               </h3>
-              <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
-                #{loaderData.campaignWithRanks.userRank || 0}
+              <div className="flex items-center gap-2">
+                <p className="font-light text-[#9f9f9f] text-xs">5 videos</p>
+                <div className="rounded bg-linear-57 from-[#fdffa7] to-[#57ffd5] px-3 py-0.5 font-medium text-black text-xs">
+                  #{loaderData.campaignWithRanks.userRank || 0}
+                </div>
               </div>
             </div>
           </div>
 
           <div className="text-right">
-            <p className="bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-semibold text-2xl text-transparent">
+            <p className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-semibold text-2xl text-transparent">
               {loaderData.campaignWithRanks.userScore || 0}
             </p>
             <p className="text-gray-400 text-xs">Spark Points</p>
@@ -173,7 +176,7 @@ export default function Leaderboard({
         </div>
         <div className="mx-6 my-8 flex gap-3">
           <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
-            <span className="bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%] bg-clip-text font-medium text-transparent text-xl">
+            <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
               {loaderData.pagination.total || 0}
             </span>
             <span className="font-light text-[#A7A7A7] text-xs">
@@ -182,7 +185,7 @@ export default function Leaderboard({
           </div>
 
           <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
-            <span className="bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%] bg-clip-text font-medium text-transparent text-xl">
+            <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
               {loaderData.campaignWithRanks.poolSize || 0}
             </span>
             <span className="font-light text-[#A7A7A7] text-xs">
@@ -244,7 +247,7 @@ export default function Leaderboard({
                   Name
                 </th>
                 <th className="w-28 whitespace-nowrap py-3 text-left font-medium text-gray-500 text-xs tracking-wider">
-                  Score
+                  Spark Points
                 </th>
               </tr>
             </thead>

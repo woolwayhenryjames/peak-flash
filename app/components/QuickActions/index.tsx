@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { Link } from 'react-router';
 import { useUser } from '~/routes/_landing~/_layout';
 import GlowContainer from '../GlowContainer';
 import diamondIcon from './assets/diamond-icon.svg';
@@ -5,13 +7,15 @@ import usersIcon from './assets/users-icon.svg';
 
 export default function QuickActions() {
   const { user } = useUser();
+  const [isCopied, setIsCopied] = useState(false);
 
   const inviteLink = `https://distant.app/invite/${user?.id}`;
 
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(inviteLink);
-      // You might want to show a toast notification here
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 1000);
     } catch (error) {
       console.error('Failed to copy link:', error);
     }
@@ -60,7 +64,7 @@ export default function QuickActions() {
               noShimmer
               onClick={handleCopyLink}
             >
-              Copy
+              {isCopied ? 'Copied!' : 'Copy'}
             </GlowContainer>
           </div>
 
@@ -68,9 +72,9 @@ export default function QuickActions() {
           <div className="h-px w-full bg-[#2D3338]" />
 
           {/* Share Button */}
-          <GlowContainer className="cursor-pointer" onClick={handleCopyLink}>
-            Share
-          </GlowContainer>
+          <Link to="/invite">
+            <GlowContainer>Share</GlowContainer>
+          </Link>
         </div>
       </div>
     </div>

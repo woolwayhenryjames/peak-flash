@@ -15,7 +15,7 @@ export default function FirstOpenCampainDetailsDialog({
   const [show, setShow] = useState(forceShow);
 
   useEffect(() => {
-    const lastDismissed = sessionStorage.getItem(
+    const lastDismissed = localStorage.getItem(
       `${FirstOpenCampainDetailsDialog.name}${id}Dismissed`
     );
     if (!lastDismissed) {
@@ -29,7 +29,7 @@ export default function FirstOpenCampainDetailsDialog({
 
   // Handle dismissing the dialog
   const handleDismiss = (state: boolean) => {
-    sessionStorage.setItem(
+    localStorage.setItem(
       `${FirstOpenCampainDetailsDialog.name}${id}Dismissed`,
       Date.now().toString()
     );

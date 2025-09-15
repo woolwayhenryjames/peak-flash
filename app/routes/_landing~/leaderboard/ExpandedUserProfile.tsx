@@ -126,7 +126,7 @@ export default function ExpandedUserProfile({
         {/* First row */}
         <div className="flex gap-4">
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
                 {formatter.format(profile?.follower_count || 0)}
               </p>
@@ -134,7 +134,7 @@ export default function ExpandedUserProfile({
             </div>
           </div>
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
                 {formatter.format(profile?.following_count || 0)}
               </p>
@@ -146,7 +146,7 @@ export default function ExpandedUserProfile({
         {/* Second row */}
         <div className="flex gap-4">
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
                 {formatter.format(profile?.likes_count || 0)}
               </p>
@@ -154,7 +154,7 @@ export default function ExpandedUserProfile({
             </div>
           </div>
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
                 {formatter.format(profile?.video_count || 0)}
               </p>

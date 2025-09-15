@@ -59,6 +59,9 @@ importers:
       react-router:
         specifier: ^7.7.1
         version: 7.8.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      react-tiny-popover:
+        specifier: ^8.1.6
+        version: 8.1.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       remix-flat-routes:
         specifier: ^0.8.5
         version: 0.8.5
@@ -2801,6 +2804,12 @@ packages:
     peerDependenciesMeta:
       react-dom:
         optional: true
+
+  react-tiny-popover@8.1.6:
+    resolution: {integrity: sha512-jeZnGqHxb5TX7pCzpqLoVJned7DTVnLrLoCQQGFTyvlxXB/QUaet7O0krG22t5FReMBH035SLnzThKvk8tIfsg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   react@19.1.1:
     resolution: {integrity: sha512-w8nqGImo45dmMIfljjMwOGtbmC/mk4CMYhWIicdSflH91J9TyCyczcPFXJzrZ/ZXcgGRFeP6BU0BEJTw6tZdfQ==}
@@ -6713,6 +6722,11 @@ snapshots:
       react: 19.1.1
       set-cookie-parser: 2.7.1
     optionalDependencies:
+      react-dom: 19.1.1(react@19.1.1)
+
+  react-tiny-popover@8.1.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+    dependencies:
+      react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
 
   react@19.1.1: {}

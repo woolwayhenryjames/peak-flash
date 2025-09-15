@@ -26,7 +26,7 @@ export default function StartEarningSection() {
         <div className="-right-0.5 -bottom-0.5 absolute size-1 bg-[#D9D9D9]" />
         <div className="flex flex-col text-start">
           <div className="font-semibold text-[#faff9b]">
-            join ASCENT hub now!
+            Join ASCENT Hub now!
           </div>
           <div className="text-[#acacac] text-sm">
             Post TikTok videos, AI auto-detects rewards

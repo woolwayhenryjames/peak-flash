@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Markdown from 'react-markdown';
 import { Link, redirect } from 'react-router';
 import CampaignCard from '~/components/CampaignCard';
+import SubmitVideoDialog from '~/components/Dialogs/SubmitVideoDialog';
 import GlowContainer from '~/components/GlowContainer';
 import { cn } from '~/lib/utils';
 import { getDbUser } from '~/services/auth.server';
@@ -58,6 +59,7 @@ export default function CampaignDetails({
     ? user.campaignUsers.find((cu) => cu.campaignId === campaign.id)
     : null;
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
+  const [showSubmitVideoDialog, setShowSubmitVideoDialog] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-950 via-31% via-[#0e0e10] to-[#0d0d19]">
@@ -201,7 +203,10 @@ export default function CampaignDetails({
                             </svg>
                           </GlowContainer>
                         </button>
-                        <button type="button">
+                        <button
+                          onClick={() => setShowSubmitVideoDialog(true)}
+                          type="button"
+                        >
                           <GlowContainer className="rounded-sm px-4 py-1 text-sm">
                             Add
                           </GlowContainer>
@@ -214,29 +219,6 @@ export default function CampaignDetails({
                 {/* Expanded Content */}
                 {expandedSection === 'profile' && (
                   <div className="flex flex-col items-center">
-                    {/* Vertical dotted line connector */}
-                    <div className="h-6 w-px border-gray-600 border-l border-dashed" />
-
-                    {/* Performance Stats */}
-                    <div className="flex w-full gap-4">
-                      <div className="flex-1 rounded-lg border border-gray-600/20 bg-black/50 p-3">
-                        <div className="flex flex-col items-end gap-2">
-                          <p className="bg-gradient-to-r from-[#694AFF] to-[#69D7FF] bg-clip-text font-medium text-transparent text-xl">
-                            5
-                          </p>
-                          <p className="text-gray-500 text-xs">Videos Posted</p>
-                        </div>
-                      </div>
-                      <div className="flex-1 rounded-lg border border-gray-600/20 bg-black/50 p-3">
-                        <div className="flex flex-col items-end gap-2">
-                          <p className="bg-gradient-to-r from-[#694AFF] to-[#69D7FF] bg-clip-text font-medium text-transparent text-xl">
-                            #8
-                          </p>
-                          <p className="text-gray-500 text-xs">Current Rank</p>
-                        </div>
-                      </div>
-                    </div>
-
                     {/* Vertical dotted line connector */}
                     <div className="h-6 w-px border-gray-600 border-l border-dashed" />
 
@@ -264,6 +246,25 @@ export default function CampaignDetails({
                         on content interactions, quality scores, and account
                         ratings, updated every 24 hours.
                       </p>
+                    </div>
+
+                    {/* Vertical dotted line connector */}
+                    <div className="h-6 w-px border-gray-600 border-l border-dashed" />
+
+                    {/* Performance Stats */}
+                    <div className="flex w-full gap-4">
+                      <div className="flex flex-1 flex-col gap-2 rounded-lg border border-[#9c9c9c]/20 p-3">
+                        <p className="bg-gradient-to-r from-[#694AFF] to-[#69D7FF] bg-clip-text font-medium text-transparent text-xl">
+                          5
+                        </p>
+                        <p className="text-gray-500 text-xs">Posted Videos</p>
+                      </div>
+                      <div className="flex flex-1 flex-col gap-2 rounded-lg border border-[#9c9c9c]/20 p-3">
+                        <p className="bg-gradient-to-r from-[#694AFF] to-[#69D7FF] bg-clip-text font-medium text-transparent text-xl">
+                          #8
+                        </p>
+                        <p className="text-gray-500 text-xs">Current Rank</p>
+                      </div>
                     </div>
 
                     {/* Vertical dotted line connector */}
@@ -357,9 +358,7 @@ export default function CampaignDetails({
                         @{user?.name || 'User'}
                       </h3>
                       <div className="flex items-center gap-3">
-                        <span className="text-gray-400 text-sm">
-                          {campaignUser?.score || 0} · 5 videos
-                        </span>
+                        <span className="text-gray-400 text-sm">5 videos</span>
                         <div className="rounded bg-gradient-to-r from-amber-400 to-blue-400 px-2 py-0.5 font-medium text-black text-xs">
                           #{campaign.userRank || 8}
                         </div>
@@ -379,49 +378,49 @@ export default function CampaignDetails({
 
             {/* Leaderboard */}
             <div className="flex flex-col gap-10">
-              <div className="rounded-xl border border-gray-700 bg-gradient-to-b from-gray-900/90 to-black/90 p-9">
-                {/* Leaderboard Header */}
-                <div className="mb-6 flex items-center justify-between border-gray-600 border-b pb-6">
-                  <span className="font-light text-gray-400 text-sm">Name</span>
-                  <span className="font-light text-gray-400 text-sm">
-                    SPARK Points
-                  </span>
-                </div>
-
-                {/* Top 5 Users */}
-                <div className="flex flex-col gap-10">
-                  {topParticipants.length > 0 ? (
-                    topParticipants.map((participant, index: number) => (
-                      <div
-                        className="flex items-center gap-6"
-                        key={participant.id}
-                      >
-                        <span className="w-6 font-semibold text-sm text-white">
-                          {index + 1}
-                        </span>
-
-                        <div className="flex flex-1 items-center justify-between gap-27">
-                          <div className="flex flex-col gap-1">
-                            <span className="white-gradient-text font-medium">
-                              @{participant.user.name || 'user'}
-                            </span>
-                            <span className="text-gray-500 text-xs">
-                              5 videos
-                            </span>
-                          </div>
-
-                          <span className="white-gradient-text font-medium">
-                            {(participant.score / 10).toFixed(1)}
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="py-8 text-center text-gray-400">
-                      <p>No participants yet</p>
-                    </div>
-                  )}
-                </div>
+              {/* Top 5 Users */}
+              <div className="flex flex-col gap-10">
+                {topParticipants.length > 0 ? (
+                  <table className="w-full table-fixed divide-y divide-gray-600 border-gray-600 border-b">
+                    <thead>
+                      <tr>
+                        <th className="w-12" />
+                        <th className="whitespace-nowrap py-3 text-left font-light text-gray-400 text-sm tracking-wider">
+                          Name
+                        </th>
+                        <th className="w-26 whitespace-nowrap py-3 text-left font-light text-gray-400 text-sm tracking-wider">
+                          SPARK Points
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-600">
+                      {topParticipants.map((participant, index) => (
+                        <tr key={participant.user.name}>
+                          <td className="whitespace-nowrap py-4 text-center">
+                            {index + 1}
+                          </td>
+                          <td className="truncate whitespace-nowrap py-4">
+                            <div className="flex flex-col gap-1">
+                              <span className="white-gradient-text font-medium">
+                                @{participant.user.name || 'user'}
+                              </span>
+                              <span className="text-gray-500 text-xs">
+                                5 videos
+                              </span>
+                            </div>
+                          </td>
+                          <td className="whitespace-nowrap py-4">
+                            {participant.score}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="py-8 text-center text-gray-400">
+                    <p>No participants yet</p>
+                  </div>
+                )}
               </div>
 
               {/* View Full Leaderboard Button */}
@@ -436,6 +435,11 @@ export default function CampaignDetails({
           </div>
         </div>
       </div>
+      <SubmitVideoDialog
+        id={campaign.id}
+        setShow={setShowSubmitVideoDialog}
+        show={showSubmitVideoDialog}
+      />
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function FirstOpenHomeDialog({
   const [show, setShow] = useState(forceShow);
 
   useEffect(() => {
-    const lastDismissed = sessionStorage.getItem(
+    const lastDismissed = localStorage.getItem(
       `${FirstOpenHomeDialog.name}Dismissed`
     );
     if (!lastDismissed) {
@@ -27,7 +27,7 @@ export default function FirstOpenHomeDialog({
 
   // Handle dismissing the dialog
   const handleDismiss = (state: boolean) => {
-    sessionStorage.setItem(
+    localStorage.setItem(
       `${FirstOpenHomeDialog.name}Dismissed`,
       Date.now().toString()
     );
@@ -48,7 +48,7 @@ export default function FirstOpenHomeDialog({
         <div className="flex w-full flex-col items-center gap-4">
           {/* Icon */}
           <img
-            alt="Peak.AI Logo"
+            alt="Peak AI Logo"
             className="size-17"
             src="/icons/favicon.svg"
           />
@@ -56,7 +56,7 @@ export default function FirstOpenHomeDialog({
           {/* Welcome Text */}
           <div className="flex w-full flex-col items-center gap-3">
             <h1 className="white-gradient-text text-center font-medium text-xl leading-6">
-              Welcome to Peak.AI!
+              Welcome to Peak AI!
             </h1>
             <p className="white-gradient-text text-center text-xs leading-5">
               Your Web3 TikTok rewards journey starts here
@@ -68,13 +68,13 @@ export default function FirstOpenHomeDialog({
         <div className="h-px w-[141px] bg-white/20" />
 
         {/* KINDLE Score Card */}
-        <div className="flex w-full items-center gap-2">
+        <div className="flex w-full gap-2">
           {/* Logo */}
           <img alt="Flower" className="size-14" src={flower} />
 
           {/* Score Info */}
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex w-full items-center gap-7">
+          <div className="flex flex-1 flex-col gap-4">
+            <div className="flex justify-between gap-7">
               <span className="white-gradient-text font-medium text-base leading-6">
                 KINDLE Score
               </span>

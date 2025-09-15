@@ -69,7 +69,7 @@ export default function Invite({
 
   const handleSocialShare = (platform: string) => {
     const shareText =
-      'Join me on PEAK.AI and start earning rewards! Use my invite link:';
+      'Join me on PEAK AI and start earning rewards! Use my invite link:';
     const fullText = `${shareText} ${inviteLink}`;
 
     const shareUrls = {

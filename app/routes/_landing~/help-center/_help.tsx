@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import FollowUs from '~/components/FollowUs';
 import GlowContainer from '~/components/GlowContainer';
 import aiDetectionIcon from './assets/ai-detection-icon.svg';
@@ -10,6 +11,17 @@ import smsBoldIcon from './assets/sms-bold-icon.svg';
 import smsNotificationIcon from './assets/sms-notification-icon.svg';
 
 export default function Help() {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText('ask@takeapeak.ai');
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 1000);
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#03020a] via-31% via-[#10191b] to-[#030306] pb-24">
       {/* Smart Reminder Header */}
@@ -54,12 +66,9 @@ export default function Help() {
             <div className="flex h-10 flex-1 items-center rounded border-[#313136] border-[0.5px] px-[11px]">
               <span className="text-[#6E6E6E] text-xs">ask@takeapeak.ai</span>
             </div>
-            <button
-              onClick={() => navigator.clipboard.writeText('ask@takeapeak.ai')}
-              type="button"
-            >
+            <button onClick={handleCopyLink} type="button">
               <GlowContainer className="rounded-sm px-2 py-px">
-                Copy
+                {isCopied ? 'Copied' : 'Copy'}
               </GlowContainer>
             </button>
           </div>

@@ -119,7 +119,7 @@ export default function Profile({
             {totalVideos}
           </span>
           <span className="font-light text-[#A7A7A7] text-xs">
-            Videos Posted
+            Posted Videos
           </span>
         </div>
       </div>
