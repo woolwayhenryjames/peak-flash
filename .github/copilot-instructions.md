@@ -1,10 +1,32 @@
----
-applyTo: "**/*.{ts,tsx,js,jsx}"
----
+# Peak AI - AI Coding Instructions
+
+This is a **React Router v7 + Prisma + TikTok OAuth** application for crypto/AI campaign management with social features. Peak AI enables users to participate in campaigns, earn "Kindle Score" points, and invite others for rewards.
+
+## Architecture Overview
+
+### Tech Stack
+- **Frontend**: React 19 + React Router v7 (file-based routing with `remix-flat-routes`)
+- **Backend**: Node.js with React Router SSR
+- **Database**: MySQL with Prisma ORM + complex ranking queries
+- **Auth**: `better-auth` with TikTok OAuth (only provider)
+- **Styling**: Tailwind CSS v4 + DaisyUI + custom gradients
+- **Build**: Vite + React Compiler (production only) + TypeScript
+
+### Key Business Logic
+- **Campaign System**: Users join campaigns, earn base scores, receive 10% bonus from invitees
+- **Ranking**: MySQL window functions for real-time leaderboards (see `getCampaignsWithUserRanks`)  
+- **Scoring**: `baseScore` (individual) + `bonusScore` (10% from referrals) = `score` (computed)
+- **TikTok Integration**: Profile fetching, avatar persistence to S3, OAuth-only authentication
+
+### Critical Patterns
+- **Error Handling**: Use `neverthrow` library (`ok()`/`err()`) in server functions
+- **Database**: User relationships are complex - campaigns, invites, scores all interconnected
+- **File Structure**: Flat routes with `~` for nested dirs (`_landing~/campaigns.$id~/`)
+- **Authentication**: TikTok-only login, session handling via `getDbUser()`, auto-redirect patterns
 
 ## Before Writing Code
 1. Analyze existing patterns in the codebase
-2. Consider edge cases and error scenarios
+2. Consider edge cases and error scenarios  
 3. Follow the rules below strictly
 4. Validate accessibility requirements
 
@@ -296,73 +318,104 @@ The AI should ignore the following auto-fixable linter issues that can be handle
 - Make sure to use the digits argument with Number#toFixed().
 - Make sure to use the "use strict" directive in script files.
 
-### Project-Specific Rules
+## Project-Specific Rules
 
-#### React Router
-- Use React Router v7 for routing (not Next.js).
-- Use `Link` from `react-router` for navigation, not `<a>` tags.
-- Use `useNavigate` hook for programmatic navigation.
-- Use `useParams`, `useSearchParams`, and `useLocation` hooks for route data.
-- Follow the file-based routing convention.
-- Use loaders and actions for data fetching and mutations.
-- Prefer `Form` component from `react-router` over regular HTML forms.
+### React Router v7 Architecture
+- **File Routing**: Use `remix-flat-routes` with `~` for nested directories (`_landing~/campaigns.$id~/`)  
+- **Route Types**: Import types from `./+types/route` (e.g., `Route.LoaderArgs`, `Route.ComponentProps`)
+- **Loaders/Actions**: Always use for data fetching. Return JSON, handle redirects with `redirect()`
+- **Navigation**: Use `Link` from `react-router`, `useNavigate()` for programmatic navigation
+- **Forms**: Prefer `Form` component over HTML `<form>` for mutations
 
-#### Package Management
-- Always use `pnpm` for package management, never `npm` or `yarn`.
-- Use `pnpm add` to install dependencies.
-- Use `pnpm add -D` for dev dependencies.
-- Use `pnpm install` to install from lockfile.
-- Check `pnpm-lock.yaml` for dependency versions.
+### Authentication & Sessions  
+- **TikTok Only**: Single OAuth provider, no email/password auth
+- **Session Pattern**: Use `getDbUser(request)` in loaders, auto-redirect on auth failure
+- **User Context**: Access via `useUser()` hook in `_landing~` layout
+- **Invite Flow**: Pass `inviterId` via `X-Inviter-ID` header during signup
 
-#### Storybook
-- Always import Storybook types from `@storybook/react-vite`.
-- Example imports: `import type { Meta, StoryObj } from '@storybook/react-vite';`
-- Place story files next to components with `.stories.tsx` extension.
-- Use `satisfies Meta<typeof Component>` for type-safe meta objects.
-- Include `parameters` and `argTypes` for better documentation.
-- Wrap components needing providers (QueryClient, Router) in decorators.
+### Database & Prisma Patterns
+- **Connection**: Use `db` singleton from `~/services/db.server.ts` (prevents dev restart issues)  
+- **Complex Queries**: Leverage MySQL window functions for rankings (see `getCampaignsWithUserRanks`)
+- **Error Handling**: Use `neverthrow` - return `ok(data)` or `err(message)` from service functions
+- **Scoring Logic**: `CampaignUser.score = baseScore + bonusScore` (10% from referrals)
+- **Relations**: User → CampaignUser → Campaign, User → Invites (self-referential)
 
-#### Tailwind CSS
-- Use Tailwind CSS v4 utility classes for styling.
-- Prefer Tailwind classes over inline styles or CSS modules.
-- Use arbitrary values sparingly (e.g., `w-[137px]`).
-- Group related utilities with responsive prefixes (e.g., `sm:`, `md:`, `lg:`).
-- Always use `cn()` utility for conditional classes.
+### Component Architecture
+- **Composition**: Heavy use of `GlowContainer` wrapper for visual consistency
+- **Assets**: Store in component `assets/` folders, import as ES modules  
+- **Props**: Extend Prisma types (e.g., `CampaignWithParticipation extends Campaign`)
+- **State**: Minimal client state, prefer server state via loaders
 
-#### Styling Best Practices
-- Sort CSS classes alphabetically or by logical groups.
-- Use consistent spacing utilities (prefer `gap` over margins for flex/grid).
-- Never use static width height or absolute positioning unless absolutely necessary.
-- Use flexbox and grid layouts for responsiveness.
-- Use semantic color classes when available.
-- Maintain consistent border radius values across the app.
-- Use CSS variables for theme values when needed.
+### Styling System
+- **Tailwind v4**: Always use `cn()` utility for conditional classes
+- **Gradients**: Custom gradient utilities (`white-gradient-text`, `bg-gradient-to-r`)  
+- **Responsive**: Mobile-first, use `gap` over margins for flex/grid
+- **Consistency**: Follow existing patterns for spacing, colors, and effects
 
-#### Build Tools
-- Project uses Vite for development and building.
-- TypeScript configuration is in `tsconfig.json`.
-- Use path aliases like `~/` for imports from the app directory.
+### TikTok Integration  
+- **API**: Use `getUserInfo()` from `~/services/tiktok-api.server.ts` for profile data
+- **Tokens**: Access via `auth.api.getAccessToken()` with userId
+- **Avatar Persistence**: Auto-upload TikTok avatars to S3, cleanup old versions
+- **Scopes**: `['user.info.basic', 'user.info.profile', 'user.info.stats']`
 
-#### Asset Management
-- Store component-specific icons and assets in a local `assets` folder within the component directory.
-- Use ES module import syntax for images instead of placing them in the public folder.
-- Example: `import iconName from './assets/icon-name.svg'` instead of `src="/icons/icon-name.svg"`.
+### Development Workflow
+- **Package Manager**: Always use `pnpm` (never npm/yarn)
+- **Scripts**: `pnpm dev` (HMR), `pnpm build:staging`/`pnpm build:prod`  
+- **Linting**: Biome via `ultracite` config, lint-staged on commits
+- **Storybook**: Component stories using `@storybook/react-vite` types
 
-## Example: Error Handling
+## Code Examples
+
+### Loader Pattern with Auth
 ```typescript
-// ✅ Good: Comprehensive error handling
-try {
-  const result = await fetchData();
-  return { success: true, data: result };
-} catch (error) {
-  console.error('API call failed:', error);
-  return { success: false, error: error.message };
+// ✅ Standard loader with auth check
+export async function loader({ request }: Route.LoaderArgs) {
+  const user = await getDbUser(request);
+  if (user.isErr()) {
+    throw redirect('/login');
+  }
+  
+  const campaigns = await getCampaignsForUser(user.value);
+  return { user: user.value, campaigns };
+}
+```
+
+### Service Layer Error Handling  
+```typescript
+// ✅ Use neverthrow for consistent error handling
+export async function getUserInfo(userId: string): Promise<Result<TikTokUserInfo, string>> {
+  try {
+    const response = await fetch(/* ... */);
+    const data = await response.json();
+    return ok(data.user);
+  } catch (error) {
+    console.error('TikTok API error:', error);
+    return err('Failed to fetch user info');
+  }
+}
+```
+
+### Component with Conditional Styling
+```tsx
+// ✅ Use cn() for conditional classes, extend Prisma types
+interface CampaignCardProps {
+  campaign: Campaign & { 
+    isParticipating: boolean;
+    userRank?: number;
+    participants: number;
+  };
 }
 
-// ❌ Bad: Swallowing errors
-try {
-  return await fetchData();
-} catch (e) {
-  console.log(e);
+export default function CampaignCard({ campaign }: CampaignCardProps) {
+  return (
+    <div className={cn(
+      'border rounded-lg p-4',
+      campaign.isParticipating && 'border-purple-500'
+    )}>
+      <GlowContainer>
+        {/* Campaign content */}
+      </GlowContainer>
+    </div>
+  );
 }
 ```

@@ -218,3 +218,42 @@ export async function getCampaignLeaderboard(id: string, page = 1, limit = 10) {
     },
   };
 }
+
+// Admin CRUD operations
+export async function getAllCampaigns() {
+  return await db.campaign.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      _count: {
+        select: { campaignUsers: true },
+      },
+    },
+  });
+}
+
+export async function createCampaign(data: Prisma.CampaignCreateInput) {
+  return await db.campaign.create({
+    data,
+  });
+}
+
+export async function updateCampaign(
+  id: string,
+  data: Prisma.CampaignUpdateInput
+) {
+  return await db.campaign.update({
+    where: { id },
+    data,
+  });
+}
+
+export async function deleteCampaign(id: string) {
+  // Delete related campaign users first due to foreign key constraints
+  await db.campaignUser.deleteMany({
+    where: { campaignId: id },
+  });
+
+  return await db.campaign.delete({
+    where: { id },
+  });
+}
