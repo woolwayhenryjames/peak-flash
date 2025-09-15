@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Markdown from 'react-markdown';
 import { Link, redirect } from 'react-router';
 import CampaignCard from '~/components/CampaignCard';
 import SubmitVideoDialog from '~/components/Dialogs/SubmitVideoDialog';
@@ -11,6 +10,7 @@ import { db } from '~/services/db.server';
 import type { Route } from './+types/_campaign';
 import profileIcon from './assets/profile.svg';
 import videoIcon from './assets/video.svg';
+import VideoRequirementsContent from './VideoRequirementsContent';
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);
@@ -442,47 +442,4 @@ export default function CampaignDetails({
       />
     </div>
   );
-}
-
-function VideoRequirementsContent({
-  joinRequirement,
-}: {
-  joinRequirement?: unknown;
-}) {
-  let requirements: [string, unknown][] = [];
-  try {
-    const requirementsObj = JSON.parse(String(joinRequirement || '{}'));
-    requirements = Object.entries(requirementsObj);
-  } catch {
-    requirements = [];
-  }
-  return requirements.map(([key, value]) => (
-    <>
-      <div className="h-6 w-px border-gray-600 border-l border-dashed" />
-      <div
-        className="w-full rounded-xl border border-gray-700 bg-black/50 p-6"
-        key={key}
-      >
-        <h4 className="mb-3 font-medium text-gray-100">{key}</h4>
-        <div className="flex flex-wrap gap-3">
-          {Array.isArray(value) &&
-            value.map((tag) => (
-              <div
-                className="rounded-lg border border-gray-600 px-3 py-1"
-                key={tag}
-              >
-                <span className="bg-gradient-to-r from-orange-400 to-cyan-400 bg-clip-text font-light text-sm text-transparent">
-                  #{tag}
-                </span>
-              </div>
-            ))}
-          {typeof value === 'string' && (
-            <div className="text-gray-500 text-sm [&_*]:list-image-[linear-gradient(114deg,#FFA44A_12.87%,#69D7FF_51.12%)]">
-              <Markdown>{value}</Markdown>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  ));
 }

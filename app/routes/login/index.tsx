@@ -50,10 +50,10 @@ export default function SignIn() {
         {/* Subtitle */}
         <div className="space-y-1">
           <p className="white-gradient-text text-lg">
-            Web3 TikTok Reword Platform
+            AI-powered Crypto Distribution OS
           </p>
           <p className="white-gradient-text text-xs">
-            Create content,earn real tokens
+            Turn Attention into Capital.
           </p>
         </div>
 

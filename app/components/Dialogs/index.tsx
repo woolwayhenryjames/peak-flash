@@ -45,7 +45,9 @@ export default function Dialog({
         )}
         {...props}
       >
-        {title && <div className="font-bold text-2xl">{title}</div>}
+        {title && (
+          <div className="white-gradient-text font-medium text-xl">{title}</div>
+        )}
         {show && children}
       </div>
       <form className="modal-backdrop" method="dialog">

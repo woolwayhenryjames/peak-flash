@@ -108,14 +108,14 @@ export default function Profile({
       {/* Campaign and Video Stats */}
       <div className="flex gap-3">
         <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
-          <span className="bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%] bg-clip-text font-medium text-transparent text-xl">
+          <span className="bg-linear-to-r from-[#6CFBD3] from-[24%] to-[#A194F0] to-[95%] bg-clip-text font-medium text-transparent text-xl">
             {campaigns.length}
           </span>
           <span className="font-light text-[#A7A7A7] text-xs">Campaigns</span>
         </div>
 
         <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
-          <span className="bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%] bg-clip-text font-medium text-transparent text-xl">
+          <span className="bg-linear-to-r from-[#6CFBD3] from-[24%] to-[#A194F0] to-[95%] bg-clip-text font-medium text-transparent text-xl">
             {totalVideos}
           </span>
           <span className="font-light text-[#A7A7A7] text-xs">
