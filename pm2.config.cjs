@@ -5,6 +5,7 @@ module.exports = {
       name: 'peak.ai',
       script: './node_modules/@react-router/serve/bin.js',
       args: './build/server/index.js',
+      instances: '1',
       env: {
         PORT: 9092,
       },

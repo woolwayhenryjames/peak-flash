@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { redirect } from 'react-router';
 import CampaignList from '~/components/CampaignList';
 import { getDbUser } from '~/services/auth.server';
@@ -21,7 +22,7 @@ export async function loader({ request }: Route.LoaderArgs) {
         id: { in: user.value.campaignUsers.map((cu) => cu.campaignId) },
       },
       1,
-      10
+      100
     ),
   ]);
 
@@ -38,6 +39,10 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function Profile({
   loaderData: { user, campaigns, totalVideos },
 }: Route.ComponentProps) {
+  const [showAllCampaigns, setShowAllCampaigns] = useState(false);
+  const displayedCampaigns = showAllCampaigns
+    ? campaigns
+    : campaigns.slice(0, 5);
   return (
     <div className="flex flex-col gap-6 p-4">
       {/* Header Profile Info */}
@@ -137,7 +142,16 @@ export default function Profile({
           </div>
         </div>
 
-        <CampaignList campaigns={campaigns} type="spark-points" />
+        <CampaignList campaigns={displayedCampaigns} type="spark-points" />
+        {campaigns.length > 5 && (
+          <button
+            className="mx-auto text-[#ababab] text-sm underline"
+            onClick={() => setShowAllCampaigns(!showAllCampaigns)}
+            type="button"
+          >
+            {showAllCampaigns ? 'Show Less' : 'Show All'}
+          </button>
+        )}
       </div>
     </div>
   );
