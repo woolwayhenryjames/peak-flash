@@ -31,10 +31,6 @@ export const auth = betterAuth({
     after: createAuthMiddleware((ctx) => {
       const newSession = ctx.context.newSession;
       if (newSession) {
-        console.log('New user session created:', {
-          userId: newSession.user.id,
-          name: newSession.user.name,
-        });
         persistUserImage(newSession.user);
       }
       return Promise.resolve();

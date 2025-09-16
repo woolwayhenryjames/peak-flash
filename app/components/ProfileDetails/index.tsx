@@ -33,7 +33,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
           <div className="w-max rounded-[10px] border border-[#7C7C7C] bg-black/70 backdrop-blur-sm">
             {/* Username Section */}
             <div className="flex items-center gap-[10px] px-7 py-4 text-center font-normal text-white text-xs leading-[1.5]">
-              @{user.name || 'user'}
+              @{user.email || 'user'}
             </div>
 
             {/* Divider */}

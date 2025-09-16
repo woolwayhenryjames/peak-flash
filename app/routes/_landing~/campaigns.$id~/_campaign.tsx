@@ -413,7 +413,7 @@ export default function CampaignDetails({
 
                     <div className="flex flex-col gap-2">
                       <h3 className="font-medium text-white">
-                        @{user?.name || 'User'}
+                        @{user?.email || 'User'}
                       </h3>
                       <div className="flex items-center gap-3">
                         <span className="text-gray-400 text-sm">5 videos</span>
