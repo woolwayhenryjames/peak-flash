@@ -103,12 +103,41 @@ export const processInviteSignup = async (
   inviterId: string
 ) => {
   try {
+    console.log(
+      `Processing invite signup: newUserId=${newUserId}, inviterId=${inviterId}`
+    );
+
+    // Validate that the inviter exists
+    const inviter = await db.user.findUnique({
+      where: { id: inviterId },
+      select: { id: true, name: true },
+    });
+
+    if (!inviter) {
+      console.error(`Inviter ${inviterId} not found`);
+      return err(new Error('Inviter not found'));
+    }
+
+    // Check if the new user already has an inviter (prevent duplicate invites)
+    const existingUser = await db.user.findUnique({
+      where: { id: newUserId },
+      select: { inviterId: true },
+    });
+
+    if (existingUser?.inviterId) {
+      console.log(
+        `User ${newUserId} already has inviter ${existingUser.inviterId}, skipping`
+      );
+      return ok(existingUser);
+    }
+
     // Update the new user with the inviter relationship
     const user = await db.user.update({
       where: { id: newUserId },
       data: { inviterId },
     });
 
+    console.log(`Successfully set inviter ${inviterId} for user ${newUserId}`);
     return ok(user);
   } catch (error) {
     console.error('Error processing invite signup:', error);

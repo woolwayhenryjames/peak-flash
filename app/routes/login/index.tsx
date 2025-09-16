@@ -48,21 +48,31 @@ export default function SignIn() {
   const [searchParams] = useSearchParams();
 
   const signIn = async () => {
-    const inviterId = searchParams.get('inviter');
-    const headers: Record<string, string> = {};
+    try {
+      const inviterId = searchParams.get('inviter');
 
-    if (inviterId) {
-      headers['X-Inviter-ID'] = inviterId;
-    }
+      // Build the callback URL with inviter state if present
+      const currentUrl = new URL(window.location.href);
+      const callbackUrl = new URL(
+        '/api/auth/callback/tiktok',
+        currentUrl.origin
+      );
 
-    await authClient.signIn.social(
-      {
-        provider: 'tiktok',
-      },
-      {
-        headers,
+      if (inviterId) {
+        console.log(`Starting OAuth flow with inviter: ${inviterId}`);
+        callbackUrl.searchParams.set('inviter', inviterId);
       }
-    );
+
+      console.log(`OAuth callback URL: ${callbackUrl.toString()}`);
+
+      await authClient.signIn.social({
+        provider: 'tiktok',
+        callbackURL: callbackUrl.toString(),
+      });
+    } catch (error) {
+      console.error('Error during sign in:', error);
+      // You could show a user-friendly error message here
+    }
   };
 
   return (
