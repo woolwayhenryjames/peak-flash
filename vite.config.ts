@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 import babel from 'vite-plugin-babel';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-export default defineConfig(({ command }) => ({
+export default defineConfig(({ command, mode }) => ({
   plugins: [
     ...(command === 'build'
       ? [
@@ -22,7 +22,7 @@ export default defineConfig(({ command }) => ({
     tsconfigPaths(),
   ],
   esbuild:
-    command === 'build'
+    command === 'build' && mode === 'production'
       ? {
           drop: ['debugger', 'console'],
           legalComments: 'none',

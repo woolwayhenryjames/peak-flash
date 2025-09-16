@@ -74,7 +74,7 @@ export default function ExpandedUserProfile({
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="mt-4 flex flex-col gap-8">
       {/* Profile Section */}
       <div className="flex items-center gap-3">
         {/* Avatar with verified badge */}

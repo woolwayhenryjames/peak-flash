@@ -7,7 +7,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   if (!s3Key) {
     return new Response('Not found', { status: 404 });
   }
-  const assets = await getAsset(`peakai/${s3Key}`);
+  const assets = await getAsset(s3Key);
 
   // Add long cache headers for static assets
   return new Response(assets?.Body as unknown as ReadableStream, {

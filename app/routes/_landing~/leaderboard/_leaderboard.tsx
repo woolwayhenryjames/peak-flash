@@ -243,7 +243,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
                       @{user.email}
                     </td>
                     <td className="whitespace-nowrap py-4">
-                      <div className="flex items-center gap-6">
+                      <div className="flex items-center justify-around gap-6">
                         {user.kindleScore}
                         <button
                           onClick={() =>

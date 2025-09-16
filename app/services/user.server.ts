@@ -152,6 +152,7 @@ export const persistUserImage = async (user: {
   if (user.image) {
     try {
       let imageUrl = user.image;
+      console.log(`Persisting image for user ${user.id}: ${user.image}`);
 
       // Check if the image URL is from external source with expiration
       if (isExternalImageUrl(user.image)) {

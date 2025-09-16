@@ -97,6 +97,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
         select: {
           name: true,
           image: true,
+          email: true,
         },
       },
     },
@@ -459,7 +460,7 @@ export default function CampaignDetails({
                           <td className="truncate whitespace-nowrap py-4">
                             <div className="flex flex-col gap-1">
                               <span className="font-medium text-white">
-                                @{participant.user.name || 'user'}
+                                @{participant.user.email || 'user'}
                               </span>
                               <span className="text-gray-500 text-xs">
                                 5 videos

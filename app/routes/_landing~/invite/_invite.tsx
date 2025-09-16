@@ -173,10 +173,10 @@ export default function Invite({
 
               {/* Title and Description */}
               <div className="space-y-3">
-                <h2 className="bg-gradient-to-r from-[#6d7077] via-[#fefefe] via-[32%] to-[#3c4041] bg-clip-text font-medium text-transparent text-xl">
+                <h2 className="font-medium text-white text-xl">
                   Invite & Earn
                 </h2>
-                <p className="mx-auto max-w-xs bg-gradient-to-r from-[#6d7077] via-[#fefefe] via-[54%] to-[#3c4041] bg-clip-text text-center text-transparent text-xs leading-relaxed">
+                <p className="btext-white mx-auto max-w-xs text-center text-xs leading-relaxed">
                   Invite friends to join campaigns and get 10% of their score
                   rewards
                 </p>
