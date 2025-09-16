@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware } from 'better-auth/api';
 import { err, ok } from 'neverthrow';
-import { persistUserImage, processInviteSignup } from '~/services/user.server';
+import { persistUserImage } from '~/services/user.server';
 import { db } from './db.server';
 
 export const auth = betterAuth({
@@ -30,47 +30,12 @@ export const auth = betterAuth({
   hooks: {
     after: createAuthMiddleware((ctx) => {
       const newSession = ctx.context.newSession;
-      const isCallback = ctx.request?.url?.includes('/callback');
-
-      // Log all callback requests for debugging
-      if (isCallback) {
-        console.log('OAuth Callback received:', {
-          url: ctx.request?.url,
-          hasNewSession: !!newSession,
-          userId: newSession?.user?.id,
-        });
-      }
-
       if (newSession) {
+        console.log('New user session created:', {
+          userId: newSession.user.id,
+          name: newSession.user.name,
+        });
         persistUserImage(newSession.user);
-
-        // Extract inviter ID from the callback URL query parameters
-        const url = ctx.request?.url;
-        if (url) {
-          try {
-            const urlObj = new URL(url);
-            const inviterId = urlObj.searchParams.get('inviter');
-
-            console.log('Processing new user session:', {
-              newUserId: newSession.user.id,
-              inviterId,
-              callbackUrl: url,
-            });
-
-            if (inviterId) {
-              console.log(
-                `Processing invite signup for user ${newSession.user.id} with inviter ${inviterId}`
-              );
-              processInviteSignup(newSession.user.id, inviterId);
-            } else {
-              console.log('No inviter ID found in callback URL');
-            }
-          } catch (error) {
-            console.error('Error parsing callback URL for inviter:', error);
-          }
-        } else {
-          console.log('No URL found in auth context');
-        }
       }
       return Promise.resolve();
     }),

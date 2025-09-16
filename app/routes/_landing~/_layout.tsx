@@ -1,4 +1,5 @@
 import type { User } from 'better-auth';
+import { useEffect } from 'react';
 import {
   Outlet,
   redirect,
@@ -32,6 +33,29 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const pageName = getPageName(location.pathname);
+
+  // Check for pending inviter ID and process it
+  useEffect(() => {
+    const processPendingInvite = async () => {
+      const pendingInviterId = sessionStorage.getItem('pendingInviterId');
+      if (!pendingInviterId) {
+        return;
+      }
+      try {
+        await fetch('/api/process-invite', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ inviterId: pendingInviterId }),
+        });
+      } finally {
+        sessionStorage.removeItem('pendingInviterId');
+      }
+    };
+
+    processPendingInvite();
+  }, []); // Run once on mount
 
   // Check if there are more than one segments (excluding empty strings)
   const segments = location.pathname.split('/').filter(Boolean);
