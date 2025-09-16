@@ -194,9 +194,11 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
             <h3 className="font-medium text-white">
               @{loaderData.user?.email || 'User'}
             </h3>
-            <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
-              #{loaderData.user?.rank || 0}
-            </div>
+            {loaderData.user.kindleScore > 0 && (
+              <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
+                #{loaderData.user?.rank || 0}
+              </div>
+            )}
           </div>
         </div>
 
