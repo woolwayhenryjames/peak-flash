@@ -9,6 +9,11 @@ import { db } from '~/services/db.server';
 import type { Route } from './+types/_cleaderboard';
 import bg from './assets/bg.avif';
 
+const formatter = new Intl.NumberFormat('en', {
+  notation: 'compact',
+  compactDisplay: 'short',
+});
+
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
@@ -124,7 +129,7 @@ export default function Leaderboard({
         style={{ backgroundImage: `url(${bg})` }}
       >
         <div className="">
-          <div className="white-gradient-text font-medium text-2xl tracking-tight">
+          <div className="font-medium text-2xl text-white tracking-tight">
             Spark Points
           </div>
           <div className="font-normal text-[#d7d7d7] text-xs">
@@ -155,7 +160,7 @@ export default function Leaderboard({
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <h3 className="white-gradient-text font-medium">
+              <h3 className="font-medium text-white">
                 @{loaderData.user?.email || 'User'}
               </h3>
               <div className="flex items-center gap-2">
@@ -186,7 +191,7 @@ export default function Leaderboard({
 
           <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
             <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
-              {loaderData.campaignWithRanks.poolSize || 0}
+              {formatter.format(loaderData.campaignWithRanks.poolSize || 0)}
             </span>
             <span className="font-light text-[#A7A7A7] text-xs">
               Token Pool
@@ -223,7 +228,7 @@ export default function Leaderboard({
             </defs>
           </svg>
 
-          <h3 className="white-gradient-text font-semibold text-xl">
+          <h3 className="font-semibold text-white text-xl">
             {loaderData.campaignWithRanks.name} Leaders
           </h3>
         </div>

@@ -118,7 +118,7 @@ export default function Invite({
         className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover"
         style={{ backgroundImage: `url(${bg})` }}
       >
-        <h1 className="white-gradient-text pl-10 font-medium text-2xl tracking-tight">
+        <h1 className="pl-10 font-medium text-2xl text-white tracking-tight">
           Smart <br /> Reminder
         </h1>
       </div>
@@ -176,7 +176,7 @@ export default function Invite({
               className="h-6 w-6"
               src={gitBranchIcon}
             />
-            <h3 className="white-gradient-text font-medium text-xl">
+            <h3 className="font-medium text-white text-xl">
               Profile Invite Link
             </h3>
           </div>
@@ -271,9 +271,7 @@ export default function Invite({
           {/* Header */}
           <div className="flex items-center gap-1">
             <img alt="Stars icon" className="h-6 w-6" src={starsIcon} />
-            <h3 className="white-gradient-text font-semibold text-xl">
-              Invite Records
-            </h3>
+            <h3 className="font-semibold text-white text-xl">Invite Records</h3>
           </div>
 
           {/* Records List */}

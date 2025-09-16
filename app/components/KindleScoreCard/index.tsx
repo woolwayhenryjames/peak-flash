@@ -19,7 +19,7 @@ export default function KindleScoreCard({
         <div className="flex items-center justify-between gap-5">
           <div className="flex flex-col gap-3">
             <div>
-              <h2 className="white-gradient-text mb-2 font-medium text-lg">
+              <h2 className="mb-2 font-medium text-lg text-white">
                 Kindle Score
               </h2>
               <p className="text-gray-400 text-xs leading-relaxed">

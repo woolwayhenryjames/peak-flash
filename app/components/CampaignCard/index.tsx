@@ -41,6 +41,11 @@ const gradientByType = {
     'bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%]',
 } as const;
 
+const formatter = new Intl.NumberFormat('en', {
+  notation: 'compact',
+  compactDisplay: 'short',
+});
+
 export default function CampaignCard({
   campaign: {
     id,
@@ -78,7 +83,7 @@ export default function CampaignCard({
                       src={image}
                     />
                   )}
-                  <h3 className="white-gradient-text font-medium text-xl leading-tight">
+                  <h3 className="font-medium text-white text-xl leading-tight">
                     {name}
                   </h3>
                 </div>
@@ -119,7 +124,7 @@ export default function CampaignCard({
                     gradientByType[type]
                   )}
                 >
-                  {poolSize.toLocaleString()}
+                  {formatter.format(poolSize)}
                 </div>
                 <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
                   Token Pool

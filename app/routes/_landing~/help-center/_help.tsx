@@ -29,7 +29,7 @@ export default function Help() {
         className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover"
         style={{ backgroundImage: `url(${bg})` }}
       >
-        <h1 className="white-gradient-text pl-10 font-medium text-2xl tracking-tight">
+        <h1 className="pl-10 font-medium text-2xl text-white tracking-tight">
           Help Center
         </h1>
       </div>
@@ -39,10 +39,8 @@ export default function Help() {
         <div className="flex flex-col items-center space-y-4 text-center">
           <img alt="email" className="z-10 h-15 w-19" src={smsBoldIcon} />
           <div className="space-y-3">
-            <h2 className="white-gradient-text font-medium text-xl">
-              Need Help?
-            </h2>
-            <p className="white-gradient-text text-xs leading-[1.5]">
+            <h2 className="font-medium text-white text-xl">Need Help?</h2>
+            <p className="text-white text-xs leading-[1.5]">
               We're here to help you with any questions or issues
             </p>
           </div>
@@ -82,7 +80,7 @@ export default function Help() {
         {/* Header */}
         <div className="flex items-center gap-1 px-4 py-7">
           <img alt="Git branch icon" className="h-6 w-6" src={faqIcon} />
-          <h3 className="white-gradient-text font-medium text-xl">
+          <h3 className="font-medium text-white text-xl">
             Frequently Asked Questions
           </h3>
         </div>

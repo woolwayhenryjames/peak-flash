@@ -9,9 +9,8 @@
 
 html,
 body {
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+  color-scheme: dark;
+  @apply text-white;
 }
 
 html {
@@ -39,15 +38,4 @@ code {
 
 .animate-shimmer {
   animation: shimmer 2s infinite;
-}
-
-@utility white-gradient-text {
-  @apply bg-clip-text text-transparent;
-  background-image: linear-gradient(
-    to left,
-    #ffffff70 0%,
-    #ffffff 35%,
-    #ffffff 65%,
-    #ffffff70 100%
-  );
 }

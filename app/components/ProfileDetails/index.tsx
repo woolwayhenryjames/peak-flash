@@ -19,6 +19,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
 
   const signOut = async () => {
     await authClient.signOut();
+    window.location.reload();
   };
 
   const handleLinkClick = () => {

@@ -9,7 +9,7 @@ export default function QuickActions() {
   const { user } = useUser();
   const [isCopied, setIsCopied] = useState(false);
 
-  const inviteLink = `https://distant.app/invite/${user?.id}`;
+  const inviteLink = `${import.meta.env.VITE_ORIGIN}invite/${user?.id}`;
 
   const handleCopyLink = async () => {
     try {
@@ -26,9 +26,7 @@ export default function QuickActions() {
       {/* Header with diamond icon */}
       <div className="mb-8 flex items-center gap-1">
         <img alt="" className="h-6 w-6 flex-shrink-0" src={diamondIcon} />
-        <h3 className="white-gradient-text font-semibold text-xl">
-          Quick Actions
-        </h3>
+        <h3 className="font-semibold text-white text-xl">Quick Actions</h3>
       </div>
 
       {/* Main content card */}

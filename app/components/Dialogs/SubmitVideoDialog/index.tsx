@@ -16,9 +16,7 @@ export default function SubmitVideoDialog({
   };
   return (
     <DialogWithCloseButton className="min-w-80" setShow={setShow} show={show}>
-      <div className="white-gradient-text pb-3 font-medium text-xl">
-        Submit Video
-      </div>
+      <div className="pb-3 font-medium text-white text-xl">Submit Video</div>
       <div className="font-medium text-[#e2e2e2] text-xs">TikTok Video URL</div>
       <input
         className="rounded-sm border border-[#4e5d93] px-2.5 py-2 text-[#7c7c7c] text-xs"

@@ -76,9 +76,7 @@ export default function Home({
               </defs>
             </svg>
 
-            <h3 className="white-gradient-text font-medium text-xl">
-              Active Campaigns
-            </h3>
+            <h3 className="font-medium text-white text-xl">Active Campaigns</h3>
           </div>
           <a
             className="border-[#505050] border-b pb-0.5 text-[#AEAEAE] text-xs hover:text-white"
@@ -121,9 +119,7 @@ export default function Home({
                   </linearGradient>
                 </defs>
               </svg>
-              <h3 className="white-gradient-text font-semibold text-xl">
-                Follow Us
-              </h3>
+              <h3 className="font-semibold text-white text-xl">Follow Us</h3>
             </div>
             <FollowUs />
           </div>

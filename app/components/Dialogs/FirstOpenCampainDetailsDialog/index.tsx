@@ -62,10 +62,10 @@ export default function FirstOpenCampainDetailsDialog({
 
             {/* Title and Subtitle */}
             <div className="flex flex-col items-center gap-3">
-              <h1 className="white-gradient-text text-center font-medium text-xl leading-tight">
+              <h1 className="text-center font-medium text-white text-xl leading-tight">
                 Join Campaign
               </h1>
-              <p className="white-gradient-text text-center text-xs leading-relaxed">
+              <p className="text-center text-white text-xs leading-relaxed">
                 Start earning rewards now
               </p>
             </div>
@@ -93,7 +93,7 @@ export default function FirstOpenCampainDetailsDialog({
 
           {/* Tips Section */}
           <div className="flex flex-col gap-4">
-            <h2 className="white-gradient-text font-medium text-base">Tips</h2>
+            <h2 className="font-medium text-base text-white">Tips</h2>
 
             <div className="space-y-3">
               <div className="flex items-center gap-2">

@@ -138,9 +138,7 @@ export default function Profile({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <img alt="Star icon" className="h-6 w-6" src={starIcon} />
-            <h2 className="white-gradient-text font-semibold text-xl">
-              My Campaigns
-            </h2>
+            <h2 className="font-semibold text-white text-xl">My Campaigns</h2>
           </div>
         </div>
 

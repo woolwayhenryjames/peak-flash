@@ -124,7 +124,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
         style={{ backgroundImage: `url(${bg})` }}
       >
         <div className="">
-          <div className="white-gradient-text font-medium text-2xl tracking-tight">
+          <div className="font-medium text-2xl text-white tracking-tight">
             Peekaboos&nbsp;&nbsp;(Top 100)
           </div>
           <div className="font-normal text-[#d7d7d7] text-xs">
@@ -133,7 +133,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
         </div>
       </div>
       <div className="mx-auto mb-6 h-px w-[80%] bg-[#6c6c6c]/50" />
-      <div className="mx-6 flex items-center justify-between rounded-xl border border-gray-700 p-4">
+      <div className="mx-6 my-12 flex items-center justify-between rounded-xl border border-gray-700 p-4">
         <div className="flex items-end gap-4">
           <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-600">
             <img
@@ -148,7 +148,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
           </div>
 
           <div className="flex flex-col items-start gap-2">
-            <h3 className="white-gradient-text font-medium">
+            <h3 className="font-medium text-white">
               @{loaderData.user?.email || 'User'}
             </h3>
             <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">

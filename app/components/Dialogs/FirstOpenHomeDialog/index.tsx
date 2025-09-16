@@ -55,10 +55,10 @@ export default function FirstOpenHomeDialog({
 
           {/* Welcome Text */}
           <div className="flex w-full flex-col items-center gap-3">
-            <h1 className="white-gradient-text text-center font-medium text-xl leading-6">
+            <h1 className="text-center font-medium text-white text-xl leading-6">
               Welcome to Peak AI!
             </h1>
-            <p className="white-gradient-text text-center text-xs leading-5">
+            <p className="text-center text-white text-xs leading-5">
               Your Web3 TikTok rewards journey starts here
             </p>
           </div>
@@ -75,7 +75,7 @@ export default function FirstOpenHomeDialog({
           {/* Score Info */}
           <div className="flex flex-1 flex-col gap-4">
             <div className="flex justify-between gap-7">
-              <span className="white-gradient-text font-medium text-base leading-6">
+              <span className="font-medium text-base text-white leading-6">
                 KINDLE Score
               </span>
               <span className="font-semibold text-2xl text-[#67C9DA] leading-7">
@@ -95,7 +95,7 @@ export default function FirstOpenHomeDialog({
 
         {/* Features List */}
         <div className="flex w-full flex-col gap-3">
-          <h2 className="white-gradient-text font-medium text-base leading-6">
+          <h2 className="font-medium text-base text-white leading-6">
             Ready to Earn?
           </h2>
 

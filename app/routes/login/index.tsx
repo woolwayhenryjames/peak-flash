@@ -42,19 +42,17 @@ export default function SignIn() {
             className="size-16"
             src="/icons/favicon.svg"
           />
-          <h1 className="white-gradient-text font-poppins font-semibold text-[32px] leading-[48px]">
+          <h1 className="font-poppins font-semibold text-[32px] text-white leading-[48px]">
             Peak AI
           </h1>
         </div>
 
         {/* Subtitle */}
         <div className="space-y-1">
-          <p className="white-gradient-text text-lg">
+          <p className="text-lg text-white">
             AI-powered Crypto Distribution OS
           </p>
-          <p className="white-gradient-text text-xs">
-            Turn Attention into Capital.
-          </p>
+          <p className="text-white text-xs">Turn Attention into Capital.</p>
         </div>
 
         {/* Invite Banner */}
@@ -81,7 +79,7 @@ export default function SignIn() {
             </GlowContainer>
           </button>
 
-          <p className="white-gradient-text mt-6 text-center text-xs leading-6">
+          <p className="mt-6 text-center text-white text-xs leading-6">
             By continuing, you agree to our Terms of Service and Privacy Policy
           </p>
         </div>

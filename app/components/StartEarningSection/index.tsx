@@ -6,7 +6,7 @@ export default function StartEarningSection() {
     <div className="flex flex-col gap-4 rounded-2xl border border-slate-700 bg-gradient-to-b from-[#0f1118] to-[#212636] p-6 backdrop-blur-sm">
       {/* Header Section */}
       <div className="flex flex-col gap-3">
-        <h3 className="white-gradient-text font-medium text-xl leading-tight">
+        <h3 className="font-medium text-white text-xl leading-tight">
           Start Earning!
         </h3>
         <p className="text-slate-400 text-sm leading-relaxed">

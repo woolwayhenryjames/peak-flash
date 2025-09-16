@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
+import Markdown from 'react-markdown';
 import { Link, redirect } from 'react-router';
 import CampaignCard from '~/components/CampaignCard';
 import SubmitVideoDialog from '~/components/Dialogs/SubmitVideoDialog';
@@ -10,7 +11,6 @@ import { db } from '~/services/db.server';
 import type { Route } from './+types/_campaign';
 import profileIcon from './assets/profile.svg';
 import videoIcon from './assets/video.svg';
-import VideoRequirementsContent from './VideoRequirementsContent';
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);
@@ -72,9 +72,7 @@ export default function CampaignDetails({
         }}
       >
         <div className="flex flex-col gap-9">
-          <h1 className="white-gradient-text font-medium text-2xl">
-            Campaign Details
-          </h1>
+          <h1 className="font-medium text-2xl text-white">Campaign Details</h1>
           <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
         </div>
       </div>
@@ -99,7 +97,7 @@ export default function CampaignDetails({
                     <img alt="Video icon" className="size-13" src={videoIcon} />
 
                     <div className="flex flex-col gap-2">
-                      <h3 className="white-gradient-text font-medium text-lg">
+                      <h3 className="font-medium text-lg text-white">
                         Video Requirements
                       </h3>
                       <p className="text-gray-400 text-sm">
@@ -139,13 +137,15 @@ export default function CampaignDetails({
                 </div>
 
                 {/* Expanded Content */}
-                {expandedSection === 'video' && (
-                  <div className="flex flex-col items-center">
-                    <VideoRequirementsContent
-                      joinRequirement={campaign.joinRequirement}
-                    />
-                  </div>
-                )}
+                <div
+                  className={cn('flex flex-col items-center', {
+                    hidden: expandedSection !== 'video',
+                  })}
+                >
+                  <VideoRequirementsContent
+                    joinRequirement={campaign.joinRequirement}
+                  />
+                </div>
               </div>
 
               {!expandedSection && (
@@ -165,7 +165,7 @@ export default function CampaignDetails({
                     />
 
                     <div className="flex w-full flex-col gap-3">
-                      <h3 className="white-gradient-text font-medium text-lg">
+                      <h3 className="font-medium text-lg text-white">
                         Profile Performance
                       </h3>
                       <div className="flex items-center gap-3">
@@ -332,7 +332,7 @@ export default function CampaignDetails({
 
           {/* SPARK Points Section */}
           <div className="flex flex-col gap-10">
-            <h2 className="white-gradient-text text-center font-medium text-xl">
+            <h2 className="text-center font-medium text-white text-xl">
               Spark Points
             </h2>
 
@@ -354,7 +354,7 @@ export default function CampaignDetails({
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <h3 className="white-gradient-text font-medium">
+                      <h3 className="font-medium text-white">
                         @{user?.name || 'User'}
                       </h3>
                       <div className="flex items-center gap-3">
@@ -401,7 +401,7 @@ export default function CampaignDetails({
                           </td>
                           <td className="truncate whitespace-nowrap py-4">
                             <div className="flex flex-col gap-1">
-                              <span className="white-gradient-text font-medium">
+                              <span className="font-medium text-white">
                                 @{participant.user.name || 'user'}
                               </span>
                               <span className="text-gray-500 text-xs">
@@ -442,4 +442,70 @@ export default function CampaignDetails({
       />
     </div>
   );
+}
+
+function VideoRequirementsContent({
+  joinRequirement,
+}: {
+  joinRequirement?: unknown;
+}) {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyLink = async (value: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 1000);
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+    }
+  };
+  const requirements: [string, unknown][] = useMemo(() => {
+    try {
+      const requirementsObj =
+        typeof joinRequirement === 'string'
+          ? JSON.parse(joinRequirement)
+          : (joinRequirement ?? {});
+      return Object.entries(requirementsObj);
+    } catch {
+      return [];
+    }
+  }, [joinRequirement]);
+  return requirements.map(([key, value]) => (
+    <Fragment key={key}>
+      <div className="h-6 w-px border-gray-600 border-l border-dashed" />
+      <div className="w-full rounded-xl border border-gray-700 bg-black/50 p-6">
+        <div className="flex justify-between">
+          <h4 className="mb-3 font-medium text-gray-100">{key}</h4>
+          {Array.isArray(value) && (
+            <GlowContainer
+              className="w-fit cursor-pointer rounded-sm px-3 py-1 text-sm"
+              noShimmer
+              onClick={() => handleCopyLink(value.join(', '))}
+            >
+              {isCopied ? 'Copied!' : 'Copy'}
+            </GlowContainer>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {Array.isArray(value) &&
+            value.map((tag) => (
+              <div
+                className="rounded-lg border border-gray-600 px-3 py-1"
+                key={tag}
+              >
+                <span className="bg-gradient-to-r from-orange-400 to-cyan-400 bg-clip-text font-light text-sm text-transparent">
+                  #{tag}
+                </span>
+              </div>
+            ))}
+          {typeof value === 'string' && (
+            <div className="text-gray-500 text-sm [&_*]:list-image-[linear-gradient(114deg,#FFA44A_12.87%,#69D7FF_51.12%)]">
+              <Markdown>{value}</Markdown>
+            </div>
+          )}
+        </div>
+      </div>
+    </Fragment>
+  ));
 }
