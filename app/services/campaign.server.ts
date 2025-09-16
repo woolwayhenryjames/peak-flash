@@ -82,13 +82,16 @@ export async function getCampaignsWithUserRanks(
     }));
   }
 
-  // Optimized query using MySQL's RANK() window function with proper type safety
+  // Efficient query using COUNT subquery to calculate rank for specific user only
   const sqlQuery = Prisma.sql`
     SELECT 
       cu.campaignId,
       cu.userId,
       cu.score,
-      RANK() OVER (PARTITION BY cu.campaignId ORDER BY cu.score DESC) as user_rank
+      (SELECT COUNT(*) + 1 
+       FROM CampaignUser cu2 
+       WHERE cu2.campaignId = cu.campaignId 
+       AND cu2.score > cu.score) as user_rank
     FROM CampaignUser cu
     WHERE cu.campaignId IN (${Prisma.join(campaignIds.map((id) => Prisma.sql`${id}`))})
       AND cu.userId = ${user.id}
@@ -108,7 +111,7 @@ export async function getCampaignsWithUserRanks(
   }
 
   // Create a lookup map for ranks (convert bigint to number)
-  // TypeScript now knows campaignId is definitely a string due to our type definition
+  // Results are already filtered for the current user by the SQL query
   const userRanksMap = new Map<string, number>(
     ranksResult.map((result) => [result.campaignId, Number(result.user_rank)])
   );

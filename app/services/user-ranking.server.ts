@@ -28,24 +28,20 @@ export interface PaginatedLeaderboardResult {
 
 /**
  * Calculate a user's kindle rank based on their kindle score
- * Uses an optimized query with MySQL's RANK() window function
+ * Uses efficient COUNT subquery instead of window function over all users
  */
 export async function getUserKindleRank(userId: string): Promise<number> {
   try {
-    const result = await db.$queryRaw<Array<{ user_rank: bigint }>>`
+    const result = await db.$queryRaw<Array<{ user_rank: number }>>`
       SELECT 
-        user_rank
-      FROM (
-        SELECT 
-          id,
-          kindleScore,
-          RANK() OVER (ORDER BY kindleScore DESC) as user_rank
-        FROM User
-      ) ranked_users
-      WHERE id = ${userId}
+        (SELECT COUNT(*) + 1 
+         FROM User u2 
+         WHERE u2.kindleScore > u.kindleScore) as user_rank
+      FROM User u
+      WHERE u.id = ${userId}
     `;
 
-    return result.length > 0 ? Number(result[0].user_rank) : 1;
+    return result.length > 0 ? result[0].user_rank : 1;
   } catch (error) {
     console.error('Failed to get user kindle rank:', error);
     return 1; // Return default rank on error
