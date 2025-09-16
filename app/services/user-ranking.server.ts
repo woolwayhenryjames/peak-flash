@@ -63,12 +63,7 @@ export async function getGlobalLeaderboard(
 
   try {
     // Get total count of users with kindle scores > 0, but limit to top 100
-    const totalCount = Math.min(
-      100,
-      await db.user.count({
-        where: { kindleScore: { gt: 0 } },
-      })
-    );
+    const totalCount = Math.min(100, await db.user.count());
 
     // Don't fetch beyond the top 100 users
     if (offset >= 100) {
@@ -107,7 +102,6 @@ export async function getGlobalLeaderboard(
         kindleScore,
         RANK() OVER (ORDER BY kindleScore DESC) as user_rank
       FROM User
-      WHERE kindleScore > 0
       ORDER BY kindleScore DESC
       LIMIT ${actualLimit} OFFSET ${offset}
     `;

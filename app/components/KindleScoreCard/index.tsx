@@ -46,11 +46,9 @@ export default function KindleScoreCard({
           {/* Stats Row */}
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-400">This week +0.3</span>
-            {score > 0 && (
-              <GlowContainer className="w-fit rounded-md py-1">
-                <span className="text-white text-xs">#{rank}&nbsp;&gt;</span>
-              </GlowContainer>
-            )}
+            <GlowContainer className="w-fit rounded-md py-1">
+              <span className="text-white text-xs">#{rank}&nbsp;&gt;</span>
+            </GlowContainer>
           </div>
         </div>
       </div>
