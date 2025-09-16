@@ -76,7 +76,7 @@ export default function Home({
 }: Route.ComponentProps) {
   return (
     <>
-      <div className="flex flex-col justify-evenly gap-6 px-6 pt-6 md:mx-auto md:flex-row">
+      <div className="flex flex-col justify-evenly gap-6 px-6 pt-6 md:px-18">
         <KindleScoreCard
           rank={user.kindleRank ?? 1}
           score={user.kindleScore ?? 0}
@@ -84,7 +84,7 @@ export default function Home({
         <StartEarningSection />
       </div>
       <HomeSeparator />
-      <div className="space-y-6 bg-gradient-to-b from-[#090917] to-black px-6 md:mx-auto md:mt-6">
+      <div className="space-y-6 from-[#090917] to-black px-6 max-md:bg-gradient-to-b md:mx-auto md:mt-6 md:px-18">
         <div className="mb-10 flex items-center justify-between md:px-6">
           <div className="flex items-center gap-1">
             <svg
@@ -128,43 +128,41 @@ export default function Home({
           </a>
         </div>
         <CampaignList campaigns={campaigns} />
-        <div className="contents justify-evenly gap-6 md:flex">
-          <QuickActions />
-          <div className="mt-18 w-full">
-            <div className="mb-7 flex items-center gap-1">
-              <svg
-                className="size-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Sun</title>
-                <path
-                  d="M12 5.51342V2.3999M12 21.5999V18.4864M18.4865 11.9999H21.6M2.40002 11.9999H5.51354M16.587 7.41348L18.7885 5.2119M5.21128 18.7881L7.41286 16.5866M16.587 16.5863L18.7885 18.7879M5.21128 5.21166L7.41286 7.41325M15.5688 11.8733C15.5688 13.8616 13.957 15.4733 11.9688 15.4733C9.98055 15.4733 8.36877 13.8616 8.36877 11.8733C8.36877 9.88512 9.98055 8.27334 11.9688 8.27334C13.957 8.27334 15.5688 9.88512 15.5688 11.8733Z"
-                  stroke="url(#paint0_linear_131_3020)"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                />
-                <defs>
-                  <linearGradient
-                    gradientUnits="userSpaceOnUse"
-                    id="paint0_linear_131_3020"
-                    x1="-7.00037"
-                    x2="35.9996"
-                    y1="11.9995"
-                    y2="11.9995"
-                  >
-                    <stop stopColor="#6D7077" />
-                    <stop offset="0.495192" stopColor="#FEFEFE" />
-                    <stop offset="1" stopColor="#3C4041" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <h3 className="font-semibold text-white text-xl">Follow Us</h3>
-            </div>
-            <FollowUs />
+        <QuickActions />
+        <div className="mt-18 w-full">
+          <div className="mb-7 flex items-center gap-1">
+            <svg
+              className="size-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>Sun</title>
+              <path
+                d="M12 5.51342V2.3999M12 21.5999V18.4864M18.4865 11.9999H21.6M2.40002 11.9999H5.51354M16.587 7.41348L18.7885 5.2119M5.21128 18.7881L7.41286 16.5866M16.587 16.5863L18.7885 18.7879M5.21128 5.21166L7.41286 7.41325M15.5688 11.8733C15.5688 13.8616 13.957 15.4733 11.9688 15.4733C9.98055 15.4733 8.36877 13.8616 8.36877 11.8733C8.36877 9.88512 9.98055 8.27334 11.9688 8.27334C13.957 8.27334 15.5688 9.88512 15.5688 11.8733Z"
+                stroke="url(#paint0_linear_131_3020)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+              />
+              <defs>
+                <linearGradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint0_linear_131_3020"
+                  x1="-7.00037"
+                  x2="35.9996"
+                  y1="11.9995"
+                  y2="11.9995"
+                >
+                  <stop stopColor="#6D7077" />
+                  <stop offset="0.495192" stopColor="#FEFEFE" />
+                  <stop offset="1" stopColor="#3C4041" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <h3 className="font-semibold text-white text-xl">Follow Us</h3>
           </div>
+          <FollowUs />
         </div>
       </div>
       <FirstOpenHomeDialog score={user?.kindleScore ?? 0} />

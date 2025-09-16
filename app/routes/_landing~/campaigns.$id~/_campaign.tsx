@@ -123,7 +123,7 @@ export default function CampaignDetails({
     <div className="min-h-screen bg-gradient-to-b from-neutral-950 via-31% via-[#0e0e10] to-[#0d0d19]">
       {/* Header */}
       <div
-        className="px-10 py-8"
+        className="px-10 py-8 md:px-18"
         style={{
           backgroundImage:
             'radial-gradient(93.1% 93.1% at 50% 0%, #707070 0%, #524532 36.21%, #272117 68.11%, #120D0C 87.69%, #0A0A0A 100%)',
@@ -136,7 +136,7 @@ export default function CampaignDetails({
       </div>
 
       {/* Main Content */}
-      <div className="px-5 py-11">
+      <div className="px-5 py-11 md:px-18">
         <div className="flex flex-col gap-10">
           {/* Campaign Info Card */}
           <div className="w-full rounded-xl border border-[#2D3338] pt-4 pl-4">

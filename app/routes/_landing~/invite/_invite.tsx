@@ -151,7 +151,7 @@ export default function Invite({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24 md:px-18">
       {/* Smart Reminder Header */}
       <div
         className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover"

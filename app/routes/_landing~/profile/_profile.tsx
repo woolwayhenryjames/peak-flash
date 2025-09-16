@@ -87,7 +87,7 @@ export default function Profile({
     ? campaigns
     : campaigns.slice(0, showCampaignsLimit);
   return (
-    <div className="flex flex-col gap-6 p-4">
+    <div className="flex flex-col gap-6 p-4 md:px-18">
       {/* Header Profile Info */}
       <div className="flex flex-col items-center gap-4">
         <div className="flex flex-col items-center gap-4">

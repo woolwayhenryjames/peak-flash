@@ -177,7 +177,7 @@ export default function Leaderboard({
   return (
     <>
       <div
-        className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover pl-10"
+        className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover pl-10 md:pl-28"
         style={{ backgroundImage: `url(${bg})` }}
       >
         <div className="">
@@ -190,7 +190,7 @@ export default function Leaderboard({
         </div>
       </div>
       <div
-        className="container mx-auto min-h-screen"
+        className="container mx-auto min-h-screen md:px-18"
         style={{
           backgroundImage:
             'linear-gradient(180deg, #000001 0%, #151411 30.78%, #241F1A 71.63%, #151512 100%)',

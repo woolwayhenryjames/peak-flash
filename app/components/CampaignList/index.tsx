@@ -25,7 +25,7 @@ export default function CampaignList({
   type = 'default',
 }: CampaignListProps) {
   return (
-    <div className="flex flex-col justify-center gap-2.5 md:flex-row md:flex-wrap md:gap-4">
+    <div className="flex flex-col justify-center gap-2.5 md:gap-6">
       {campaigns.length === 0 ? (
         <div className="rounded-2xl border border-[#2D3338] bg-gradient-to-br from-[#20202D] to-[#101013] px-4 py-6 text-center">
           <p className="text-[#878788] text-sm">
@@ -38,7 +38,7 @@ export default function CampaignList({
 
           return (
             <Link
-              className="block h-[72px] rounded-2xl border border-[#2D3338] bg-gradient-to-br from-[#20202D] to-[#101013] px-4 py-2.5 md:flex-1"
+              className="block h-[72px] rounded-2xl border border-[#2D3338] bg-gradient-to-br from-[#20202D] to-[#101013] px-4 py-2.5"
               key={campaign.id}
               to={`/campaigns/${campaign.id}`}
               viewTransition
