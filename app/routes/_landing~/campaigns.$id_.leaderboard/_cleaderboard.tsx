@@ -198,7 +198,7 @@ export default function Leaderboard({
       >
         <div className="mx-auto mb-6 h-px w-[80%] bg-[#6c6c6c]/50" />
         <div className="mx-6 flex items-center justify-between rounded-xl border border-[#2d3338] p-4">
-          <div className="flex items-end gap-4">
+          <div className="flex items-center gap-4">
             <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-600">
               <img
                 alt={
@@ -215,12 +215,11 @@ export default function Leaderboard({
               <h3 className="font-medium text-white">
                 @{loaderData.user?.email || 'User'}
               </h3>
-              <div className="flex items-center gap-2">
-                <p className="font-light text-[#9f9f9f] text-xs">5 videos</p>
+              {loaderData.campaignWithRanks.userRank && (
                 <div className="rounded bg-linear-57 from-[#fdffa7] to-[#57ffd5] px-3 py-0.5 font-medium text-black text-xs">
-                  #{loaderData.campaignWithRanks.userRank || 0}
+                  #{loaderData.campaignWithRanks.userRank}
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
