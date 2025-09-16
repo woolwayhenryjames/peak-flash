@@ -329,17 +329,11 @@ export default function Invite({
                       <div className="flex items-center gap-4">
                         {/* Avatar */}
                         <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#f9f9fb] text-lg">
-                          {record.avatar.startsWith('http') ? (
-                            <img
-                              alt={`${record.name} avatar`}
-                              className="h-full w-full object-cover"
-                              src={record.avatar}
-                            />
-                          ) : (
-                            <span className="font-semibold text-gray-600">
-                              {record.avatar}
-                            </span>
-                          )}
+                          <img
+                            alt={`${record.name} avatar`}
+                            className="h-full w-full object-cover"
+                            src={record.avatar}
+                          />
                         </div>
 
                         {/* User Info */}
