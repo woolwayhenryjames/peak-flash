@@ -122,7 +122,7 @@ export default function Home({
           </div>
           <a
             className="border-[#505050] border-b pb-0.5 text-[#AEAEAE] text-xs hover:text-white"
-            href="/ascent"
+            href="/ascent?status=active"
           >
             View All
           </a>
