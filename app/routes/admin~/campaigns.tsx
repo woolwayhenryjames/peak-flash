@@ -17,6 +17,39 @@ import {
 } from '~/services/campaign.server';
 import type { Route } from './+types/campaigns';
 
+export function meta({ data }: Route.MetaArgs) {
+  const campaigns = data?.campaigns || [];
+  const totalCampaigns = campaigns.length;
+  const activeCampaigns = campaigns.filter(
+    (c) => new Date(c.endDate) > new Date()
+  ).length;
+  const endedCampaigns = totalCampaigns - activeCampaigns;
+
+  return [
+    { title: 'Admin - Campaign Management - Peak AI' },
+    {
+      name: 'description',
+      content: `Peak AI admin panel for campaign management. View and manage ${totalCampaigns} campaigns (${activeCampaigns} active, ${endedCampaigns} ended). Create, edit, and monitor campaign performance.`,
+    },
+    {
+      name: 'keywords',
+      content:
+        'Peak AI admin, campaign management, admin panel, campaign dashboard, create campaigns, edit campaigns, campaign analytics',
+    },
+    { name: 'robots', content: 'noindex, nofollow' }, // Admin pages should not be indexed
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph - minimal for admin pages
+    { property: 'og:title', content: 'Peak AI Admin - Campaign Management' },
+    {
+      property: 'og:description',
+      content: 'Administrative interface for Peak AI campaign management.',
+    },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Peak AI' },
+  ];
+}
+
 interface LoaderData {
   campaigns: Array<{
     id: string;

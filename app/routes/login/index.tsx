@@ -4,6 +4,45 @@ import { authClient } from '~/lib/auth-client';
 import bg from './assets/bg.avif';
 import tiktokIcon from './assets/tiktok-icon.svg';
 import FeatureItems from './components/FeatureItems';
+export function meta() {
+  return [
+    { title: 'Sign In to Peak AI - Start Earning with Crypto & AI Campaigns' },
+    {
+      name: 'description',
+      content:
+        'Join Peak AI and start earning Kindle Score points through crypto and AI campaigns. Connect with TikTok to participate in exclusive campaigns and climb the leaderboard.',
+    },
+    {
+      name: 'keywords',
+      content:
+        'Peak AI login, TikTok sign in, crypto campaigns, AI campaigns, social earning, Kindle Score, referral rewards, campaign participation',
+    },
+    { name: 'robots', content: 'index, follow' },
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    { property: 'og:title', content: 'Join Peak AI - Start Earning Today' },
+    {
+      property: 'og:description',
+      content:
+        'Connect your TikTok account and start earning rewards through crypto and AI campaigns. Join thousands of users already earning on Peak AI.',
+    },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Peak AI' },
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    {
+      name: 'twitter:title',
+      content: 'Join Peak AI - Crypto & AI Campaign Platform',
+    },
+    {
+      name: 'twitter:description',
+      content:
+        'Connect with TikTok and start earning through exclusive campaigns. Track your progress and compete with others!',
+    },
+  ];
+}
 
 export default function SignIn() {
   const [searchParams] = useSearchParams();

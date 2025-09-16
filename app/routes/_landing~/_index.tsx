@@ -11,6 +11,48 @@ import { getCampaignsForUser } from '~/services/campaign.server';
 import { getUserKindleRank } from '~/services/user-ranking.server';
 import type { Route } from './+types/_index';
 
+export function meta({ data }: Route.MetaArgs) {
+  const user = data?.user;
+  const campaigns = data?.campaigns || [];
+  const userRank = user?.kindleRank || 'N/A';
+  const userScore = user?.kindleScore || 0;
+
+  return [
+    { title: 'Peak AI - Your Crypto & AI Campaign Dashboard' },
+    {
+      name: 'description',
+      content: `Welcome to Peak AI! Track your Kindle Score (${userScore} points), compete in campaigns, and earn rewards. Currently ranked #${userRank} with ${campaigns.length} active campaigns.`,
+    },
+    {
+      name: 'keywords',
+      content:
+        'Peak AI, crypto campaigns, AI campaigns, Kindle Score, leaderboard, TikTok rewards, campaign dashboard, social earning',
+    },
+    { name: 'robots', content: 'index, follow' },
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    {
+      property: 'og:title',
+      content: 'Peak AI - Your Crypto & AI Campaign Dashboard',
+    },
+    {
+      property: 'og:description',
+      content: `Track your progress with ${userScore} Kindle Score points, ranked #${userRank}. Join campaigns and earn rewards on Peak AI.`,
+    },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Peak AI' },
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Peak AI - Your Campaign Dashboard' },
+    {
+      name: 'twitter:description',
+      content: `Track campaigns, earn Kindle Score points, and compete on leaderboards. Currently at ${userScore} points!`,
+    },
+  ];
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {

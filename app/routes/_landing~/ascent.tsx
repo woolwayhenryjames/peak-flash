@@ -8,6 +8,48 @@ import { getDbUser } from '~/services/auth.server';
 import { getCampaignsForUser } from '~/services/campaign.server';
 import type { Route } from './+types/ascent';
 
+export function meta({ data }: Route.MetaArgs) {
+  const pagination = data?.pagination;
+  const currentPage = pagination?.page || 1;
+  const totalCampaigns = pagination?.total || 0;
+
+  const statusText = 'All Campaigns';
+
+  return [
+    {
+      title: `${statusText} - Peak AI Campaign Hub ${currentPage > 1 ? `(Page ${currentPage})` : ''}`,
+    },
+    {
+      name: 'description',
+      content: `Discover all campaigns on Peak AI. Browse ${totalCampaigns} campaigns and find the perfect opportunity to earn Kindle Score points and rewards. Join crypto and AI campaigns today!`,
+    },
+    {
+      name: 'keywords',
+      content:
+        'Peak AI campaigns, all campaigns, crypto campaigns, AI campaigns, earn money, TikTok campaigns, campaign hub, social earning',
+    },
+    { name: 'robots', content: 'index, follow' },
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    { property: 'og:title', content: `${statusText} - Peak AI Campaign Hub` },
+    {
+      property: 'og:description',
+      content: `Explore ${totalCampaigns} campaigns on Peak AI. Find opportunities to earn through crypto and AI campaigns.`,
+    },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Peak AI' },
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: `Peak AI ${statusText}` },
+    {
+      name: 'twitter:description',
+      content: `Browse ${totalCampaigns} campaigns and start earning Kindle Score points. Join the Peak AI community today!`,
+    },
+  ];
+}
+
 type CampaignStatus = 'all' | 'active' | 'ended' | 'new';
 
 export async function loader({ request }: Route.LoaderArgs) {

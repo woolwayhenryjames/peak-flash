@@ -12,6 +12,63 @@ import type { Route } from './+types/_campaign';
 import profileIcon from './assets/profile.svg';
 import videoIcon from './assets/video.svg';
 
+export function meta({ data }: Route.MetaArgs) {
+  const campaign = data?.campaign;
+  const topParticipants = data?.topParticipants || [];
+  const userRank = data?.campaign?.userRank;
+
+  const campaignName = campaign?.name || 'Campaign';
+  const campaignDescription =
+    campaign?.description || 'Join this exciting campaign';
+  const poolSize = campaign?.poolSize || 0;
+  const participantCount = topParticipants.length;
+
+  const isActive = campaign?.endDate
+    ? new Date(campaign.endDate) > new Date()
+    : false;
+  const status = isActive ? 'Active' : 'Ended';
+
+  return [
+    { title: `${campaignName} - Peak AI Campaign` },
+    {
+      name: 'description',
+      content: `${campaignDescription.substring(0, 150)}${campaignDescription.length > 150 ? '...' : ''} Pool: $${poolSize}. ${status} campaign with ${participantCount}+ participants.${userRank ? ` You're ranked #${userRank}` : ''}`,
+    },
+    {
+      name: 'keywords',
+      content: `Peak AI campaign, ${campaignName}, crypto rewards, AI campaign, ${status.toLowerCase()} campaign, earn money, TikTok campaign`,
+    },
+    { name: 'robots', content: 'index, follow' },
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    {
+      property: 'og:title',
+      content: `${campaignName} - Join Peak AI Campaign`,
+    },
+    {
+      property: 'og:description',
+      content: `${status} campaign with $${poolSize} prize pool! ${campaignDescription.substring(0, 100)}${campaignDescription.length > 100 ? '...' : ''}`,
+    },
+    { property: 'og:type', content: 'article' },
+    { property: 'og:site_name', content: 'Peak AI' },
+    ...(campaign?.image
+      ? [{ property: 'og:image', content: campaign.image }]
+      : []),
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: `${campaignName} - Peak AI` },
+    {
+      name: 'twitter:description',
+      content: `${status} campaign with $${poolSize} prize pool. Join now and compete for rewards!`,
+    },
+    ...(campaign?.image
+      ? [{ name: 'twitter:image', content: campaign.image }]
+      : []),
+  ];
+}
+
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {

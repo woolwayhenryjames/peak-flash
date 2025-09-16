@@ -9,6 +9,58 @@ import { db } from '~/services/db.server';
 import type { Route } from './+types/_cleaderboard';
 import bg from './assets/bg.avif';
 
+export function meta({ data }: Route.MetaArgs) {
+  const campaign = data?.campaignWithRanks;
+  const currentPage = data?.pagination?.page || 1;
+  const totalParticipants = data?.pagination?.total || 0;
+
+  const campaignName = campaign?.name || 'Campaign';
+  const poolSize = campaign?.poolSize || 0;
+  const isActive = campaign?.endDate
+    ? new Date(campaign.endDate) > new Date()
+    : false;
+  const status = isActive ? 'Active' : 'Ended';
+
+  return [
+    {
+      title: `${campaignName} Leaderboard - Peak AI ${currentPage > 1 ? `(Page ${currentPage})` : ''}`,
+    },
+    {
+      name: 'description',
+      content: `View the leaderboard for ${campaignName} campaign on Peak AI. ${status} campaign with $${poolSize} prize pool and ${totalParticipants} participants competing for rewards.`,
+    },
+    {
+      name: 'keywords',
+      content: `${campaignName} leaderboard, Peak AI campaign ranking, crypto campaign results, AI campaign winners, ${status.toLowerCase()} campaign`,
+    },
+    { name: 'robots', content: 'index, follow' },
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    { property: 'og:title', content: `${campaignName} Leaderboard - Peak AI` },
+    {
+      property: 'og:description',
+      content: `Check out who's leading in the ${campaignName} campaign! ${status} with $${poolSize} prize pool and ${totalParticipants} participants.`,
+    },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Peak AI' },
+    ...(campaign?.image
+      ? [{ property: 'og:image', content: campaign.image }]
+      : []),
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: `${campaignName} Leaderboard` },
+    {
+      name: 'twitter:description',
+      content: `See who's winning the ${campaignName} campaign on Peak AI! $${poolSize} prize pool up for grabs.`,
+    },
+    ...(campaign?.image
+      ? [{ name: 'twitter:image', content: campaign.image }]
+      : []),
+  ];
+}
+
 const formatter = new Intl.NumberFormat('en', {
   notation: 'compact',
   compactDisplay: 'short',

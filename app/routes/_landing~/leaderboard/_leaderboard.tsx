@@ -11,6 +11,49 @@ import {
 import type { Route } from './+types/_leaderboard';
 import bg from './assets/bg.avif';
 
+export function meta({ data }: Route.MetaArgs) {
+  const userRank = data?.user?.rank || 'N/A';
+  const currentPage = data?.pagination?.page || 1;
+  const totalUsers = data?.pagination?.total || 0;
+
+  return [
+    {
+      title: `Global Leaderboard - Peak AI Rankings ${currentPage > 1 ? `(Page ${currentPage})` : ''}`,
+    },
+    {
+      name: 'description',
+      content: `Explore Peak AI's global leaderboard with ${totalUsers} users competing for the top Kindle Score rankings. See who's leading in crypto and AI campaigns, track your position at rank #${userRank}.`,
+    },
+    {
+      name: 'keywords',
+      content:
+        'Peak AI leaderboard, global rankings, Kindle Score rankings, crypto campaign leaders, AI campaign winners, user competition, top performers',
+    },
+    { name: 'robots', content: 'index, follow' },
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    {
+      property: 'og:title',
+      content: "Peak AI Global Leaderboard - See Who's Leading",
+    },
+    {
+      property: 'og:description',
+      content: `Check out the top performers on Peak AI! ${totalUsers} users competing for Kindle Score supremacy. Where do you rank?`,
+    },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Peak AI' },
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Peak AI Global Leaderboard' },
+    {
+      name: 'twitter:description',
+      content: `Discover the top Kindle Score performers across ${totalUsers} Peak AI users. Compete in campaigns and climb the rankings!`,
+    },
+  ];
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {

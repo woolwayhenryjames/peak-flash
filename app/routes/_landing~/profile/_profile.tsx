@@ -7,6 +7,47 @@ import { getUserKindleRank } from '~/services/user-ranking.server';
 import type { Route } from './+types/_profile';
 import starIcon from './assets/star-icon.svg';
 
+export function meta({ data }: Route.MetaArgs) {
+  const user = data?.user;
+  const campaigns = data?.campaigns || [];
+  const totalVideos = data?.totalVideos || 0;
+  const userRank = user?.kindleRank || 'N/A';
+  const userScore = user?.kindleScore || 0;
+  const username = 'User';
+
+  return [
+    { title: `${username}'s Profile - Peak AI` },
+    {
+      name: 'description',
+      content: `View ${username}'s Peak AI profile. Ranked #${userRank} with ${userScore} Kindle Score points across ${campaigns.length} campaigns and ${totalVideos} videos submitted.`,
+    },
+    {
+      name: 'keywords',
+      content:
+        'Peak AI profile, user stats, Kindle Score, campaign history, leaderboard ranking, video submissions, crypto rewards',
+    },
+    { name: 'robots', content: 'noindex, nofollow' }, // Private user profiles should not be indexed
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    { property: 'og:title', content: `${username}'s Peak AI Profile` },
+    {
+      property: 'og:description',
+      content: `Peak AI user profile for ${username}. Ranked #${userRank} with ${userScore} points across ${campaigns.length} campaigns.`,
+    },
+    { property: 'og:type', content: 'profile' },
+    { property: 'og:site_name', content: 'Peak AI' },
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary' },
+    { name: 'twitter:title', content: `${username} on Peak AI` },
+    {
+      name: 'twitter:description',
+      content: `Check out ${username}'s performance on Peak AI - ${userScore} Kindle Score points and ranked #${userRank}!`,
+    },
+  ];
+}
+
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {

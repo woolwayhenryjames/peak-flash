@@ -17,6 +17,45 @@ import tiktok from './assets/tiktok.svg';
 import whatsapp from './assets/whatsapp.png';
 import x from './assets/x.svg';
 
+export function meta({ data }: Route.MetaArgs) {
+  const inviteStats = data?.inviteStats;
+  const totalInvites = inviteStats?.inviteCount || 0;
+
+  return [
+    { title: 'Invite Friends - Earn Rewards on Peak AI' },
+    {
+      name: 'description',
+      content: `Invite friends to Peak AI and earn rewards together! You've already invited ${totalInvites} friends. Share your invite code and grow the Peak AI community while earning bonus points.`,
+    },
+    {
+      name: 'keywords',
+      content:
+        'Peak AI invite, referral program, earn rewards, invite friends, bonus points, social sharing, referral code, crypto rewards',
+    },
+    { name: 'robots', content: 'noindex, nofollow' }, // Personal invite pages should not be indexed
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    { property: 'og:title', content: 'Join Peak AI through My Invite!' },
+    {
+      property: 'og:description',
+      content:
+        "I'm inviting you to join Peak AI! Earn Kindle Score points through crypto and AI campaigns. Join me and let's compete together!",
+    },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Peak AI' },
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: 'Join Me on Peak AI!' },
+    {
+      name: 'twitter:description',
+      content:
+        "Earn rewards through crypto & AI campaigns on Peak AI. Join through my invite and let's earn together!",
+    },
+  ];
+}
+
 const socialPlatforms = [
   { name: 'Twitter', icon: x },
   { name: 'TikTok', icon: tiktok },

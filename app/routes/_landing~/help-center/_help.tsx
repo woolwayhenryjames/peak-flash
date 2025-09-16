@@ -10,6 +10,43 @@ import penToolIcon from './assets/pen-tool-icon.svg';
 import smsBoldIcon from './assets/sms-bold-icon.svg';
 import smsNotificationIcon from './assets/sms-notification-icon.svg';
 
+export function meta() {
+  return [
+    { title: 'Help Center - Peak AI Support & FAQ' },
+    {
+      name: 'description',
+      content:
+        'Get help with Peak AI! Find answers to frequently asked questions, learn about Kindle Score, campaign participation, AI detection, ranking systems, and earnings. Contact our support team at ask@takeapeak.ai.',
+    },
+    {
+      name: 'keywords',
+      content:
+        'Peak AI help, FAQ, support center, Kindle Score help, campaign questions, AI detection, ranking system, earnings help, customer support',
+    },
+    { name: 'robots', content: 'index, follow' },
+    { name: 'author', content: 'Peak AI' },
+
+    // Open Graph
+    { property: 'og:title', content: 'Peak AI Help Center - Get Support' },
+    {
+      property: 'og:description',
+      content:
+        'Need help with Peak AI? Find answers to your questions about campaigns, Kindle Score, rankings, and more in our comprehensive help center.',
+    },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'Peak AI' },
+
+    // Twitter Card
+    { name: 'twitter:card', content: 'summary' },
+    { name: 'twitter:title', content: 'Peak AI Help Center' },
+    {
+      name: 'twitter:description',
+      content:
+        'Get answers to your Peak AI questions. Learn about campaigns, Kindle Score, and how to maximize your earnings.',
+    },
+  ];
+}
+
 export default function Help() {
   const [isCopied, setIsCopied] = useState(false);
 

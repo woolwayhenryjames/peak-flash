@@ -29,7 +29,11 @@ export const auth = betterAuth({
   },
   hooks: {
     after: createAuthMiddleware((ctx) => {
-      console.log(ctx.headers);
+      console.log(
+        ctx.headers?.get?.('X-Inviter-ID'),
+        ctx.headers?.get?.('x-inviter-id'),
+        ctx.context.newSession
+      );
 
       const newSession = ctx.context.newSession;
       if (newSession) {
