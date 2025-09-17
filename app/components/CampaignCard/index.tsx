@@ -116,7 +116,7 @@ export default function CampaignCard({
 
             {/* Stats Section */}
             <div className="grid grid-cols-2 gap-4">
-              {/* Token Pool */}
+              {/* Prize Pool */}
               <div className="flex flex-col gap-2 rounded-lg border border-[#9c9c9c]/20 p-3">
                 <div
                   className={cn(
@@ -127,7 +127,7 @@ export default function CampaignCard({
                   {formatter.format(poolSize)}
                 </div>
                 <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
-                  Token Pool
+                  Prize Pool
                 </div>
               </div>
 

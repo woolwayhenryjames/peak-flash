@@ -80,16 +80,12 @@ export default function CampaignList({
                 </div>
                 <div className="w-[40%] border-[#2D3338] border-l pl-3">
                   <div className="text-right">
-                    {type === 'default' ? (
+                    {type === 'default' && (
                       <span
                         className={`bg-gradient-to-r ${status.gradient} bg-clip-text font-normal text-transparent text-xs`}
                       >
                         {status.text}
                       </span>
-                    ) : (
-                      <p className="text-[#878788] text-xs">
-                        {formatter.format(campaign.poolSize)} Tokens
-                      </p>
                     )}
                     <div className="flex flex-col items-end">
                       {campaign.isParticipating && campaign.userRank ? (

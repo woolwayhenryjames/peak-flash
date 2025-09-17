@@ -245,7 +245,7 @@ export default function Leaderboard({
               {formatter.format(loaderData.campaignWithRanks.poolSize || 0)}
             </span>
             <span className="font-light text-[#A7A7A7] text-xs">
-              Token Pool
+              Prize Pool
             </span>
           </div>
         </div>
