@@ -1,18 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import GlowContainer from '~/components/GlowContainer';
 import DialogWithCloseButton from '../DialogWithCloseButton';
 import flower from './assets/flower.svg';
 
 export default function FirstOpenCampainDetailsDialog({
   id,
-  tags,
+  joinRequirement,
   forceShow = false,
 }: {
   id: string;
-  tags?: string[];
+  joinRequirement: unknown;
   forceShow?: boolean;
 }) {
   const [show, setShow] = useState(forceShow);
+  const tags = useMemo(() => {
+    if (joinRequirement && typeof joinRequirement === 'object') {
+      const tagsKey = Object.keys(joinRequirement).find((key) =>
+        key.toLowerCase().includes('tag')
+      );
+      if (tagsKey) {
+        return (joinRequirement as any)[tagsKey] as string[];
+      }
+    }
+    return null;
+  }, [joinRequirement]);
 
   useEffect(() => {
     const lastDismissed = localStorage.getItem(

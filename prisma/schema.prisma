@@ -44,6 +44,7 @@ model Campaign {
   name            String
   image           String?  @db.Text
   poolSize        Int      @default(0)
+  poolUnit        String?  @db.VarChar(10)
   startDate       DateTime
   endDate         DateTime
   description     String?  @db.Text

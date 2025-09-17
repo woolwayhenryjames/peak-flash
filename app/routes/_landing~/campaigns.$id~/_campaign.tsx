@@ -2,6 +2,7 @@ import { Fragment, useMemo, useState } from 'react';
 import Markdown from 'react-markdown';
 import { Link, redirect } from 'react-router';
 import CampaignCard from '~/components/CampaignCard';
+import FirstOpenCampainDetailsDialog from '~/components/Dialogs/FirstOpenCampainDetailsDialog';
 import SubmitVideoDialog from '~/components/Dialogs/SubmitVideoDialog';
 import GlowContainer from '~/components/GlowContainer';
 import { cn } from '~/lib/utils';
@@ -497,6 +498,10 @@ export default function CampaignDetails({
         id={campaign.id}
         setShow={setShowSubmitVideoDialog}
         show={showSubmitVideoDialog}
+      />
+      <FirstOpenCampainDetailsDialog
+        id={campaign.id}
+        joinRequirement={campaign.joinRequirement}
       />
     </div>
   );

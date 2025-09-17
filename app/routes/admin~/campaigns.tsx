@@ -1,3 +1,4 @@
+import { type FileUpload, parseFormData } from '@remix-run/form-data-parser';
 import { useEffect, useState } from 'react';
 import {
   Form,
@@ -9,6 +10,7 @@ import {
 import DialogWithCloseButton from '~/components/Dialogs/DialogWithCloseButton';
 import { cn } from '~/lib/utils';
 import { getSessionUser } from '~/services/auth.server';
+import { uploadHandler } from '~/services/aws-s3.server';
 import {
   createCampaign,
   deleteCampaign,
@@ -57,6 +59,7 @@ interface LoaderData {
     description: string | null;
     image: string | null;
     poolSize: number;
+    poolUnit: string | null;
     order: number;
     startDate: Date;
     endDate: Date;
@@ -88,18 +91,24 @@ export async function loader({ request }: Route.LoaderArgs) {
 async function handleCreateCampaign(formData: FormData) {
   const name = formData.get('name') as string;
   const description = formData.get('description') as string;
-  const image = formData.get('image') as string;
+  const imageFile = formData.get('image');
+  const imageUrl = formData.get('imageUrl') as string;
   const poolSize = Number.parseInt(formData.get('poolSize') as string, 10);
+  const poolUnit = formData.get('poolUnit') as string;
   const order = Number.parseInt(formData.get('order') as string, 10) || 0;
   const startDate = new Date(formData.get('startDate') as string);
   const endDate = new Date(formData.get('endDate') as string);
   const joinRequirement = formData.get('joinRequirement') as string;
 
+  // Use uploaded image path if file was uploaded, otherwise use URL if provided
+  const image = (imageFile as string) || imageUrl || undefined;
+
   await createCampaign({
     name,
     description: description || undefined,
-    image: image || undefined,
+    image,
     poolSize,
+    poolUnit: poolUnit || undefined,
     order,
     startDate,
     endDate,
@@ -113,18 +122,24 @@ async function handleUpdateCampaign(formData: FormData) {
   const id = formData.get('id') as string;
   const name = formData.get('name') as string;
   const description = formData.get('description') as string;
-  const image = formData.get('image') as string;
+  const imageFile = formData.get('image');
+  const imageUrl = formData.get('imageUrl') as string;
   const poolSize = Number.parseInt(formData.get('poolSize') as string, 10);
+  const poolUnit = formData.get('poolUnit') as string;
   const order = Number.parseInt(formData.get('order') as string, 10) || 0;
   const startDate = new Date(formData.get('startDate') as string);
   const endDate = new Date(formData.get('endDate') as string);
   const joinRequirement = formData.get('joinRequirement') as string;
 
+  // Use uploaded image path if file was uploaded, otherwise use URL if provided
+  const image = (imageFile as string) || imageUrl || undefined;
+
   await updateCampaign(id, {
     name,
     description: description || undefined,
-    image: image || undefined,
+    image,
     poolSize,
+    poolUnit: poolUnit || undefined,
     order,
     startDate,
     endDate,
@@ -140,7 +155,21 @@ export async function action({ request }: Route.ActionArgs) {
     throw redirect('/login');
   }
 
-  const formData = await request.formData();
+  // Handle file uploads for image field
+  const formUploadHandler = async (fileUpload: FileUpload) => {
+    if (
+      fileUpload.fieldName === 'image' &&
+      fileUpload.type.startsWith('image/')
+    ) {
+      // Use the existing uploadHandler from aws-s3.server.ts
+      const uploadPath = await uploadHandler(fileUpload);
+      // Convert to full asset URL that can be served by the assets route
+      return `/assets${uploadPath}`;
+    }
+    return null;
+  };
+
+  const formData = await parseFormData(request, formUploadHandler);
   const intent = formData.get('intent');
 
   try {
@@ -174,6 +203,7 @@ type Campaign = {
   description: string | null;
   image: string | null;
   poolSize: number;
+  poolUnit: string | null;
   order: number;
   startDate: Date;
   endDate: Date;
@@ -250,6 +280,9 @@ export default function AdminCampaigns() {
                   Pool Size
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
+                  Unit
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
                   Order
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
@@ -306,7 +339,14 @@ export default function AdminCampaigns() {
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
-                      ${campaign.poolSize.toLocaleString()}
+                      {campaign.poolUnit === 'USD' ? '$' : ''}
+                      {campaign.poolSize.toLocaleString()}
+                      {campaign.poolUnit && campaign.poolUnit !== 'USD'
+                        ? ` ${campaign.poolUnit}`
+                        : ''}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
+                      {campaign.poolUnit || 'USD'}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
                       {campaign.order}
@@ -614,7 +654,7 @@ function CampaignModal({
       show={isOpen}
       title={isEdit ? 'Edit Campaign' : 'Create Campaign'}
     >
-      <Form className="space-y-4" method="post">
+      <Form className="space-y-4" encType="multipart/form-data" method="post">
         <input
           name="intent"
           type="hidden"
@@ -628,21 +668,40 @@ function CampaignModal({
           </div>
         )}
 
-        <div>
-          <label
-            className="block font-medium text-gray-300 text-sm"
-            htmlFor="name"
-          >
-            Name
-          </label>
-          <input
-            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-400 focus:ring-indigo-400 sm:text-sm"
-            defaultValue={isEdit ? campaign.name : ''}
-            id="name"
-            name="name"
-            required
-            type="text"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              className="block font-medium text-gray-300 text-sm"
+              htmlFor="order"
+            >
+              Order (Display Priority)
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              defaultValue={isEdit ? campaign.order : 0}
+              id="order"
+              min="0"
+              name="order"
+              type="number"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block font-medium text-gray-300 text-sm"
+              htmlFor="name"
+            >
+              Name
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-400 focus:ring-indigo-400 sm:text-sm"
+              defaultValue={isEdit ? campaign.name : ''}
+              id="name"
+              name="name"
+              required
+              type="text"
+            />
+          </div>
         </div>
 
         <div>
@@ -662,88 +721,130 @@ function CampaignModal({
         </div>
 
         <div>
-          <label
-            className="block font-medium text-gray-300 text-sm"
-            htmlFor="image"
-          >
-            Image URL
-          </label>
-          <input
-            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            defaultValue={isEdit ? campaign.image || '' : ''}
-            id="image"
-            name="image"
-            type="url"
-          />
+          <div className="mb-2 block font-medium text-gray-300 text-sm">
+            Campaign Image
+          </div>
+          {isEdit && campaign.image && (
+            <div className="mb-3">
+              <p className="mb-1 text-gray-400 text-xs">Current Image</p>
+              <img
+                alt="Current campaign"
+                className="h-20 w-20 rounded-lg object-cover"
+                src={campaign.image}
+              />
+            </div>
+          )}
+          <div className="space-y-3">
+            <div>
+              <label className="block text-gray-400 text-xs" htmlFor="image">
+                Upload New Image File
+              </label>
+              <input
+                accept="image/*"
+                className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm file:mr-4 file:rounded-md file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-sm file:text-white hover:file:bg-indigo-700 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                id="image"
+                name="image"
+                type="file"
+              />
+            </div>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-gray-600 border-t" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-gray-900 px-2 text-gray-400">OR</span>
+              </div>
+            </div>
+            <div>
+              <label className="block text-gray-400 text-xs" htmlFor="imageUrl">
+                Enter Image URL
+              </label>
+              <input
+                className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                defaultValue={isEdit ? campaign.image || '' : ''}
+                id="imageUrl"
+                name="imageUrl"
+                placeholder="https://example.com/image.jpg"
+                type="url"
+              />
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label
-            className="block font-medium text-gray-300 text-sm"
-            htmlFor="poolSize"
-          >
-            Pool Size ($)
-          </label>
-          <input
-            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            defaultValue={isEdit ? campaign.poolSize : ''}
-            id="poolSize"
-            min="0"
-            name="poolSize"
-            required
-            type="number"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              className="block font-medium text-gray-300 text-sm"
+              htmlFor="poolSize"
+            >
+              Pool Size
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              defaultValue={isEdit ? campaign.poolSize : ''}
+              id="poolSize"
+              min="0"
+              name="poolSize"
+              required
+              type="number"
+            />
+          </div>
+
+          <div>
+            <label
+              className="block font-medium text-gray-300 text-sm"
+              htmlFor="poolUnit"
+            >
+              Pool Unit
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              defaultValue={isEdit ? campaign.poolUnit || '' : ''}
+              id="poolUnit"
+              maxLength={10}
+              name="poolUnit"
+              placeholder="e.g. USD, USDT, ETH, Points"
+              type="text"
+            />
+          </div>
         </div>
 
-        <div>
-          <label
-            className="block font-medium text-gray-300 text-sm"
-            htmlFor="order"
-          >
-            Order (Display Priority)
-          </label>
-          <input
-            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            defaultValue={isEdit ? campaign.order : 0}
-            id="order"
-            min="0"
-            name="order"
-            type="number"
-          />
-        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              className="block font-medium text-gray-300 text-sm"
+              htmlFor="startDate"
+            >
+              Start Date
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              defaultValue={
+                isEdit ? formatDateForInput(campaign.startDate) : ''
+              }
+              id="startDate"
+              name="startDate"
+              required
+              type="datetime-local"
+            />
+          </div>
 
-        <div>
-          <label
-            className="block font-medium text-gray-300 text-sm"
-            htmlFor="startDate"
-          >
-            Start Date
-          </label>
-          <input
-            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            defaultValue={isEdit ? formatDateForInput(campaign.startDate) : ''}
-            id="startDate"
-            name="startDate"
-            required
-            type="datetime-local"
-          />
-        </div>
-
-        <div>
-          <label
-            className="block font-medium text-gray-300 text-sm"
-            htmlFor="endDate"
-          >
-            End Date
-          </label>
-          <input
-            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            defaultValue={isEdit ? formatDateForInput(campaign.endDate) : ''}
-            id="endDate"
-            name="endDate"
-            required
-            type="datetime-local"
-          />
+          <div>
+            <label
+              className="block font-medium text-gray-300 text-sm"
+              htmlFor="endDate"
+            >
+              End Date
+            </label>
+            <input
+              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              defaultValue={isEdit ? formatDateForInput(campaign.endDate) : ''}
+              id="endDate"
+              name="endDate"
+              required
+              type="datetime-local"
+            />
+          </div>
         </div>
 
         <div>

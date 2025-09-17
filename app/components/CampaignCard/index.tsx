@@ -53,6 +53,7 @@ export default function CampaignCard({
     description,
     image,
     poolSize,
+    poolUnit,
     participants,
     userRank,
     endDate,
@@ -124,7 +125,10 @@ export default function CampaignCard({
                     gradientByType[type]
                   )}
                 >
-                  {formatter.format(poolSize)}
+                  $&nbsp;{formatter.format(poolSize)}{' '}
+                  {poolUnit && (
+                    <span className="font-light text-xs">in {poolUnit}</span>
+                  )}
                 </div>
                 <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
                   Prize Pool

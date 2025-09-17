@@ -46,7 +46,7 @@ const storage = new S3Client({
 });
 
 export const uploadHandler = async (fileUpload: FileUpload) => {
-  const fileName = `assets/user-upload/${Date.now()}-${fileUpload.name}`;
+  const fileName = `user-upload/${Date.now()}-${fileUpload.name}`;
   const upload = await new Upload({
     client: storage,
     leavePartsOnError: false,
