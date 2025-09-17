@@ -151,7 +151,7 @@ export default function Invite({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24 md:px-18">
+    <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24">
       {/* Smart Reminder Header */}
       <div
         className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover"
@@ -162,7 +162,7 @@ export default function Invite({
         </h1>
       </div>
 
-      <div className="mt-4 space-y-6 px-5">
+      <div className="mt-4 space-y-6 px-5 md:px-18">
         {/* Invite & Earn Business Card */}
         <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-10">
           <div className="space-y-12 text-center">
