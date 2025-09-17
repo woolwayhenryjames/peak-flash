@@ -100,7 +100,7 @@ async function handleCreateCampaign(formData: FormData) {
     poolSize,
     startDate,
     endDate,
-    joinRequirement: joinRequirement || undefined,
+    joinRequirement: joinRequirement ? JSON.parse(joinRequirement) : undefined,
   });
 
   return { success: true, message: 'Campaign created successfully' };
@@ -218,13 +218,16 @@ export default function AdminCampaigns() {
           </button>
         </div>
 
-        {actionData && !actionData.success && (
-          <div className="mb-4 rounded-lg border border-red-500 bg-red-900/20 p-4 text-red-300">
-            <p>{actionData.error}</p>
-          </div>
-        )}
+        {actionData &&
+          !actionData.success &&
+          !isCreateModalOpen &&
+          !editingCampaign && (
+            <div className="mb-4 rounded-lg border border-red-500 bg-red-900/20 p-4 text-red-300">
+              <p>{actionData.error}</p>
+            </div>
+          )}
 
-        {actionData?.success && (
+        {actionData?.success && !isCreateModalOpen && !editingCampaign && (
           <div className="mb-4 rounded-lg border border-green-500 bg-green-900/20 p-4 text-green-300">
             <p>{actionData.message}</p>
           </div>
@@ -447,7 +450,7 @@ function DynamicJSONInput({
       return (
         <div className="space-y-2">
           {value.map((item, index) => (
-            <div className="flex gap-2" key={`${key}-${String(item)}-${index}`}>
+            <div className="flex gap-2" key={`${key}-${index}`}>
               <input
                 className="flex-1 rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
                 onChange={(e) => {
