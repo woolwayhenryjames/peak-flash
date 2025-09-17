@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Form,
   redirect,
@@ -72,12 +72,11 @@ type ActionData =
   | { success: true; message: string }
   | { success: false; error: string };
 
+const allowedAdminEmails = ['arslanablikim', 'user7948065599493'];
+
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getSessionUser(request);
-  if (
-    user.isErr() ||
-    !['arslanablikim', 'user7948065599493'].includes(user.value.email)
-  ) {
+  if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
     throw redirect('/login');
   }
 
@@ -101,7 +100,7 @@ async function handleCreateCampaign(formData: FormData) {
     poolSize,
     startDate,
     endDate,
-    joinRequirement: joinRequirement ? JSON.parse(joinRequirement) : undefined,
+    joinRequirement: joinRequirement || undefined,
   });
 
   return { success: true, message: 'Campaign created successfully' };
@@ -132,7 +131,7 @@ async function handleUpdateCampaign(formData: FormData) {
 
 export async function action({ request }: Route.ActionArgs) {
   const user = await getSessionUser(request);
-  if (user.isErr() || user.value.email !== 'user7948065599493') {
+  if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
     throw redirect('/login');
   }
 
@@ -189,6 +188,14 @@ export default function AdminCampaigns() {
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
 
   const isSubmitting = navigation.state === 'submitting';
+
+  // Close modal on successful submission
+  useEffect(() => {
+    if (actionData?.success && !isSubmitting) {
+      setIsCreateModalOpen(false);
+      setEditingCampaign(null);
+    }
+  }, [actionData?.success, isSubmitting]);
 
   return (
     <>
@@ -440,7 +447,7 @@ function DynamicJSONInput({
       return (
         <div className="space-y-2">
           {value.map((item, index) => (
-            <div className="flex gap-2" key={`${key}-item-${index}`}>
+            <div className="flex gap-2" key={`${key}-${String(item)}-${index}`}>
               <input
                 className="flex-1 rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
                 onChange={(e) => {
@@ -577,6 +584,7 @@ function CampaignModal({
   onClose: () => void;
   isSubmitting: boolean;
 }) {
+  const actionData = useActionData<ActionData>();
   const isEdit = !!campaign;
 
   const formatDateForInput = (date: Date | string) => {
@@ -598,6 +606,12 @@ function CampaignModal({
           value={isEdit ? 'update' : 'create'}
         />
         {isEdit && <input name="id" type="hidden" value={campaign.id} />}
+
+        {actionData && !actionData.success && (isOpen || !!campaign) && (
+          <div className="rounded-lg border border-red-500 bg-red-900/20 p-4 text-red-300">
+            <p>{actionData.error}</p>
+          </div>
+        )}
 
         <div>
           <label
