@@ -5,10 +5,13 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from 'react-router';
 
 import type { Route } from './+types/root';
 import './app.css';
+import { useEffect } from 'react';
+import { pageview } from '~/lib/gtags.client';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -37,7 +40,16 @@ export const links: Route.LinksFunction = () => [
   { rel: 'manifest', href: '/icons/site.webmanifest' },
 ];
 
+const gaTrackingId = 'G-FD4ZDVH6YP';
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (import.meta.env.MODE === 'production') {
+      pageview(location.pathname, gaTrackingId);
+    }
+  }, [location]);
   return (
     <html lang="en">
       <head>
@@ -51,6 +63,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        {import.meta.env.MODE === 'production' && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaTrackingId}`}
+            />
+            <script
+              async
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: dynamic gaTrackingId
+              dangerouslySetInnerHTML={{
+                __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', '${gaTrackingId}', {
+                  page_path: window.location.pathname,
+                });
+              `,
+              }}
+              id="gtag-init"
+            />
+          </>
+        )}
         {children}
         <ScrollRestoration />
         <Scripts />

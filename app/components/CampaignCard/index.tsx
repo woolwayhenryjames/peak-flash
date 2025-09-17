@@ -125,7 +125,7 @@ export default function CampaignCard({
                     gradientByType[type]
                   )}
                 >
-                  $&nbsp;{formatter.format(poolSize)}{' '}
+                  $&nbsp;{formatter.format(poolSize)}&nbsp;
                   {poolUnit && (
                     <span className="font-light text-xs">in {poolUnit}</span>
                   )}
