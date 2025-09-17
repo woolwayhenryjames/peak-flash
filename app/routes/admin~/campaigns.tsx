@@ -19,6 +19,11 @@ import {
 } from '~/services/campaign.server';
 import type { Route } from './+types/campaigns';
 
+const formatter = new Intl.NumberFormat('en', {
+  notation: 'compact',
+  compactDisplay: 'short',
+});
+
 export function meta({ data }: Route.MetaArgs) {
   const campaigns = data?.campaigns || [];
   const totalCampaigns = campaigns.length;
@@ -269,10 +274,13 @@ export default function AdminCampaigns() {
           </div>
         )}
 
-        <div className="overflow-hidden bg-gray-900 shadow ring-1 ring-gray-700 md:rounded-lg">
+        <div className="overflow-x-auto bg-gray-900 shadow ring-1 ring-gray-700 md:rounded-lg">
           <table className="min-w-full divide-y divide-gray-700">
             <thead className="bg-gray-800">
               <tr>
+                <th className="px-6 py-3">
+                  <span className="sr-only">Order</span>
+                </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
                   Name
                 </th>
@@ -280,24 +288,17 @@ export default function AdminCampaigns() {
                   Pool Size
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
-                  Unit
-                </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
-                  Order
-                </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
                   Participants
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
                   Start Date
-                </th>
-                <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
+                  <br />
                   End Date
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
                   Status
                 </th>
-                <th className="relative px-6 py-3">
+                <th className="w-32 px-6 py-3">
                   <span className="sr-only">Actions</span>
                 </th>
               </tr>
@@ -317,6 +318,9 @@ export default function AdminCampaigns() {
 
                 return (
                   <tr className="hover:bg-gray-800" key={campaign.id}>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
+                      {campaign.order}
+                    </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="flex items-center">
                         {campaign.image && (
@@ -339,25 +343,15 @@ export default function AdminCampaigns() {
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
-                      {campaign.poolUnit === 'USD' ? '$' : ''}
-                      {campaign.poolSize.toLocaleString()}
-                      {campaign.poolUnit && campaign.poolUnit !== 'USD'
-                        ? ` ${campaign.poolUnit}`
-                        : ''}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
-                      {campaign.poolUnit || 'USD'}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
-                      {campaign.order}
+                      $&nbsp;{formatter.format(campaign.poolSize)}
+                      {campaign.poolUnit && ` in ${campaign.poolUnit}`}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
                       {campaign._count.campaignUsers}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-gray-300 text-sm">
                       {startDate.toLocaleDateString()}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-gray-300 text-sm">
+                      <br />
                       {endDate.toLocaleDateString()}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
@@ -376,16 +370,16 @@ export default function AdminCampaigns() {
                         {status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-right font-medium text-sm">
-                      <div className="flex items-center justify-end gap-2">
+                    <td className="w-32 whitespace-nowrap px-6 py-4 text-right font-medium text-sm">
+                      <div className="flex min-w-fit items-center justify-end gap-3">
                         <button
-                          className="text-indigo-400 hover:text-indigo-300"
+                          className="shrink-0 text-indigo-400 hover:text-indigo-300"
                           onClick={() => setEditingCampaign(campaign)}
                           type="button"
                         >
                           Edit
                         </button>
-                        <Form className="inline" method="post">
+                        <Form className="inline shrink-0" method="post">
                           <input name="intent" type="hidden" value="delete" />
                           <input name="id" type="hidden" value={campaign.id} />
                           <button
