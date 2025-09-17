@@ -57,6 +57,7 @@ interface LoaderData {
     description: string | null;
     image: string | null;
     poolSize: number;
+    order: number;
     startDate: Date;
     endDate: Date;
     joinRequirement: unknown;
@@ -89,6 +90,7 @@ async function handleCreateCampaign(formData: FormData) {
   const description = formData.get('description') as string;
   const image = formData.get('image') as string;
   const poolSize = Number.parseInt(formData.get('poolSize') as string, 10);
+  const order = Number.parseInt(formData.get('order') as string, 10) || 0;
   const startDate = new Date(formData.get('startDate') as string);
   const endDate = new Date(formData.get('endDate') as string);
   const joinRequirement = formData.get('joinRequirement') as string;
@@ -98,6 +100,7 @@ async function handleCreateCampaign(formData: FormData) {
     description: description || undefined,
     image: image || undefined,
     poolSize,
+    order,
     startDate,
     endDate,
     joinRequirement: joinRequirement ? JSON.parse(joinRequirement) : undefined,
@@ -112,6 +115,7 @@ async function handleUpdateCampaign(formData: FormData) {
   const description = formData.get('description') as string;
   const image = formData.get('image') as string;
   const poolSize = Number.parseInt(formData.get('poolSize') as string, 10);
+  const order = Number.parseInt(formData.get('order') as string, 10) || 0;
   const startDate = new Date(formData.get('startDate') as string);
   const endDate = new Date(formData.get('endDate') as string);
   const joinRequirement = formData.get('joinRequirement') as string;
@@ -121,6 +125,7 @@ async function handleUpdateCampaign(formData: FormData) {
     description: description || undefined,
     image: image || undefined,
     poolSize,
+    order,
     startDate,
     endDate,
     joinRequirement: joinRequirement ? JSON.parse(joinRequirement) : undefined,
@@ -169,6 +174,7 @@ type Campaign = {
   description: string | null;
   image: string | null;
   poolSize: number;
+  order: number;
   startDate: Date;
   endDate: Date;
   joinRequirement: unknown;
@@ -244,6 +250,9 @@ export default function AdminCampaigns() {
                   Pool Size
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
+                  Order
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
                   Participants
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
@@ -298,6 +307,9 @@ export default function AdminCampaigns() {
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
                       ${campaign.poolSize.toLocaleString()}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
+                      {campaign.order}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
                       {campaign._count.campaignUsers}
@@ -679,6 +691,23 @@ function CampaignModal({
             min="0"
             name="poolSize"
             required
+            type="number"
+          />
+        </div>
+
+        <div>
+          <label
+            className="block font-medium text-gray-300 text-sm"
+            htmlFor="order"
+          >
+            Order (Display Priority)
+          </label>
+          <input
+            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            defaultValue={isEdit ? campaign.order : 0}
+            id="order"
+            min="0"
+            name="order"
             type="number"
           />
         </div>

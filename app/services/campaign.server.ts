@@ -150,7 +150,7 @@ export async function getCampaignsForUser(
   // Get paginated campaigns
   const campaigns = await db.campaign.findMany({
     where,
-    orderBy: { createdAt: 'desc' },
+    orderBy: { order: 'asc', createdAt: 'desc' },
     skip: offset,
     take: normalizedLimit,
   });
@@ -225,7 +225,7 @@ export async function getCampaignLeaderboard(id: string, page = 1, limit = 10) {
 // Admin CRUD operations
 export async function getAllCampaigns() {
   return await db.campaign.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { order: 'asc', createdAt: 'desc' },
     include: {
       _count: {
         select: { campaignUsers: true },
