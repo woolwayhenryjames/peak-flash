@@ -78,8 +78,8 @@ export default function SignIn() {
           />
           <img
             alt="Peak AI Logo"
-            className="size-16"
-            src="/icons/favicon.svg"
+            className="size-24"
+            src="/icons/web-app-manifest-512x512.png"
           />
           <h1 className="font-poppins font-semibold text-[32px] text-white leading-[48px]">
             Peak AI
