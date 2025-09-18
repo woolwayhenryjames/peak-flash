@@ -9,7 +9,7 @@ export default function StartEarningSection() {
         <h3 className="font-medium text-white text-xl leading-tight">
           Start Earning!
         </h3>
-        <p className="text-slate-400 text-sm leading-relaxed">
+        <p className="text-slate-400 text-xs leading-relaxed">
           Your account score is great, now join campaigns to earn tokens
         </p>
       </div>
@@ -25,7 +25,7 @@ export default function StartEarningSection() {
         <div className="-left-0.5 -bottom-0.5 absolute size-1 bg-[#D9D9D9]" />
         <div className="-right-0.5 -bottom-0.5 absolute size-1 bg-[#D9D9D9]" />
         <div className="flex flex-col text-start">
-          <div className="font-semibold text-[#faff9b]">
+          <div className="bg-linear-98 from-[#FAFF9C] to-121% to-[#BFBFFF] bg-clip-text font-semibold text-sm text-transparent leading-5">
             Join ASCENT Hub now!
           </div>
           <div className="text-[#acacac] text-sm">

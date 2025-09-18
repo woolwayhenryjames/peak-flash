@@ -70,7 +70,7 @@ export default function SignIn() {
       {/* Header Section */}
       <div className="mb-16 flex flex-col items-center text-center">
         {/* Logo */}
-        <div className="relative z-0 mb-3 flex h-64 w-full max-w-xl flex-col items-center justify-center gap-3">
+        <div className="relative z-0 mb-3 flex h-64 w-full max-w-xl flex-col items-center justify-center">
           <img
             alt="Background"
             className="-z-1 absolute inset-0 aspect-1280/832 w-full object-cover"
@@ -118,14 +118,14 @@ export default function SignIn() {
             </GlowContainer>
           </button>
 
-          <p className="mt-6 text-center text-white text-xs leading-6">
+          <p className="mx-auto mt-6 max-w-[95%] text-center text-[#ACAEB1] text-xs leading-6">
             By continuing, you agree to our Terms of Service and Privacy Policy
           </p>
         </div>
       </div>
 
       {/* Features Section */}
-      <div className="w-full">
+      <div className="mb-10 w-full">
         {/* Title with underline effect */}
         <div className="mb-12 text-center">
           <h2 className="mb-2 font-medium font-poppins text-lg text-white">

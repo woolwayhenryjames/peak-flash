@@ -118,7 +118,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
         title="Reminder"
       >
         <div className="text-[#df6767]">Are you sure you want to sign out?</div>
-        <div className="font-light text-[#e2e2e2]">
+        <div className="font-light text-[#e2e2e2] italic">
           Keep creating to earn more rewards!
         </div>
         <div className="mt-8 flex gap-4">

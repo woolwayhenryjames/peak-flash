@@ -50,7 +50,7 @@ export default function FirstOpenHomeDialog({
           <img
             alt="Peak AI Logo"
             className="size-17"
-            src="/icons/favicon.svg"
+            src="/icons/web-app-manifest-512x512.png"
           />
 
           {/* Welcome Text */}

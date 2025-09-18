@@ -6,14 +6,14 @@ import twitterIcon from './assets/twitter-icon.svg';
 
 export default function FollowUs() {
   return (
-    <div className="space-y-8">
+    <div>
       {/* Horizontal Divider */}
       <div className="w-full border-[#2D3338]/50 border-t" />
 
       {/* Social Platforms */}
       <div className="flex gap-8">
         {/* TikTok Section */}
-        <div className="mx-auto flex max-w-[140px] flex-1 flex-col items-center gap-6">
+        <div className="mx-auto flex max-w-[140px] flex-1 flex-col items-center gap-6 pt-3">
           <div className="flex flex-col items-center gap-4">
             {/* TikTok Icon */}
             <div className="relative">
@@ -46,10 +46,10 @@ export default function FollowUs() {
         </div>
 
         {/* Vertical Divider - Hidden on mobile, shown on desktop */}
-        <div className="min-h-[120px] w-px bg-[#2D3338]/50" />
+        <div className="w-px self-stretch bg-[#2D3338]/50" />
 
         {/* Twitter Section */}
-        <div className="mx-auto flex max-w-[140px] flex-1 flex-col items-center gap-6">
+        <div className="mx-auto flex max-w-[140px] flex-1 flex-col items-center gap-6 pt-3">
           <div className="flex flex-col items-center gap-4">
             {/* Twitter Icon */}
             <div className="relative">

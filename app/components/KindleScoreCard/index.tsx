@@ -10,7 +10,7 @@ export default function KindleScoreCard({
 }) {
   return (
     <Link
-      className="block rounded-2xl border border-gray-700/50 bg-gradient-to-b from-gray-900/90 to-gray-800/90 p-6 backdrop-blur-sm"
+      className="block rounded-2xl border border-gray-700/50 bg-gradient-to-b from-[#0f1219] to-141% to-[#212637] p-6 backdrop-blur-sm"
       to="/leaderboard"
       viewTransition
     >

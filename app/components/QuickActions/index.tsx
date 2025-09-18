@@ -34,14 +34,14 @@ export default function QuickActions() {
         <div className="space-y-5">
           {/* Invite Friends Section */}
           <div className="w-full sm:w-auto">
-            <div className="mb-5 flex items-center gap-1.5">
-              <img alt="" className="h-5 w-5 flex-shrink-0" src={usersIcon} />
-              <div>
+            <div className="mb-5">
+              <div className="flex items-center gap-1.5">
+                <img alt="" className="h-5 w-5 flex-shrink-0" src={usersIcon} />
                 <h4 className="font-medium text-sm text-white">
                   Invite Friends
                 </h4>
-                <p className="text-[#676767] text-xs">Get 10% score rewards</p>
               </div>
+              <p className="text-[#676767] text-xs">Get 10% score rewards</p>
             </div>
           </div>
 

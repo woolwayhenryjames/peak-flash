@@ -89,13 +89,19 @@ export default function FirstOpenCampainDetailsDialog({
         {/* Steps Section */}
         <div className="flex flex-col gap-9">
           {/* Steps List */}
-          <div className="space-y-5">
+          <div>
             {instructions.map((ins, index) => (
               <div className="flex items-start gap-4" key={index}>
-                <div className="flex min-w-fit items-center justify-center rounded bg-[#F3EEEA] px-1.5">
-                  <span className="font-medium text-[#141616] text-sm">
-                    {index + 1}
-                  </span>
+                <div className="flex flex-col items-center">
+                  <div className="flex min-w-fit items-center justify-center bg-[#F3EEEA] px-1.5">
+                    <span className="font-medium text-[#141616] text-sm">
+                      {index + 1}
+                    </span>
+                  </div>
+                  {/* Dotted line connector - only show if not the last item */}
+                  {index < instructions.length - 1 && (
+                    <div className="h-5 w-px border-[#5f5f5f] border-l border-dotted" />
+                  )}
                 </div>
                 <span className="flex-1 text-[#D8D8D8] text-xs">{ins}</span>
               </div>
