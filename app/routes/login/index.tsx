@@ -73,7 +73,7 @@ export default function SignIn() {
         <div className="relative z-0 mb-3 flex h-64 w-full max-w-xl flex-col items-center justify-center">
           <img
             alt="Background"
-            className="-z-1 absolute inset-0 aspect-1280/832 w-full object-cover"
+            className="-z-1 absolute inset-0 aspect-1280/832 w-full object-cover opacity-40"
             src={bg}
           />
           <img
