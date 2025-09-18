@@ -335,6 +335,9 @@ export default function CampaignDetails({
                         <div
                           className="relative h-32 flex-1 overflow-hidden rounded-lg bg-gray-800"
                           key={index}
+                          style={{
+                            backgroundImage: `url(https://picsum.photos/seed/${index}/300/200)`,
+                          }}
                         >
                           <div className="absolute right-2 bottom-2 flex items-center gap-1 rounded bg-black/70 px-2 py-1">
                             <svg
