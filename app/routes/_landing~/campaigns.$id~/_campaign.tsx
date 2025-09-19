@@ -420,7 +420,9 @@ export default function CampaignDetails({
                         @{user?.email || 'User'}
                       </h3>
                       <div className="flex items-center gap-3">
-                        <span className="text-gray-400 text-sm">5 videos</span>
+                        <span className="text-gray-400 text-sm">
+                          {campaignUser?.videoCount || 0} videos
+                        </span>
                         <div className="rounded bg-gradient-to-r from-amber-400 to-blue-400 px-2 py-0.5 font-medium text-black text-xs">
                           #{campaign.userRank || 8}
                         </div>
@@ -467,7 +469,7 @@ export default function CampaignDetails({
                                 @{participant.user.email || 'user'}
                               </span>
                               <span className="text-gray-500 text-xs">
-                                5 videos
+                                {participant.videoCount || 0} videos
                               </span>
                             </div>
                           </td>

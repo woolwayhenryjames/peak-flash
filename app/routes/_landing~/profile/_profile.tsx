@@ -69,11 +69,19 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   return {
     user: { ...user.value, kindleRank },
-    campaigns: userCampaigns.campaigns,
+    campaigns: userCampaigns.campaigns.map((campaign) => {
+      const campaignUser = user.value.campaignUsers.find(
+        (cu) => cu.campaignId === campaign.id
+      );
+      return {
+        ...campaign,
+        videoCount: campaignUser?.videoCount || 0,
+      };
+    }),
     totalVideos: user.value.campaignUsers.reduce(
-      (sum, cu) => sum + cu.baseScore / 10,
+      (sum, cu) => sum + cu.videoCount,
       0
-    ), // Assuming 10 points per video
+    ), // Total videos submitted
   };
 }
 

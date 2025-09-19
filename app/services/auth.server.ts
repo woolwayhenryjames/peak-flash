@@ -2,6 +2,10 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware } from 'better-auth/api';
 import { err, ok } from 'neverthrow';
+import {
+  checkUserCampaignAlgo,
+  updateUserPoints,
+} from '~/services/score-algo-api';
 import { persistUserImage } from '~/services/user.server';
 import { db } from './db.server';
 
@@ -32,6 +36,8 @@ export const auth = betterAuth({
       const newSession = ctx.context.newSession;
       if (newSession) {
         persistUserImage(newSession.user);
+        checkUserCampaignAlgo();
+        setTimeout(() => updateUserPoints(), 10_000);
       }
       return Promise.resolve();
     }),

@@ -68,6 +68,7 @@ model CampaignUser {
   joinedAt   DateTime @default(now())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
+  videoCount Int      @default(0)
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
