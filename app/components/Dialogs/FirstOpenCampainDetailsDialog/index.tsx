@@ -60,7 +60,7 @@ export default function FirstOpenCampainDetailsDialog({
 
   return (
     <DialogWithCloseButton
-      className="max-w-md"
+      className="max-w-md p-3"
       setShow={handleDismiss}
       show={show}
     >
