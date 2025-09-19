@@ -1,8 +1,6 @@
 import GlowContainer from '../GlowContainer';
-import tiktokBg from './assets/tiktok-bg.svg';
-import tiktokIcon from './assets/tiktok-icon.svg';
-import twitterBg from './assets/twitter-bg.svg';
-import twitterIcon from './assets/twitter-icon.svg';
+import tiktokIcon from './assets/tiktok.svg';
+import twitterIcon from './assets/x.svg';
 
 export default function FollowUs() {
   return (
@@ -14,17 +12,9 @@ export default function FollowUs() {
       <div className="flex gap-8">
         {/* TikTok Section */}
         <div className="mx-auto flex max-w-[140px] flex-1 flex-col items-center gap-6 pt-3">
-          <div className="flex flex-col items-center gap-4">
-            {/* TikTok Icon */}
-            <div className="relative">
-              <img alt="" className="h-8 w-8" src={tiktokBg} />
-              <img
-                alt=""
-                className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 h-4 w-4 transform"
-                src={tiktokIcon}
-              />
-            </div>
-            <div className="space-y-2 text-center">
+          <div className="flex flex-col gap-4">
+            <img alt="" className="size-8" src={tiktokIcon} />
+            <div className="space-y-2">
               <div className="font-normal text-sm text-white">
                 Follow on TikTok
               </div>
@@ -50,17 +40,9 @@ export default function FollowUs() {
 
         {/* Twitter Section */}
         <div className="mx-auto flex max-w-[140px] flex-1 flex-col items-center gap-6 pt-3">
-          <div className="flex flex-col items-center gap-4">
-            {/* Twitter Icon */}
-            <div className="relative">
-              <img alt="" className="h-8 w-8" src={twitterBg} />
-              <img
-                alt=""
-                className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 h-4 w-5 transform"
-                src={twitterIcon}
-              />
-            </div>
-            <div className="space-y-2 text-center">
+          <div className="flex flex-col gap-4">
+            <img alt="" className="size-8" src={twitterIcon} />
+            <div className="space-y-2">
               <div className="font-normal text-sm text-white">
                 Follow on Twitter
               </div>

@@ -164,7 +164,7 @@ export default function Invite({
 
       <div className="mt-4 space-y-6 px-5 md:px-18">
         {/* Invite & Earn Business Card */}
-        <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-10">
+        <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#2a2a2a]/40 to-[#1a1616]/40 p-10">
           <div className="space-y-12 text-center">
             {/* Header Section */}
             <div className="space-y-5">

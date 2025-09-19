@@ -113,7 +113,7 @@ export default function Help() {
       <FollowUs />
 
       {/* FAQ Section */}
-      <div>
+      <div className="mt-15">
         {/* Header */}
         <div className="flex items-center gap-1 px-4 py-7">
           <img alt="Git branch icon" className="h-6 w-6" src={faqIcon} />
@@ -124,7 +124,7 @@ export default function Help() {
         {/* FAQ Items */}
         {faqs.map((faq) => (
           <div
-            className="space-y-4 border-[#3F3F42] border-y px-10 py-8"
+            className="space-y-4 border-[#3F3F42]/80 border-y px-10 py-8"
             key={faq.question}
           >
             <div className="flex items-start gap-6">

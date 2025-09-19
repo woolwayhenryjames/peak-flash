@@ -93,7 +93,7 @@ export default function FirstOpenCampainDetailsDialog({
             {instructions.map((ins, index) => (
               <div className="flex items-start gap-4" key={index}>
                 <div className="flex flex-col items-center">
-                  <div className="flex min-w-fit items-center justify-center bg-[#F3EEEA] px-1.5">
+                  <div className="flex size-5 items-center justify-center bg-[#F3EEEA]">
                     <span className="font-medium text-[#141616] text-sm">
                       {index + 1}
                     </span>
