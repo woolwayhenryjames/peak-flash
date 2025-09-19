@@ -68,30 +68,32 @@ export default function FirstOpenHomeDialog({
         <div className="h-px w-[141px] bg-white/20" />
 
         {/* KINDLE Score Card */}
-        <div className="flex w-full gap-2">
-          {/* Logo */}
-          <img alt="Flower" className="size-14" src={flower} />
+        {score > 0 && (
+          <div className="flex w-full gap-2">
+            {/* Logo */}
+            <img alt="Flower" className="size-14" src={flower} />
 
-          {/* Score Info */}
-          <div className="flex flex-1 flex-col gap-4">
-            <div className="flex justify-between gap-7">
-              <span className="font-medium text-base text-white leading-6">
-                KINDLE Score
-              </span>
-              <span className="font-semibold text-2xl text-[#67C9DA] leading-7">
-                {score}
-              </span>
-            </div>
+            {/* Score Info */}
+            <div className="flex flex-1 flex-col gap-4">
+              <div className="flex justify-between gap-7">
+                <span className="font-medium text-base text-white leading-6">
+                  KINDLE Score
+                </span>
+                <span className="font-semibold text-2xl text-[#67C9DA] leading-7">
+                  {score}
+                </span>
+              </div>
 
-            {/* Progress Bar */}
-            <div className="h-3 w-full rounded bg-[#2A2A2A]">
-              <div
-                className="h-full rounded bg-gradient-to-r from-[#8080DA] to-[#1BCFDE]"
-                style={{ width: `${score}%` }}
-              />
+              {/* Progress Bar */}
+              <div className="h-3 w-full rounded bg-[#2A2A2A]">
+                <div
+                  className="h-full rounded bg-gradient-to-r from-[#8080DA] to-[#1BCFDE]"
+                  style={{ width: `${score}%` }}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Features List */}
         <div className="flex w-full flex-col gap-3">

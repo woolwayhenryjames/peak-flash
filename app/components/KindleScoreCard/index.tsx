@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { cn } from '~/lib/utils';
 import GlowContainer from '../GlowContainer';
 
 export default function KindleScoreCard({
@@ -28,8 +29,13 @@ export default function KindleScoreCard({
             </div>
           </div>
           <div className="text-center">
-            <div className="mb-1 font-semibold text-2xl text-[#8080DA]">
-              {score}
+            <div
+              className={cn(
+                'mb-1 font-semibold text-[#8080DA]',
+                score > 0 ? 'text-2xl' : 'text-lg'
+              )}
+            >
+              {score > 0 ? score : 'Grading'}
             </div>
           </div>
         </div>
@@ -39,15 +45,36 @@ export default function KindleScoreCard({
           <div className="h-3 w-full overflow-hidden bg-gray-700">
             <div
               className="h-full bg-[#8080DA] transition-all duration-500"
-              style={{ width: score >= 100 ? '100%' : `${score}%` }}
+              style={{ width: `${score}%` }}
             />
           </div>
 
           {/* Stats Row */}
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-400">This week +0.3</span>
-            <GlowContainer className="w-fit rounded-md py-1">
-              <span className="text-white text-xs">#{rank}&nbsp;&gt;</span>
+            <GlowContainer
+              className={cn(
+                'w-fit rounded-md py-1 text-white text-xs',
+                score > 0 || 'px-6'
+              )}
+            >
+              {score > 0 ? `#${rank}` : ''}
+              <svg
+                fill="none"
+                height={score > 0 ? 13 : 18}
+                viewBox="0 0 7 13"
+                width={score > 0 ? 7 : 9}
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>Arrow Right</title>
+                <path
+                  d="M1 11.6667L5.58 6.66584L0.999999 1.66666"
+                  stroke="white"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.4"
+                />
+              </svg>
             </GlowContainer>
           </div>
         </div>

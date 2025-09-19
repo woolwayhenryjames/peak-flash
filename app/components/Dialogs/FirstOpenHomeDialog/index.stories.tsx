@@ -29,4 +29,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const FirstOpenHomeDialog: Story = {};
+export const FirstOpenHomeDialogWithScore: Story = {};
+
+export const FirstOpenHomeDialogNoScore: Story = {
+  args: { score: 0 },
+};

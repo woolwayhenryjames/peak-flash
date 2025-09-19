@@ -33,7 +33,22 @@ export default function StartEarningSection() {
           </div>
         </div>
         <GlowContainer className="h-fit w-fit self-end rounded-md px-6 py-1">
-          <span className="text-sm text-white">&gt;</span>
+          <svg
+            fill="none"
+            height="22"
+            viewBox="0 0 7 13"
+            width="14"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <title>Arrow Right</title>
+            <path
+              d="M1 11.6667L5.58 6.66584L0.999999 1.66666"
+              stroke="white"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.4"
+            />
+          </svg>
         </GlowContainer>
       </Link>
     </div>

@@ -177,7 +177,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
       </div>
       <div className="mx-auto mb-6 h-px w-[80%] bg-[#6c6c6c]/50" />
       <div className="mx-6 my-12 flex items-center justify-between rounded-xl border border-gray-700 p-4">
-        <div className="flex items-end gap-4">
+        <div className="flex items-center gap-4">
           <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-600">
             <img
               alt={
@@ -194,18 +194,26 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
             <h3 className="font-medium text-white">
               @{loaderData.user?.email || 'User'}
             </h3>
-            <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
-              #{loaderData.user?.rank || 0}
-            </div>
+            {loaderData.user?.kindleScore > 0 && (
+              <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
+                #{loaderData.user?.rank || 0}
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="text-right">
-          <p className="bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-semibold text-2xl text-transparent">
-            {loaderData.user?.kindleScore || 0}
-          </p>
-          <p className="text-gray-400 text-xs">KINDLE Score</p>
-        </div>
+        {loaderData.user?.kindleScore > 0 ? (
+          <div className="text-right">
+            <p className="bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-semibold text-2xl text-transparent">
+              {loaderData.user?.kindleScore || 0}
+            </p>
+            <p className="text-gray-400 text-xs">KINDLE Score</p>
+          </div>
+        ) : (
+          <div className="bg-linear-114 from-[#7465ff] from-[12.87%] to-[#38bdff] to-[51.12%] bg-clip-text font-semibold text-transparent text-xs">
+            Grading
+          </div>
+        )}
       </div>
       <div className="container mx-auto min-h-screen">
         {/* Loading state for filter changes */}
