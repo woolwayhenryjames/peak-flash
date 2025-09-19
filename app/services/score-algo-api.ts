@@ -36,7 +36,7 @@ FROM
         algoTask.keyword === task.keywords.join(', ')
     );
     if (!matchingTask) {
-      fetch('https://distant-algo.peakboom.ai/api/addUser', {
+      fetch('http://localhost:3333/api/addUser', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: task.email, keywords: task.keywords }),
