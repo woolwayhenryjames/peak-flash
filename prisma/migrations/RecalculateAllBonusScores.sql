@@ -77,6 +77,7 @@ FROM
   AND existing_cu.campaignId = c.id
 WHERE
   ks.total_score IS NOT NULL
+  AND ks.total_score != 0
   AND existing_cu.id IS NULL;
 
 -- Only insert if CampaignUser doesn't exist
@@ -95,6 +96,7 @@ SET
   cu.updatedAt = NOW ()
 WHERE
   ks.total_score IS NOT NULL
+  AND ks.total_score != 0
   AND (
     SELECT
       JSON_ARRAYAGG (
