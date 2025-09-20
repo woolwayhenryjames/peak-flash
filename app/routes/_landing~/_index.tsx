@@ -1,5 +1,6 @@
 import { redirect } from 'react-router';
 import CampaignList from '~/components/CampaignList';
+import FirstGetScoreDialog from '~/components/Dialogs/FirstGetScoreDialog';
 import FirstOpenHomeDialog from '~/components/Dialogs/FirstOpenHomeDialog';
 import FollowUs from '~/components/FollowUs';
 import { HomeSeparator } from '~/components/HomeSeperator';
@@ -166,6 +167,7 @@ export default function Home({
         </div>
       </div>
       <FirstOpenHomeDialog score={Math.round(user?.kindleScore ?? 0)} />
+      <FirstGetScoreDialog score={Math.round(user?.kindleScore ?? 0)} />
     </>
   );
 }
