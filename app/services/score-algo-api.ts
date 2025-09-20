@@ -27,8 +27,6 @@ FROM
 	ON
 		tiktok_creator_score.keyword_scores.user_id = tiktok_creator_score.users.id;
   `;
-  console.log('Fetched algo tasks:', algoTasks);
-  console.log('Total tasks to check:', taskList);
   for (const task of taskList) {
     const matchingTask = algoTasks.find(
       (algoTask) =>
@@ -45,7 +43,10 @@ FROM
         if (!res.ok) {
           console.error('Failed to send task:', res.statusText);
         }
-        console.log('Task sent successfully for', res);
+        console.log('Task sent successfully for', {
+          username: task.email,
+          keywords: task.keywords,
+        });
       });
     }
   }

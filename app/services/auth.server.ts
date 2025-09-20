@@ -14,6 +14,7 @@ export const auth = betterAuth({
     provider: 'mysql',
   }),
   account: {
+    updateAccountOnSignIn: true,
     accountLinking: {
       enabled: true,
       trustedProviders: ['tiktok'],
@@ -34,6 +35,7 @@ export const auth = betterAuth({
   hooks: {
     after: createAuthMiddleware((ctx) => {
       const newSession = ctx.context.newSession;
+      console.log('New session created:', newSession);
       if (newSession) {
         persistUserImage(newSession.user);
         checkUserCampaignAlgo();
