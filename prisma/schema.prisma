@@ -24,7 +24,7 @@ model User {
   email         String
   emailVerified Boolean
   image         String?   @db.Text
-  kindleScore   Int       @default(0)
+  kindleScore   Float     @default(0)
   sessions      Session[]
   accounts      Account[]
 
@@ -62,9 +62,9 @@ model CampaignUser {
   id         Int      @id @default(autoincrement())
   userId     String
   campaignId String
-  baseScore  Int      @default(0) // User's own earned score
-  bonusScore Int      @default(0) // 10% bonus from invited users
-  score      Int      @default(0) // Computed column
+  baseScore  Float    @default(0) // User's own earned score
+  bonusScore Float    @default(0) // 10% bonus from invited users
+  score      Float    @default(0) // Computed column
   joinedAt   DateTime @default(now())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
