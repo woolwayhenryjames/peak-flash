@@ -142,7 +142,7 @@ export default function Profile({
         <div className="mb-5 flex items-center justify-around">
           <div className="flex flex-col items-center gap-1">
             <span className="font-semibold text-2xl text-white">
-              {(user.kindleScore / 10).toFixed(1)}
+              {user.kindleScore}
             </span>
             <span className="font-light text-[#C0C0C0] text-xs">
               KINDLE Score
