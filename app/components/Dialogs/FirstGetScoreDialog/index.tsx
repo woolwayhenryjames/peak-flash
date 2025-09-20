@@ -7,7 +7,7 @@ export default function FirstGetScoreDialog({
   score,
   forceShow = false,
 }: {
-  score: number;
+  score: number | null | undefined;
   forceShow?: boolean;
 }) {
   const [show, setShow] = useState(forceShow);
@@ -16,7 +16,7 @@ export default function FirstGetScoreDialog({
     const lastDismissed = localStorage.getItem(
       `${FirstGetScoreDialog.name}Dismissed`
     );
-    if (!lastDismissed && score > 0) {
+    if (!lastDismissed && score != null) {
       const timer = setTimeout(() => {
         setShow(true);
       }, 1000);

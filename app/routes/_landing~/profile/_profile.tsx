@@ -142,7 +142,9 @@ export default function Profile({
         <div className="mb-5 flex items-center justify-around">
           <div className="flex flex-col items-center gap-1">
             <span className="font-semibold text-2xl text-white">
-              {user.kindleScore > 0 ? Math.round(user.kindleScore) : 'Grading'}
+              {user.kindleScore != null
+                ? Math.round(user.kindleScore)
+                : 'Grading'}
             </span>
             <span className="font-light text-[#C0C0C0] text-xs">
               KINDLE Score
@@ -153,7 +155,7 @@ export default function Profile({
 
           <div className="flex flex-col items-center gap-1">
             <span className="font-semibold text-2xl text-white">
-              {user.kindleScore > 0 ? `#${user.kindleRank}` : 'N/A'}
+              {user.kindleScore != null ? `#${user.kindleRank}` : 'N/A'}
             </span>
             <span className="font-light text-[#C0C0C0] text-xs">
               Global Rank

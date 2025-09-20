@@ -7,7 +7,7 @@ export default function FirstOpenHomeDialog({
   score,
   forceShow = false,
 }: {
-  score: number;
+  score: number | null | undefined;
   forceShow?: boolean;
 }) {
   const [show, setShow] = useState(forceShow);
@@ -68,7 +68,7 @@ export default function FirstOpenHomeDialog({
         <div className="h-px w-[141px] bg-white/20" />
 
         {/* KINDLE Score Card */}
-        {score > 0 && (
+        {score != null && (
           <div className="flex w-full gap-2">
             {/* Logo */}
             <img alt="Flower" className="size-14" src={flower} />

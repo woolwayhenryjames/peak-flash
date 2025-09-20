@@ -194,7 +194,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
             <h3 className="font-medium text-white">
               @{loaderData.user?.email || 'User'}
             </h3>
-            {loaderData.user?.kindleScore > 0 && (
+            {loaderData.user?.kindleScore != null && (
               <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
                 #{loaderData.user?.rank || 0}
               </div>
@@ -202,7 +202,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
 
-        {loaderData.user?.kindleScore > 0 ? (
+        {loaderData.user?.kindleScore != null ? (
           <div className="text-right">
             <p className="bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-semibold text-2xl text-transparent">
               {Math.round(loaderData.user?.kindleScore || 0)}

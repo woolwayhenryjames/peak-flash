@@ -6,7 +6,7 @@ export default function KindleScoreCard({
   score,
   rank,
 }: {
-  score: number;
+  score: number | null | undefined;
   rank: number;
 }) {
   return (
@@ -32,10 +32,10 @@ export default function KindleScoreCard({
             <div
               className={cn(
                 'mb-1 font-semibold text-[#8080DA]',
-                score > 0 ? 'text-2xl' : 'text-lg'
+                score != null ? 'text-2xl' : 'text-lg'
               )}
             >
-              {score > 0 ? score : 'Grading'}
+              {score != null ? score : 'Grading'}
             </div>
           </div>
         </div>
@@ -54,15 +54,15 @@ export default function KindleScoreCard({
           <GlowContainer
             className={cn(
               'ml-auto w-fit rounded-md py-1 text-white text-xs',
-              score > 0 || 'px-6'
+              score != null || 'px-6'
             )}
           >
-            {score > 0 ? `#${rank}` : ''}
+            {score != null ? `#${rank}` : ''}
             <svg
               fill="none"
-              height={score > 0 ? 13 : 18}
+              height={score != null ? 13 : 18}
               viewBox="0 0 7 13"
-              width={score > 0 ? 7 : 9}
+              width={score != null ? 7 : 9}
               xmlns="http://www.w3.org/2000/svg"
             >
               <title>Arrow Right</title>

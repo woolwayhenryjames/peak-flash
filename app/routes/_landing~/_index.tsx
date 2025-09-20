@@ -75,13 +75,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function Home({
   loaderData: { user, campaigns },
 }: Route.ComponentProps) {
+  const userScore =
+    user.kindleScore != null ? Math.round(user.kindleScore) : null;
   return (
     <>
       <div className="flex flex-col justify-evenly gap-6 px-6 pt-6 md:px-18">
-        <KindleScoreCard
-          rank={user.kindleRank ?? 1}
-          score={Math.round(user.kindleScore ?? 0)}
-        />
+        <KindleScoreCard rank={user.kindleRank ?? 1} score={userScore} />
         <StartEarningSection />
       </div>
       <HomeSeparator />
@@ -166,8 +165,8 @@ export default function Home({
           <FollowUs />
         </div>
       </div>
-      <FirstOpenHomeDialog score={Math.round(user?.kindleScore ?? 0)} />
-      <FirstGetScoreDialog score={Math.round(user?.kindleScore ?? 0)} />
+      <FirstOpenHomeDialog score={userScore} />
+      <FirstGetScoreDialog score={userScore} />
     </>
   );
 }
