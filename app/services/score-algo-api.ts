@@ -33,7 +33,8 @@ FROM
     const matchingTask = algoTasks.find(
       (algoTask) =>
         algoTask.username === task.email &&
-        algoTask.keyword === task.keywords.join(', ')
+        algoTask.keyword.split(' | ').sort().join(' | ') ===
+          task.keywords.sort().join(' | ')
     );
     if (!matchingTask) {
       fetch('http://localhost:3333/api/addUser', {
