@@ -3,6 +3,7 @@ import { useArgs } from 'storybook/preview-api';
 import { fn } from 'storybook/test';
 import DialogWithCloseButton from './DialogWithCloseButton';
 import Dialog, { type DialogProps } from './index';
+import MobileBottomDialog from './MobileBottomDialog';
 
 const meta = {
   title: 'Dialogs',
@@ -86,7 +87,7 @@ export const Default: Story = {
 
 // DialogWithCloseButton Stories
 type DialogWithCloseButtonProps = DialogProps & {
-  style?: 'white' | 'black';
+  type?: 'white' | 'black';
   closeButtonClassName?: string;
 };
 
@@ -121,11 +122,11 @@ export const WithCloseButton: StoryObj<DialogWithCloseButtonProps> = {
     title: 'Dialog with Close Button',
     children:
       'This dialog has a close button in the top-right corner. You can click it to close the dialog.',
-    style: 'white',
+    type: 'white',
     topLayer: false,
   },
   argTypes: {
-    style: {
+    type: {
       control: { type: 'select' },
       options: ['white', 'black'],
       description: 'Dialog style theme',
@@ -143,11 +144,11 @@ export const WithCloseButtonBlackStyle: StoryObj<DialogWithCloseButtonProps> = {
     show: false,
     title: 'Black Style Dialog',
     children: 'This is a dialog with black styling and a close button.',
-    style: 'black',
+    type: 'black',
     topLayer: false,
   },
   argTypes: {
-    style: {
+    type: {
       control: { type: 'select' },
       options: ['white', 'black'],
       description: 'Dialog style theme',
@@ -155,6 +156,53 @@ export const WithCloseButtonBlackStyle: StoryObj<DialogWithCloseButtonProps> = {
     closeButtonClassName: {
       control: 'text',
       description: 'Additional CSS classes for the close button',
+    },
+  },
+};
+
+// MobileBottomDialog Stories
+const MobileBottomDialogTemplate = (args: DialogProps) => {
+  const [, setArgs] = useArgs();
+
+  const handleSetShow = (show: boolean) => {
+    args.setShow(show);
+    setArgs({ show });
+  };
+
+  return (
+    <div>
+      <button
+        className="btn btn-primary mb-4"
+        onClick={() => handleSetShow(true)}
+        type="button"
+      >
+        Open Mobile Bottom Dialog
+      </button>
+      <MobileBottomDialog {...args} setShow={handleSetShow}>
+        {args.children}
+      </MobileBottomDialog>
+    </div>
+  );
+};
+
+export const MobileBottom: Story = {
+  render: MobileBottomDialogTemplate,
+  args: {
+    show: false,
+    title: 'Mobile Bottom Dialog',
+    children:
+      'This is a mobile-optimized dialog that appears at the bottom of the screen.',
+    topLayer: false,
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+    docs: {
+      description: {
+        story:
+          'A dialog component optimized for mobile devices, appearing at the bottom of the screen.',
+      },
     },
   },
 };

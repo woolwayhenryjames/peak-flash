@@ -1,0 +1,64 @@
+import type { LoaderFunctionArgs } from 'react-router';
+import { db } from '~/services/db.server';
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  const cuId = params.cuId;
+  if (!cuId) {
+    throw new Response('Campaign User ID is required', { status: 400 });
+  }
+
+  try {
+    // Find the corresponding TikTok creator scores for this CampaignUser
+    // This matches the logic from UpdateAllScores Step 3
+    const results: { video_scores_json: string }[] = await db.$queryRaw`
+      SELECT
+        ks.video_scores_json
+      FROM CampaignUser cu
+      INNER JOIN User u 
+        ON cu.userId = u.id
+      INNER JOIN tiktok_creator_score.users tcs_users 
+        ON u.email = tcs_users.username
+      INNER JOIN tiktok_creator_score.keyword_scores ks 
+        ON tcs_users.id = ks.user_id
+      INNER JOIN Campaign c 
+        ON cu.campaignId = c.id
+      WHERE 
+        cu.id = ${cuId}
+        AND ks.total_score IS NOT NULL
+        AND ks.total_score != 0
+        AND (
+          SELECT
+            JSON_ARRAYAGG(jt1.item ORDER BY jt1.item)
+          FROM
+            JSON_TABLE(
+              JSON_EXTRACT(c.joinRequirement, '$."Required Tags"'),
+              '$[*]' COLUMNS (item VARCHAR(255) PATH '$')
+            ) AS jt1
+        ) = (
+          -- Normalize and sort the keywords from the keyword_scores table
+          SELECT
+            JSON_ARRAYAGG(jt2.item ORDER BY jt2.item)
+          FROM
+            JSON_TABLE(
+              -- Recreate the JSON array from the ' | ' separated string
+              CONCAT(
+                '["',
+                REPLACE(ks.keyword, ' | ', '","'),
+                '"]'
+              ),
+              '$[*]' COLUMNS (item VARCHAR(255) PATH '$')
+            ) AS jt2
+        )
+    `;
+    const jsonString = results[0]?.video_scores_json || '[]';
+
+    // Parse the JSON string to ensure it's valid JSON
+    const parsedData = JSON.parse(jsonString);
+
+    // Return the parsed data
+    return Response.json(parsedData);
+  } catch (error) {
+    console.error('Error fetching TikTok creator scores:', error);
+    return Response.json({ success: false, error }, { status: 500 });
+  }
+}

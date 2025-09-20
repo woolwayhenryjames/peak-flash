@@ -3,6 +3,7 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 
 import '../app/app.css';
 import { createRoutesStub } from 'react-router';
+import getVideosMockData from './getVideos.mockData';
 
 // Initialize MSW
 initialize();
@@ -40,6 +41,10 @@ const preview: Preview = {
         {
           path: '/',
           Component: () => <Story />,
+        },
+        {
+          path: '/api/getVideos/:campaignUserId',
+          loader: getVideosMockData,
         },
       ]);
       return (
