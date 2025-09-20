@@ -225,7 +225,7 @@ export default function Leaderboard({
 
           <div className="text-right">
             <p className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-semibold text-2xl text-transparent">
-              {loaderData.campaignWithRanks.userScore || 0}
+              {Math.round(loaderData.campaignWithRanks.userScore || 0)}
             </p>
             <p className="text-gray-400 text-xs">Spark Points</p>
           </div>
