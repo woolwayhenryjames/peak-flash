@@ -18,6 +18,7 @@ export const auth = betterAuth({
     accountLinking: {
       enabled: true,
       trustedProviders: ['tiktok'],
+      updateUserInfoOnLink: true,
     },
   },
   emailAndPassword: {
@@ -30,6 +31,7 @@ export const auth = betterAuth({
       clientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
       clientKey: process.env.TIKTOK_CLIENT_KEY as string,
       scope: ['user.info.basic', 'user.info.profile', 'user.info.stats'],
+      overrideUserInfoOnSignIn: true,
     },
   },
   hooks: {
