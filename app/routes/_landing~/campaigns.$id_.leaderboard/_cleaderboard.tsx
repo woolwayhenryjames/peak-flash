@@ -323,7 +323,9 @@ export default function Leaderboard({
                   <td className="truncate whitespace-nowrap py-4">
                     @{campaign.user.email}
                   </td>
-                  <td className="whitespace-nowrap py-4">{campaign.score}</td>
+                  <td className="whitespace-nowrap py-4">
+                    {Math.round(campaign.score)}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -205,7 +205,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
         {loaderData.user?.kindleScore > 0 ? (
           <div className="text-right">
             <p className="bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-semibold text-2xl text-transparent">
-              {loaderData.user?.kindleScore || 0}
+              {Math.round(loaderData.user?.kindleScore || 0)}
             </p>
             <p className="text-gray-400 text-xs">KINDLE Score</p>
           </div>
@@ -252,7 +252,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
                     </td>
                     <td className="whitespace-nowrap py-4">
                       <div className="flex items-center justify-around gap-6">
-                        {user.kindleScore}
+                        {Math.round(user.kindleScore)}
                         <button
                           onClick={() =>
                             setExpandedUserId(

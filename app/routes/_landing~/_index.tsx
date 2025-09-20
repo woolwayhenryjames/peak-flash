@@ -79,7 +79,7 @@ export default function Home({
       <div className="flex flex-col justify-evenly gap-6 px-6 pt-6 md:px-18">
         <KindleScoreCard
           rank={user.kindleRank ?? 1}
-          score={user.kindleScore ?? 0}
+          score={Math.round(user.kindleScore ?? 0)}
         />
         <StartEarningSection />
       </div>
@@ -165,7 +165,7 @@ export default function Home({
           <FollowUs />
         </div>
       </div>
-      <FirstOpenHomeDialog score={user?.kindleScore ?? 0} />
+      <FirstOpenHomeDialog score={Math.round(user?.kindleScore ?? 0)} />
     </>
   );
 }

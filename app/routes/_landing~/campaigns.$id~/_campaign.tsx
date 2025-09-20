@@ -432,7 +432,7 @@ export default function CampaignDetails({
 
                   <div className="text-right">
                     <p className="bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-semibold text-2xl text-transparent">
-                      {campaignUser?.score || 0}
+                      {Math.round(campaignUser?.score || 0)}
                     </p>
                     <p className="text-gray-400 text-xs">SPARK Points</p>
                   </div>
@@ -474,7 +474,7 @@ export default function CampaignDetails({
                             </div>
                           </td>
                           <td className="whitespace-nowrap py-4">
-                            {participant.score}
+                            {Math.round(participant.score)}
                           </td>
                         </tr>
                       ))}

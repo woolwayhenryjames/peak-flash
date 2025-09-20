@@ -112,7 +112,7 @@ BEGIN
     UPDATE CampaignUser cu
     INNER JOIN User u ON cu.userId = u.id
     SET cu.bonusScore = (
-        SELECT COALESCE(SUM(FLOOR(cu_invitee.baseScore * 0.1)), 0)
+        SELECT COALESCE(SUM(ROUND(cu_invitee.baseScore * 0.1, 2)), 0)
         FROM CampaignUser cu_invitee
         INNER JOIN User u_invitee ON cu_invitee.userId = u_invitee.id
         WHERE u_invitee.inviterId = u.id
