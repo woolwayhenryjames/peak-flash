@@ -98,7 +98,7 @@ export default function ParticipationInfo({
               <div className="relative h-3 w-full rounded-full bg-gray-800">
                 <div
                   className="absolute top-0 left-0 h-full rounded-full bg-gradient-to-r from-[#8080DA] to-[#1BCFDE]"
-                  style={{ width: `${(campaignUser?.score ?? 0) / 300}%` }}
+                  style={{ width: `${(campaignUser?.score ?? 0) / 3}%` }}
                 />
               </div>
 
