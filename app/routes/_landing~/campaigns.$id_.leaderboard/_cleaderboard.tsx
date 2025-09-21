@@ -102,7 +102,7 @@ export default function Leaderboard({
 
   // State management
   const [campaignUsers, setCampaignUsers] = useState(loaderData.campaignUsers);
-  const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = useRef(1);
   const [hasNextPage, setHasNextPage] = useState(
     loaderData.pagination.hasNextPage
   );
@@ -119,32 +119,26 @@ export default function Leaderboard({
     }
 
     setIsLoadingMore(true);
-    const nextPage = currentPage + 1;
+    const nextPage = currentPage.current + 1;
 
     fetcher.load(`/campaigns/${params.id}/leaderboard?page=${nextPage}`);
-  }, [hasNextPage, isLoadingMore, fetcher, currentPage, params.id]);
+  }, [hasNextPage, isLoadingMore, fetcher, params.id]);
 
   // Handle fetcher data
   useEffect(() => {
     if (fetcher.data && fetcher.state === 'idle') {
       const data = fetcher.data;
-      if (currentPage === 1) {
-        // New filter - replace campaigns
-        setCampaignUsers(data.campaignUsers);
-      } else {
-        // Append campaigns for pagination
-        setCampaignUsers((prev) => [...prev, ...data.campaignUsers]);
-      }
-      setCurrentPage(data.pagination.page);
+      setCampaignUsers((prev) => [...prev, ...data.campaignUsers]);
+      currentPage.current = data.pagination.page;
       setHasNextPage(data.pagination.hasNextPage);
       setIsLoadingMore(false);
     }
-  }, [fetcher.data, fetcher.state, currentPage]);
+  }, [fetcher.data, fetcher.state]);
 
   // Initialize campaigns from loader data
   useEffect(() => {
     setCampaignUsers(loaderData.campaignUsers);
-    setCurrentPage(loaderData.pagination.page);
+    currentPage.current = loaderData.pagination.page;
     setHasNextPage(loaderData.pagination.hasNextPage);
     setIsLoadingMore(false);
   }, [loaderData]);

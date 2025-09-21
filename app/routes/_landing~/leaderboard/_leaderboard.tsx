@@ -81,7 +81,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
 
   // State management
   const [users, setUsers] = useState(loaderData.users);
-  const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = useRef(1);
   const [hasNextPage, setHasNextPage] = useState(
     loaderData.pagination.hasNextPage
   );
@@ -100,32 +100,26 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
     }
 
     setIsLoadingMore(true);
-    const nextPage = currentPage + 1;
+    const nextPage = currentPage.current + 1;
 
     fetcher.load(`/leaderboard?page=${nextPage}`);
-  }, [hasNextPage, isLoadingMore, fetcher, currentPage]);
+  }, [hasNextPage, isLoadingMore, fetcher]);
 
   // Handle fetcher data
   useEffect(() => {
     if (fetcher.data && fetcher.state === 'idle') {
       const data = fetcher.data;
-      if (currentPage === 1) {
-        // New filter - replace users
-        setUsers(data.users);
-      } else {
-        // Append users for pagination
-        setUsers((prev) => [...prev, ...data.users]);
-      }
-      setCurrentPage(data.pagination.page);
+      setUsers((prev) => [...prev, ...data.users]);
+      currentPage.current = data.pagination.page;
       setHasNextPage(data.pagination.hasNextPage);
       setIsLoadingMore(false);
     }
-  }, [fetcher.data, fetcher.state, currentPage]);
+  }, [fetcher.data, fetcher.state]);
 
   // Initialize users from loader data
   useEffect(() => {
     setUsers(loaderData.users);
-    setCurrentPage(loaderData.pagination.page);
+    currentPage.current = loaderData.pagination.page;
     setHasNextPage(loaderData.pagination.hasNextPage);
     setIsLoadingMore(false);
   }, [loaderData]);

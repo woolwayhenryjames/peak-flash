@@ -109,7 +109,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
 
   // State management
   const [campaigns, setCampaigns] = useState(loaderData.campaigns);
-  const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = useRef(1);
   const [hasNextPage, setHasNextPage] = useState(
     loaderData.pagination.hasNextPage
   );
@@ -136,7 +136,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
 
       // Reset state
       setCampaigns([]);
-      setCurrentPage(1);
+      currentPage.current = 1;
       setIsLoadingMore(true);
     },
     [searchParams, setSearchParams]
@@ -149,32 +149,27 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
     }
 
     setIsLoadingMore(true);
-    const nextPage = currentPage + 1;
+
+    const nextPage = currentPage.current + 1;
 
     fetcher.load(`/ascent?page=${nextPage}&status=${currentStatus}`);
-  }, [hasNextPage, isLoadingMore, fetcher, currentPage, currentStatus]);
+  }, [hasNextPage, isLoadingMore, fetcher, currentStatus]);
 
   // Handle fetcher data
   useEffect(() => {
     if (fetcher.data && fetcher.state === 'idle') {
       const data = fetcher.data;
-      if (currentPage === 1) {
-        // New filter - replace campaigns
-        setCampaigns(data.campaigns);
-      } else {
-        // Append campaigns for pagination
-        setCampaigns((prev) => [...prev, ...data.campaigns]);
-      }
-      setCurrentPage(data.pagination.page);
+      setCampaigns((prev) => [...prev, ...data.campaigns]);
+      currentPage.current = data.pagination.page;
       setHasNextPage(data.pagination.hasNextPage);
       setIsLoadingMore(false);
     }
-  }, [fetcher.data, fetcher.state, currentPage]);
+  }, [fetcher.data, fetcher.state]);
 
   // Initialize campaigns from loader data
   useEffect(() => {
     setCampaigns(loaderData.campaigns);
-    setCurrentPage(loaderData.pagination.page);
+    currentPage.current = loaderData.pagination.page;
     setHasNextPage(loaderData.pagination.hasNextPage);
     setIsLoadingMore(false);
   }, [loaderData]);
