@@ -11,9 +11,14 @@ export function MoreVideosDialog({
   videos: GetVideosReturnedData[];
 }) {
   return (
-    <MobileBottomDialog setShow={setShow} show={show} title="Posted Videos">
+    <MobileBottomDialog
+      className="p-7 py-8"
+      setShow={setShow}
+      show={show}
+      title="Posted Videos"
+    >
       {/* Video List */}
-      <div className="max-h-[50vh] overflow-y-auto pr-2">
+      <div className="max-h-[50vh] overflow-y-auto pr-4">
         {videos.map((video) => (
           <a
             className="mb-3 flex h-33 w-full items-center gap-4.5 border border-white/20 px-4 py-3 last:mb-0"
@@ -48,7 +53,7 @@ export function MoreVideosDialog({
               </h3>
 
               {/* Metrics */}
-              <div className="flex items-center gap-0.5">
+              <div className="flex items-center justify-evenly gap-0.5">
                 {/* Like Count */}
                 <div className="flex items-center gap-[3px]">
                   <svg

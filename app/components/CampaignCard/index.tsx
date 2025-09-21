@@ -68,7 +68,7 @@ export default function CampaignCard({
   return (
     <div className={cn('w-full', className)}>
       {/* Card Container with Gradient Border */}
-      <div className="rounded-xl border border-[#2D3338] p-6 md:p-7">
+      <div className="rounded-xl border border-[#2D3338] p-4">
         {/* Inner Container */}
         <div className="flex flex-col gap-6 md:gap-8">
           {/* Header Section */}

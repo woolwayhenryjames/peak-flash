@@ -3,6 +3,7 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 
 import '../app/app.css';
 import { createRoutesStub } from 'react-router';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import getVideosMockData from './getVideos.mockData';
 
 // Initialize MSW
@@ -10,6 +11,7 @@ initialize();
 
 const preview: Preview = {
   parameters: {
+    viewport: { options: INITIAL_VIEWPORTS },
     controls: {
       matchers: {
         color: /(background|color)$/i,

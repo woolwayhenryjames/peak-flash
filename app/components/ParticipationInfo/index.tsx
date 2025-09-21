@@ -98,7 +98,7 @@ export default function ParticipationInfo({
               <div className="relative h-3 w-full rounded-full bg-gray-800">
                 <div
                   className="absolute top-0 left-0 h-full rounded-full bg-gradient-to-r from-[#8080DA] to-[#1BCFDE]"
-                  style={{ width: `${campaignUser?.score ?? 0}%` }}
+                  style={{ width: `${(campaignUser?.score ?? 0) / 300}%` }}
                 />
               </div>
 
@@ -135,7 +135,7 @@ export default function ParticipationInfo({
             <div className="flex w-full gap-4">
               {fetcher.data?.slice(0, 3).map((video) => (
                 <a
-                  className="relative h-32 flex-1 overflow-hidden rounded-lg bg-gray-800"
+                  className="relative h-[130px] w-[107px] overflow-hidden rounded-lg bg-gray-800"
                   href={video.media_urls?.video_url}
                   key={video.video_id}
                   rel="noopener noreferrer"

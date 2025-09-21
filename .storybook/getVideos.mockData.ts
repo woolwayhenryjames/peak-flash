@@ -94,11 +94,11 @@ export default function getVideosMockData() {
       create_time: '2025-09-17T06:47:10',
       desc: '#peakai',
       statistics: {
-        view_count: 13,
-        like_count: 1,
-        comment_count: 2,
+        view_count: 13_000,
+        like_count: 1_234,
+        comment_count: 239,
         share_count: 0,
-        collect_count: 1,
+        collect_count: 198,
       },
       ai_quality_score: {
         keyword_score: 60,

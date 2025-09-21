@@ -43,10 +43,8 @@ const meta = {
   },
   decorators: [
     (StoryComponent) => (
-      <div className="min-h-screen bg-gradient-to-b from-25% from-black to-[#9595FF] to-[125%] p-8">
-        <div className="mx-auto max-w-md">
-          <StoryComponent />
-        </div>
+      <div className="mx-auto">
+        <StoryComponent />
       </div>
     ),
   ],

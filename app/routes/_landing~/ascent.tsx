@@ -212,7 +212,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
   ];
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="mx-auto p-2 max-md:p-5">
       {/* Header */}
       <svg
         className="h-auto w-full"
@@ -315,7 +315,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
 
       {/* Campaign Cards */}
       {campaigns.length > 0 && (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {campaigns.map((campaign) => (
             <div key={campaign.id}>
               <div className="mb-8 h-px w-full bg-gradient-to-r from-transparent via-gray-600/50 to-transparent" />
