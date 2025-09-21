@@ -132,7 +132,12 @@ export default function ParticipationInfo({
             <div className="h-6 w-px border-gray-600 border-l border-dashed" />
 
             {/* Recent Videos */}
-            <div className="flex w-full gap-4">
+            <div
+              className={cn(
+                'flex w-full gap-4',
+                fetcher.data && fetcher.data.length > 1 && 'justify-center'
+              )}
+            >
               {fetcher.data?.slice(0, 3).map((video) => (
                 <a
                   className="relative h-[130px] w-[107px] overflow-hidden rounded-lg bg-gray-800"

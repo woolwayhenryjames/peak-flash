@@ -63,8 +63,7 @@ export const ZeroGCampaign: Story = {
       description: 'Decentralized storage network',
       poolSize: 30_000,
       participants: 856,
-      userRank: 15,
-      isParticipating: true,
+      isParticipating: false,
       startDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000), // Started 10 days ago
       endDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // Ends in 2 days (ending-soon)
       createdAt: new Date(),

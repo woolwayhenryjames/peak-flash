@@ -156,7 +156,7 @@ export default function CampaignCard({
           {type === 'detail' ? (
             <div className="flex flex-col gap-4">
               {/* Days Left and Rank */}
-              <div className="flex items-center justify-between gap-4 text-white">
+              <div className="flex h-7 items-center justify-between gap-4 text-white">
                 <DaysLeft daysLeftText={daysLeftText} />
 
                 {/* Rank Badge */}
