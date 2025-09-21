@@ -1,12 +1,10 @@
 import type { CampaignUser } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { useFetcher } from 'react-router';
-import {
-  MoreVideosDialog,
-  type VideoScoreJson,
-} from '~/components/Dialogs/MoreVideosDialog';
+import { MoreVideosDialog } from '~/components/Dialogs/MoreVideosDialog';
 import GlowContainer from '~/components/GlowContainer';
 import { cn } from '~/lib/utils';
+import type { GetVideosReturnedData } from '~/routes/api~/getVideos.$cuId';
 import profileIcon from './assets/profile.svg';
 
 export default function ParticipationInfo({
@@ -24,7 +22,7 @@ export default function ParticipationInfo({
   userRank: number | null | undefined;
 }) {
   const [showMoreVideos, setShowMoreVideos] = useState(false);
-  const fetcher = useFetcher<VideoScoreJson[]>();
+  const fetcher = useFetcher<GetVideosReturnedData[]>();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we don't want to refetch on every refetch, that would be infinite loop
   useEffect(() => {

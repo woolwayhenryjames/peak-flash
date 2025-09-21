@@ -1,36 +1,5 @@
 import MobileBottomDialog from '~/components/Dialogs/MobileBottomDialog';
-
-export interface VideoScoreJson {
-  video_id: string;
-  create_time: string;
-  desc: string;
-  statistics: {
-    view_count: number;
-    like_count: number;
-    comment_count: number;
-    share_count: number;
-    collect_count: number;
-  };
-  ai_quality_score: {
-    keyword_score: number;
-    originality_score: number;
-    clarity_score: number;
-    spam_score: number;
-    promotion_score: number;
-    total_score: number;
-  };
-  engagement_rates: {
-    like_rate: number;
-    comment_rate: number;
-    share_rate: number;
-    save_rate: number;
-  };
-  media_urls?: {
-    video_url: string;
-    cover_url: string;
-    dynamic_cover_url: string;
-  };
-}
+import type { GetVideosReturnedData } from '~/routes/api~/getVideos.$cuId';
 
 export function MoreVideosDialog({
   show,
@@ -39,7 +8,7 @@ export function MoreVideosDialog({
 }: {
   show: boolean;
   setShow: (show: boolean) => void;
-  videos: VideoScoreJson[];
+  videos: GetVideosReturnedData[];
 }) {
   return (
     <MobileBottomDialog setShow={setShow} show={show} title="Posted Videos">

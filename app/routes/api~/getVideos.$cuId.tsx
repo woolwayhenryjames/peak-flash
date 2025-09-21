@@ -1,6 +1,51 @@
 import type { LoaderFunctionArgs } from 'react-router';
 import { db } from '~/services/db.server';
 
+export interface VideoScoreJson {
+  video_id: string;
+  create_time: string;
+  desc: string;
+  statistics: {
+    view_count: number;
+    like_count: number;
+    comment_count: number;
+    share_count: number;
+    collect_count: number;
+  };
+  ai_quality_score: {
+    keyword_score: number;
+    originality_score: number;
+    clarity_score: number;
+    spam_score: number;
+    promotion_score: number;
+    total_score: number;
+  };
+  engagement_rates: {
+    like_rate: number;
+    comment_rate: number;
+    share_rate: number;
+    save_rate: number;
+  };
+}
+
+export interface AiScoreJson {
+  keyword_score: number;
+  originality_score: number;
+  clarity_score: number;
+  spam_score: number;
+  promotion_score: number;
+  total_score: number;
+  analysis_details: string;
+  media_urls?: {
+    video_url: string;
+    cover_url: string;
+    dynamic_cover_url: string;
+  };
+}
+
+export type GetVideosReturnedData = VideoScoreJson &
+  Pick<AiScoreJson, 'media_urls'>;
+
 export async function loader({ params }: LoaderFunctionArgs) {
   const cuId = params.cuId;
   if (!cuId) {
@@ -10,9 +55,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
   try {
     // Find the corresponding TikTok creator scores for this CampaignUser
     // This matches the logic from UpdateAllScores Step 3
-    const results: { video_scores_json: string }[] = await db.$queryRaw`
+    const results: { video_scores_json: string; ai_scores_json: string }[] =
+      await db.$queryRaw`
       SELECT
-        ks.video_scores_json
+        ks.video_scores_json,
+        ks.ai_scores_json
       FROM CampaignUser cu
       INNER JOIN User u 
         ON cu.userId = u.id
@@ -51,9 +98,22 @@ export async function loader({ params }: LoaderFunctionArgs) {
         )
     `;
     const jsonString = results[0]?.video_scores_json || '[]';
+    const aiJsonString = results[0]?.ai_scores_json || '[]';
 
-    // Parse the JSON string to ensure it's valid JSON
-    const parsedData = JSON.parse(jsonString);
+    // Parse the JSON strings to ensure they're valid JSON
+    const parsedVideoScores = JSON.parse(jsonString) as VideoScoreJson[];
+    const parsedAiScores = JSON.parse(aiJsonString) as Record<
+      string,
+      AiScoreJson
+    >;
+
+    // Merge the video scores with their corresponding AI scores
+    const parsedData: GetVideosReturnedData[] = parsedVideoScores.map(
+      (video) => ({
+        ...video,
+        media_urls: parsedAiScores[video.video_id]?.media_urls,
+      })
+    );
 
     // Return the parsed data
     return Response.json(parsedData);
