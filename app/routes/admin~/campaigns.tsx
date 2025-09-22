@@ -81,7 +81,12 @@ type ActionData =
   | { success: true; message: string }
   | { success: false; error: string };
 
-const allowedAdminEmails = ['arslanablikim', 'jenniffergzz', 'qtchcom'];
+const allowedAdminEmails = [
+  'arslanablikim',
+  'jenniffergzz',
+  'jen_sunny0',
+  'qtchcom',
+];
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getSessionUser(request);

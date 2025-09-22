@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import GlowContainer from '~/components/GlowContainer';
+import InviteeCampaigns from '~/components/inviteeCampaigns';
+import { cn } from '~/lib/utils';
 import { getDbUser } from '~/services/auth.server';
 import {
   getUserInviteRecords,
@@ -93,6 +95,7 @@ export default function Invite({
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedTikTok, setCopiedTikTok] = useState(false);
   const [copiedInstagram, setCopiedInstagram] = useState(false);
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
 
   const inviteLink = `${import.meta.env.VITE_ORIGIN}invite/${user?.id}`;
 
@@ -348,11 +351,44 @@ export default function Invite({
                       </div>
 
                       {/* Time */}
-                      <div className="text-[#979797] text-[10px] leading-relaxed">
-                        {record.timeAgo}
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="text-[#979797] text-[10px] leading-relaxed">
+                          {record.timeAgo}
+                        </div>
+                        <button
+                          onClick={() =>
+                            setExpandedUserId(
+                              expandedUserId === record.id ? null : record.id
+                            )
+                          }
+                          type="button"
+                        >
+                          <GlowContainer className="rounded-sm px-2 py-2">
+                            <svg
+                              className={cn(
+                                'h-4 w-4 transition-transform',
+                                expandedUserId === record.id ? 'rotate-180' : ''
+                              )}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <title>Chevron down</title>
+                              <path
+                                d="M6 9l6 6 6-6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                              />
+                            </svg>
+                          </GlowContainer>
+                        </button>
                       </div>
                     </div>
                   </div>
+                  {expandedUserId === record.id && (
+                    <InviteeCampaigns inviter={user} userId={record.id} />
+                  )}
                 </div>
               ))
             )}
