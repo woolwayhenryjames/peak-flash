@@ -1,5 +1,6 @@
 import type { Campaign, User } from '@prisma/client';
 import { Prisma } from '@prisma/client';
+import { checkUserCampaignAlgo } from '~/services/score-algo-api';
 import { db } from './db.server';
 
 export interface CampaignWithUserRank extends Campaign {
@@ -235,9 +236,11 @@ export async function getAllCampaigns() {
 }
 
 export async function createCampaign(data: Prisma.CampaignCreateInput) {
-  return await db.campaign.create({
+  const result = await db.campaign.create({
     data,
   });
+  checkUserCampaignAlgo();
+  return result;
 }
 
 export async function updateCampaign(
