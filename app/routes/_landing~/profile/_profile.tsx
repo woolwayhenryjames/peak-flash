@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { redirect } from 'react-router';
 import CampaignList from '~/components/CampaignList';
+import ConnectWallet from '~/components/ConnectWallet';
 import { getDbUser } from '~/services/auth.server';
 import { getCampaignsForUser } from '~/services/campaign.server';
 import { getUserKindleRank } from '~/services/user-ranking.server';
 import type { Route } from './+types/_profile';
 import starIcon from './assets/star-icon.svg';
+import walletIcon from './assets/wallet-icon.svg';
 
 export function meta({ data }: Route.MetaArgs) {
   const user = data?.user;
@@ -184,13 +186,25 @@ export default function Profile({
 
       <div className="mx-auto mt-8 h-px w-75 bg-gray-600/50" />
 
+      {/* Connect Wallet Section */}
+      <div className="flex flex-col gap-7">
+        <div className="flex gap-1">
+          <img alt="Wallet icon" className="h-6 w-6" src={walletIcon} />
+          <div className="space-y-4">
+            <h2 className="font-semibold text-white text-xl">Connect Wallet</h2>
+            <div className="text-[#b4b4b4] text-xs">
+              Connect wallet to get the rewards.
+            </div>
+          </div>
+        </div>
+        <ConnectWallet />
+      </div>
+
       {/* My Campaigns Section */}
       <div className="flex flex-col gap-7">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <img alt="Star icon" className="h-6 w-6" src={starIcon} />
-            <h2 className="font-semibold text-white text-xl">My Campaigns</h2>
-          </div>
+        <div className="flex items-center gap-1">
+          <img alt="Star icon" className="h-6 w-6" src={starIcon} />
+          <h2 className="font-semibold text-white text-xl">My Campaigns</h2>
         </div>
 
         <CampaignList campaigns={displayedCampaigns} type="spark-points" />

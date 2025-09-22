@@ -33,6 +33,8 @@ model User {
   inviter   User?   @relation("UserInvitations", fields: [inviterId], references: [id], onDelete: SetNull)
   invitees  User[]  @relation("UserInvitations")
 
+  walletAddress String? @db.Text
+
   @@unique([email])
   @@index([id])
   @@index([kindleScore])
