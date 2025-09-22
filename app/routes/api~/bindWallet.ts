@@ -3,29 +3,21 @@ import { getSessionUser } from '~/services/auth.server';
 import { db } from '~/services/db.server';
 
 export async function action({ request }: ActionFunctionArgs) {
-  if (request.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
+  // Get the authenticated user
+  const userResult = await getSessionUser(request);
+  if (userResult.isErr()) {
+    return new Response('Unauthorized', { status: 401 });
   }
 
+  const user = userResult.value;
   try {
-    // Get the authenticated user
-    const userResult = await getSessionUser(request);
-    if (userResult.isErr()) {
-      return new Response('Unauthorized', { status: 401 });
+    if (request.method === 'POST') {
+      return bindWallet(request, user);
     }
-
-    const user = userResult.value;
-
-    // Parse the request body
-    const { walletAddress } = await request.json();
-    if (!walletAddress) {
-      return new Response('Wallet address is required', { status: 400 });
+    if (request.method === 'DELETE') {
+      return unbindWallet(user);
     }
-    await db.user.update({
-      where: { id: user.id },
-      data: { walletAddress },
-    });
-    return Response.json({ success: true });
+    return new Response('Method not allowed', { status: 405 });
   } catch (error) {
     console.error('Error in process-invite API:', error);
     return Response.json(
@@ -36,4 +28,25 @@ export async function action({ request }: ActionFunctionArgs) {
       { status: 500 }
     );
   }
+}
+
+async function bindWallet(request: Request, user: { id: string }) {
+  // Parse the request body
+  const { walletAddress } = await request.json();
+  if (!walletAddress) {
+    return new Response('Wallet address is required', { status: 400 });
+  }
+  const result = await db.user.update({
+    where: { id: user.id },
+    data: { walletAddress },
+  });
+  return Response.json(result);
+}
+
+async function unbindWallet(user: { id: string }) {
+  const result = await db.user.update({
+    where: { id: user.id },
+    data: { walletAddress: null },
+  });
+  return Response.json(result);
 }

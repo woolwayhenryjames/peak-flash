@@ -3,13 +3,25 @@ import {
   useAppKitAccount,
   useDisconnect,
 } from '@reown/appkit/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import walletIcon from './assets/wallet-icon.svg';
 
-export default function ConnectWallet() {
+export default function ConnectWallet({
+  userWalletAddress,
+}: {
+  userWalletAddress?: string | null;
+}) {
   const { disconnect } = useDisconnect();
   const { open } = useAppKit();
   const { address, isConnected } = useAppKitAccount();
+  const [currentAddress, setCurrentAddress] = useState<
+    string | null | undefined
+  >(userWalletAddress);
+
+  // Sync currentAddress with userWalletAddress prop
+  useEffect(() => {
+    setCurrentAddress(userWalletAddress);
+  }, [userWalletAddress]);
   useEffect(() => {
     if (isConnected && address) {
       // Bind wallet to user account
@@ -21,7 +33,9 @@ export default function ConnectWallet() {
         body: JSON.stringify({ walletAddress: address }),
       })
         .then((response) => {
-          if (!response.ok) {
+          if (response.ok) {
+            setCurrentAddress(address);
+          } else {
             console.error('Failed to bind wallet');
           }
         })
@@ -31,36 +45,44 @@ export default function ConnectWallet() {
     }
   }, [address, isConnected]);
 
+  const handleClick = () => {
+    if (address) {
+      disconnect();
+      fetch('/api/bindWallet', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            setCurrentAddress(null);
+          } else {
+            console.error('Failed to unbind wallet');
+          }
+        })
+        .catch((error) => {
+          console.error('Error unbinding wallet:', error);
+        });
+    } else {
+      open();
+    }
+  };
+
   return (
-    // biome-ignore lint/a11y/useSemanticElements: button within button
-    <div
-      className="flex cursor-pointer items-center gap-4 border border-[#f2edea]/40 p-2 font-light max-md:bg-[#161616] md:p-5"
-      onClick={() => open()}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          open();
-        }
-      }}
-      role="button"
-      tabIndex={0}
-    >
+    <div className="my-6 flex cursor-pointer items-center gap-4 border border-[#f2edea]/40 p-2 font-light max-md:bg-[#161616] md:p-5">
       <img alt="airdrop-wallet" src={walletIcon} />
       <div className="text-[#c5c5c5] text-xl">
-        {address
-          ? `${address.slice(0, 8)}...${address.slice(-4)}`
+        {currentAddress
+          ? `${currentAddress.slice(0, 8)}...${currentAddress.slice(-4)}`
           : 'Connect Wallet'}
       </div>
       <button
         className="ml-auto text-white underline decoration-dashed"
-        onClick={(e) => {
-          if (address) {
-            e.stopPropagation();
-            disconnect();
-          }
-        }}
+        onClick={handleClick}
         type="button"
       >
-        {address ? (
+        {currentAddress ? (
           'Disconnect'
         ) : (
           <svg

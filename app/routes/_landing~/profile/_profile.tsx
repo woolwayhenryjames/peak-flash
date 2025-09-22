@@ -197,8 +197,10 @@ export default function Profile({
             </div>
           </div>
         </div>
-        <ConnectWallet />
+        <ConnectWallet userWalletAddress={user.walletAddress} />
       </div>
+
+      <div className="mx-auto mb-8 h-px w-75 bg-gray-600/50" />
 
       {/* My Campaigns Section */}
       <div className="flex flex-col gap-7">
