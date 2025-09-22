@@ -39,15 +39,19 @@ FROM
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: task.email, keywords: task.keywords }),
-      }).then((res) => {
-        if (!res.ok) {
-          console.error('Failed to send task:', res.statusText);
-        }
-        console.log('Task sent successfully for', {
-          username: task.email,
-          keywords: task.keywords,
+      })
+        .then((res) => {
+          if (!res.ok) {
+            console.error('Failed to send task:', res.statusText);
+          }
+          console.log('Task sent successfully for', {
+            username: task.email,
+            keywords: task.keywords,
+          });
+        })
+        .catch((error) => {
+          console.error('Error sending task:', error);
         });
-      });
     }
   }
 }
@@ -55,10 +59,10 @@ FROM
 export async function updateUserPoints() {
   try {
     await db.$executeRaw`
-    UPDATE content_score.\`User\`
+    UPDATE \`User\`
     INNER JOIN tiktok_creator_score.users
-    ON content_score.\`User\`.email = tiktok_creator_score.users.username
-  SET content_score.\`User\`.kindleScore = COALESCE(tiktok_creator_score.users.account_total_score, content_score.\`User\`.kindleScore);`;
+    ON \`User\`.email = tiktok_creator_score.users.username
+  SET \`User\`.kindleScore = COALESCE(tiktok_creator_score.users.account_total_score, \`User\`.kindleScore);`;
   } catch (error) {
     console.error('Error updating user points:', error);
   }
