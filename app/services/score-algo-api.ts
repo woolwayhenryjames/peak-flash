@@ -35,11 +35,17 @@ FROM
           task.keywords.sort().join(' | ')
     );
     if (!matchingTask) {
-      fetch('http://localhost:3333/api/addUser', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: task.email, keywords: task.keywords }),
-      })
+      fetch(
+        `${import.meta.env.MODE === 'production' ? 'http://172.31.28.161:3333' : 'http://localhost:3333'}/api/addUser`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: task.email,
+            keywords: task.keywords,
+          }),
+        }
+      )
         .then((res) => {
           if (!res.ok) {
             console.error('Failed to send task:', res.statusText);
