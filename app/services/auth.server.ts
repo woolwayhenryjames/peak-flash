@@ -51,6 +51,8 @@ export const auth = betterAuth({
     'https://staging.peakboom.ai',
     'https://www.peakboom.ai',
     'https://peakboom.ai',
+    'https://www.takeapeak.ai',
+    'https://takeapeak.ai',
   ],
 });
 
