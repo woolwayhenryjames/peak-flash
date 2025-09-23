@@ -70,7 +70,7 @@ export default function ConnectWallet({
   };
 
   return (
-    <div className="my-6 flex items-center gap-4 border border-[#f2edea]/40 p-2 font-light max-md:bg-[#161616] md:p-5">
+    <div className="my-6 flex items-center gap-4 border border-[#9c9c9c]/20 p-2 font-light max-md:bg-[#161616] md:p-5">
       <img alt="airdrop-wallet" src={walletIcon} />
       <div className="text-[#c5c5c5] text-xl">
         {currentAddress

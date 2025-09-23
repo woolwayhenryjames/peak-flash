@@ -1,6 +1,6 @@
 import type { Campaign, CampaignUser } from '@prisma/client';
 import { useEffect, useState } from 'react';
-import { useFetcher } from 'react-router';
+import { Link, useFetcher } from 'react-router';
 
 const formatter = new Intl.NumberFormat('en', {
   notation: 'compact',
@@ -48,7 +48,11 @@ export default function InviteeCampaigns({
   return (
     <div className="space-y-3">
       {displayedCampaigns.map((cu) => (
-        <div className="flex flex-col gap-5 p-4" key={cu.id}>
+        <Link
+          className="flex flex-col gap-5 p-4"
+          key={cu.id}
+          to={`/campaigns/${cu.campaignId}`}
+        >
           {/* Campaign Title */}
           <h3 className="font-medium text-[#F8F8F8] text-base leading-tight tracking-wide underline">
             {cu.campaign.name}
@@ -87,7 +91,7 @@ export default function InviteeCampaigns({
             <div className="-translate-x-0.5 absolute top-0 left-1/2 h-full w-px bg-[#5F5F5F]/80" />
             <div className="absolute bottom-0 left-0 h-px w-full bg-[#5F5F5F]/80" />
           </div>
-        </div>
+        </Link>
       ))}
       {campaignUsers.length > 3 && (
         <button
