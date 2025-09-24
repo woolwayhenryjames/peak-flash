@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs } from 'react-router';
 import { db } from '~/services/db.server';
+import { logger } from '~/services/logger.server';
 
 export interface VideoScoreJson {
   video_id: string;
@@ -118,7 +119,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     // Return the parsed data
     return Response.json(parsedData);
   } catch (error) {
-    console.error('Error fetching TikTok creator scores:', error);
+    logger.error('Error fetching TikTok creator scores:', error);
     return Response.json({ success: false, error }, { status: 500 });
   }
 }

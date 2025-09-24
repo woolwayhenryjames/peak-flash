@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs } from 'react-router';
 import { getSessionUser } from '~/services/auth.server';
+import { logger } from '~/services/logger.server';
 import { processInviteSignup } from '~/services/user.server';
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -25,7 +26,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const result = await processInviteSignup(user.id, inviterId);
 
     if (result.isErr()) {
-      console.error('Failed to process invite:', result.error);
+      logger.error('Failed to process invite:', result.error);
       return Response.json(
         {
           success: false,
@@ -41,7 +42,7 @@ export async function action({ request }: ActionFunctionArgs) {
       inviterId,
     });
   } catch (error) {
-    console.error('Error in process-invite API:', error);
+    logger.error('Error in process-invite API:', error);
     return Response.json(
       {
         success: false,

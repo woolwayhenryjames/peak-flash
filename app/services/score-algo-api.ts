@@ -1,5 +1,6 @@
 import type { JsonObject } from '@prisma/client/runtime/library';
 import { db } from '~/services/db.server';
+import { logger } from '~/services/logger.server';
 
 export async function checkUserCampaignAlgo() {
   const users = await db.user.findMany({ select: { email: true } });
@@ -48,15 +49,15 @@ FROM
       )
         .then((res) => {
           if (!res.ok) {
-            console.error('Failed to send task:', res.statusText);
+            logger.error('Failed to send task:', res.statusText);
           }
-          console.log('Task sent successfully for', {
+          logger.info('Task sent successfully for', {
             username: task.email,
             keywords: task.keywords,
           });
         })
         .catch((error) => {
-          console.error('Error sending task:', error);
+          logger.error('Error sending task:', error);
         });
     }
   }
@@ -70,6 +71,6 @@ export async function updateUserPoints() {
     ON \`User\`.email = tiktok_creator_score.users.username
   SET \`User\`.kindleScore = COALESCE(tiktok_creator_score.users.account_total_score, \`User\`.kindleScore);`;
   } catch (error) {
-    console.error('Error updating user points:', error);
+    logger.error('Error updating user points:', error);
   }
 }

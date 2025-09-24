@@ -3,6 +3,7 @@ import {
   cleanupOldUserAvatars,
   uploadImageFromUrl,
 } from '~/services/aws-s3.server';
+import { logger } from '~/services/logger.server';
 import { db } from './db.server';
 
 export const getUserInviteRecords = async (userId: string) => {
@@ -103,7 +104,7 @@ export const processInviteSignup = async (
   inviterId: string
 ) => {
   try {
-    console.log(
+    logger.info(
       `Processing invite signup: newUserId=${newUserId}, inviterId=${inviterId}`
     );
 
@@ -114,7 +115,7 @@ export const processInviteSignup = async (
     });
 
     if (!inviter) {
-      console.error(`Inviter ${inviterId} not found`);
+      logger.error(`Inviter ${inviterId} not found`);
       return err(new Error('Inviter not found'));
     }
 
@@ -125,7 +126,7 @@ export const processInviteSignup = async (
     });
 
     if (existingUser?.inviterId) {
-      console.log(
+      logger.info(
         `User ${newUserId} already has inviter ${existingUser.inviterId}, skipping`
       );
       return ok(existingUser);
@@ -137,10 +138,10 @@ export const processInviteSignup = async (
       data: { inviterId },
     });
 
-    console.log(`Successfully set inviter ${inviterId} for user ${newUserId}`);
+    logger.info(`Successfully set inviter ${inviterId} for user ${newUserId}`);
     return ok(user);
   } catch (error) {
-    console.error('Error processing invite signup:', error);
+    logger.error('Error processing invite signup:', error);
     return err(error);
   }
 };
@@ -152,7 +153,7 @@ export const persistUserImage = async (user: {
   if (user.image) {
     try {
       let imageUrl = user.image;
-      console.log(`Persisting image for user ${user.id}: ${user.image}`);
+      logger.info(`Persisting image for user ${user.id}: ${user.image}`);
 
       // Check if the image URL is from external source with expiration
       if (isExternalImageUrl(user.image)) {
@@ -162,10 +163,10 @@ export const persistUserImage = async (user: {
 
           // Cleanup old avatars (keep latest 3) - don't await to avoid blocking
           cleanupOldUserAvatars(user.id, 3).catch((cleanupError) =>
-            console.error('Failed to cleanup old avatars:', cleanupError)
+            logger.error('Failed to cleanup old avatars:', cleanupError)
           );
         } catch (uploadError) {
-          console.error('Failed to upload TikTok avatar to S3:', uploadError);
+          logger.error('Failed to upload TikTok avatar to S3:', uploadError);
           // Continue with the original URL if S3 upload fails
           // This ensures the function doesn't fail completely
         }
@@ -177,7 +178,7 @@ export const persistUserImage = async (user: {
       });
       return ok(true);
     } catch (error) {
-      console.error('Error persisting user image:', error);
+      logger.error('Error persisting user image:', error);
       return err(error as Error);
     }
   }

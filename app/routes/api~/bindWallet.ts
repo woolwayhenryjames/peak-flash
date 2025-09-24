@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs } from 'react-router';
 import { getSessionUser } from '~/services/auth.server';
 import { db } from '~/services/db.server';
+import { logger } from '~/services/logger.server';
 
 export async function action({ request }: ActionFunctionArgs) {
   // Get the authenticated user
@@ -19,7 +20,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
     return new Response('Method not allowed', { status: 405 });
   } catch (error) {
-    console.error('Error in process-invite API:', error);
+    logger.error('Error in process-invite API:', error);
     return Response.json(
       {
         success: false,

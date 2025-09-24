@@ -17,6 +17,7 @@ import {
   getAllCampaigns,
   updateCampaign,
 } from '~/services/campaign.server';
+import { logger } from '~/services/logger.server';
 import type { Route } from './+types/campaigns';
 
 const formatter = new Intl.NumberFormat('en', {
@@ -199,7 +200,7 @@ export async function action({ request }: Route.ActionArgs) {
 
     return { success: false, error: 'Invalid intent' };
   } catch (error) {
-    console.error('Campaign action error:', error);
+    logger.error('Campaign action error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An error occurred',

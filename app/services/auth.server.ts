@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { createAuthMiddleware } from 'better-auth/api';
 import { err, ok } from 'neverthrow';
+import { logger } from '~/services/logger.server';
 import {
   checkUserCampaignAlgo,
   updateUserPoints,
@@ -37,7 +38,7 @@ export const auth = betterAuth({
   hooks: {
     after: createAuthMiddleware((ctx) => {
       const newSession = ctx.context.newSession;
-      console.log('New session created:', newSession);
+      logger.debug('New session created:', newSession);
       if (newSession) {
         persistUserImage(newSession.user);
         checkUserCampaignAlgo();

@@ -8,6 +8,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import type { FileUpload } from '@remix-run/form-data-parser';
+import { logger } from '~/services/logger.server';
 
 const {
   AWS_S3_BUCKET_NAME,
@@ -93,7 +94,7 @@ export const deleteAsset = async (fullPath: string) => {
   try {
     await storage.send(command);
   } catch (error) {
-    console.error('Error deleting asset:', error);
+    logger.error('Error deleting asset:', error);
   }
 };
 
@@ -135,7 +136,7 @@ export const deleteFolder = async (prefix: string) => {
 
     return true;
   } catch (error) {
-    console.error('Error deleting folder:', error);
+    logger.error('Error deleting folder:', error);
     return false;
   }
 };
@@ -247,7 +248,7 @@ export const uploadImageFromUrl = async (
 
     return `/assets/${fileName}`;
   } catch (error) {
-    console.error('Error uploading image from URL:', error);
+    logger.error('Error uploading image from URL:', error);
     throw error;
   }
 };
@@ -271,12 +272,12 @@ export const cleanupOldUserAvatars = async (userId: string, keepLatest = 3) => {
 
     if (objectsToDelete.length > 0) {
       await deleteFilesFromS3(objectsToDelete);
-      console.log(
+      logger.info(
         `Cleaned up ${objectsToDelete.length} old avatar files for user ${userId}`
       );
     }
   } catch (error) {
-    console.error('Error cleaning up old user avatars:', error);
+    logger.error('Error cleaning up old user avatars:', error);
     // Don't throw - cleanup failure shouldn't break the main flow
   }
 };

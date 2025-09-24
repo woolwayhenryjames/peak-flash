@@ -1,4 +1,5 @@
 import { err, ok, type Result } from 'neverthrow';
+import { logger } from '~/services/logger.server';
 
 export interface TikTokUserInfo {
   nickname: string;
@@ -42,22 +43,22 @@ export async function getUserInfo(
     );
 
     if (!response.ok) {
-      console.error('TikTok API error:', response.status, response.statusText);
+      logger.error('TikTok API error:', response.status, response.statusText);
       return err('Failed to fetch TikTok user info');
     }
 
     const result: TikHubApiResponse<{ user: TikTokUserInfo }> =
       await response.json();
 
-    console.log('TikTok API response:', result);
+    logger.debug('TikTok API response:', result);
     if (result.code !== 200) {
-      console.error('TikTok API error:', result.message);
+      logger.error('TikTok API error:', result.message);
       return err(result.message);
     }
 
     return ok(result.data.user);
   } catch (error) {
-    console.error('Error fetching TikTok user info:', error);
+    logger.error('Error fetching TikTok user info:', error);
     return err('Failed to fetch TikTok user info');
   }
 }

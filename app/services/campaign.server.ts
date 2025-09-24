@@ -1,5 +1,6 @@
 import type { Campaign, User } from '@prisma/client';
 import { Prisma } from '@prisma/client';
+import { logger } from '~/services/logger.server';
 import { checkUserCampaignAlgo } from '~/services/score-algo-api';
 import { db } from './db.server';
 
@@ -101,7 +102,7 @@ export async function getCampaignsWithUserRanks(
   try {
     ranksResult = await db.$queryRaw<UserRankQueryResult[]>(sqlQuery);
   } catch (error) {
-    console.error('Failed to get user campaign ranks:', error);
+    logger.error('Failed to get user campaign ranks:', error);
     return campaigns.map((campaign) => ({
       ...campaign,
       userRank: null,

@@ -1,4 +1,5 @@
 import type { User } from '@prisma/client';
+import { logger } from '~/services/logger.server';
 import { db } from './db.server';
 
 export interface UserWithKindleRank extends User {
@@ -43,7 +44,7 @@ export async function getUserKindleRank(userId: string): Promise<number> {
 
     return result.length > 0 ? result[0].user_rank : 1;
   } catch (error) {
-    console.error('Failed to get user kindle rank:', error);
+    logger.error('Failed to get user kindle rank:', error);
     return 1; // Return default rank on error
   }
 }
@@ -134,7 +135,7 @@ export async function getGlobalLeaderboard(
       },
     };
   } catch (error) {
-    console.error('Failed to get global leaderboard:', error);
+    logger.error('Failed to get global leaderboard:', error);
     // Return empty result on error
     return {
       users: [],
