@@ -64,12 +64,14 @@ interface LoaderData {
     name: string;
     description: string | null;
     image: string | null;
+    homepageUrl: string | null;
     poolSize: number;
     poolUnit: string | null;
     order: number;
     startDate: Date;
     endDate: Date;
     joinRequirement: unknown;
+    shareUrls: unknown;
     createdAt: Date;
     updatedAt: Date;
     _count: {
@@ -99,67 +101,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { campaigns };
 }
 
-async function handleCreateCampaign(formData: FormData) {
-  const name = formData.get('name') as string;
-  const description = formData.get('description') as string;
-  const imageFile = formData.get('image');
-  const imageUrl = formData.get('imageUrl') as string;
-  const poolSize = Number.parseInt(formData.get('poolSize') as string, 10);
-  const poolUnit = formData.get('poolUnit') as string;
-  const order = Number.parseInt(formData.get('order') as string, 10) || 0;
-  const startDate = new Date(formData.get('startDate') as string);
-  const endDate = new Date(formData.get('endDate') as string);
-  const joinRequirement = formData.get('joinRequirement') as string;
-
-  // Use uploaded image path if file was uploaded, otherwise use URL if provided
-  const image = (imageFile as string) || imageUrl || undefined;
-
-  await createCampaign({
-    name,
-    description: description || undefined,
-    image,
-    poolSize,
-    poolUnit: poolUnit || undefined,
-    order,
-    startDate,
-    endDate,
-    joinRequirement: joinRequirement ? JSON.parse(joinRequirement) : undefined,
-  });
-
-  return { success: true, message: 'Campaign created successfully' };
-}
-
-async function handleUpdateCampaign(formData: FormData) {
-  const id = formData.get('id') as string;
-  const name = formData.get('name') as string;
-  const description = formData.get('description') as string;
-  const imageFile = formData.get('image');
-  const imageUrl = formData.get('imageUrl') as string;
-  const poolSize = Number.parseInt(formData.get('poolSize') as string, 10);
-  const poolUnit = formData.get('poolUnit') as string;
-  const order = Number.parseInt(formData.get('order') as string, 10) || 0;
-  const startDate = new Date(formData.get('startDate') as string);
-  const endDate = new Date(formData.get('endDate') as string);
-  const joinRequirement = formData.get('joinRequirement') as string;
-
-  // Use uploaded image path if file was uploaded, otherwise use URL if provided
-  const image = (imageFile as string) || imageUrl || undefined;
-
-  await updateCampaign(id, {
-    name,
-    description: description || undefined,
-    image,
-    poolSize,
-    poolUnit: poolUnit || undefined,
-    order,
-    startDate,
-    endDate,
-    joinRequirement: joinRequirement ? JSON.parse(joinRequirement) : undefined,
-  });
-
-  return { success: true, message: 'Campaign updated successfully' };
-}
-
 export async function action({ request }: Route.ActionArgs) {
   const user = await getSessionUser(request);
   if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
@@ -177,23 +118,110 @@ export async function action({ request }: Route.ActionArgs) {
       // Convert to full asset URL that can be served by the assets route
       return `/assets${uploadPath}`;
     }
+
+    // Handle icon uploads for shareUrls
+    if (
+      fileUpload.fieldName.startsWith('icon-') &&
+      fileUpload.type.startsWith('image/')
+    ) {
+      const uploadPath = await uploadHandler(fileUpload);
+      return `/assets${uploadPath}`;
+    }
+
     return null;
   };
 
   const formData = await parseFormData(request, formUploadHandler);
   const intent = formData.get('intent');
+  const id = formData.get('id') as string;
+  const name = formData.get('name') as string;
+  const description = formData.get('description') as string;
+  const imageFile = formData.get('image');
+  const imageUrl = formData.get('imageUrl') as string;
+  const homepageUrl = formData.get('homepageUrl') as string;
+  const poolSize = Number.parseInt(formData.get('poolSize') as string, 10);
+  const poolUnit = formData.get('poolUnit') as string;
+  const order = Number.parseInt(formData.get('order') as string, 10) || 0;
+  const startDate = new Date(formData.get('startDate') as string);
+  const endDate = new Date(formData.get('endDate') as string);
+  const joinRequirement = formData.get('joinRequirement') as string;
+  const shareUrls = formData.get('shareUrls') as string;
+
+  // Use uploaded image path if file was uploaded, otherwise use URL if provided
+  const image = (imageFile as string) || imageUrl || undefined;
+
+  // Process shareUrls and update with uploaded icon paths
+  let processedShareUrls: Array<{ url: string; icon: string }> | undefined;
+  if (shareUrls) {
+    const parsedShareUrls = JSON.parse(shareUrls) as Array<{
+      url: string;
+      icon: string;
+    }>;
+    processedShareUrls = parsedShareUrls.map((shareUrl, index) => {
+      // Look for uploaded icon files that match icon- pattern
+      const iconKeys = Array.from(formData.keys()).filter((key) =>
+        key.startsWith('icon-')
+      );
+      const matchingIconFile = iconKeys.find((key) => {
+        const iconFile = formData.get(key) as string;
+        return (
+          iconFile && iconFile.length > 0 && key.endsWith(index.toString())
+        );
+      });
+
+      if (matchingIconFile) {
+        const iconFile = formData.get(matchingIconFile) as string;
+        if (iconFile) {
+          return { ...shareUrl, icon: iconFile };
+        }
+      }
+
+      return shareUrl;
+    });
+  }
 
   try {
     if (intent === 'create') {
-      return await handleCreateCampaign(formData);
+      await createCampaign({
+        name,
+        description: description || undefined,
+        image,
+        homepageUrl: homepageUrl || undefined,
+        poolSize,
+        poolUnit: poolUnit || undefined,
+        order,
+        startDate,
+        endDate,
+        joinRequirement: joinRequirement
+          ? JSON.parse(joinRequirement)
+          : undefined,
+        shareUrls: processedShareUrls,
+      });
+
+      return { success: true, message: 'Campaign created successfully' };
     }
 
     if (intent === 'update') {
-      return await handleUpdateCampaign(formData);
+      await updateCampaign(id, {
+        name,
+        description: description || undefined,
+        image,
+        homepageUrl: homepageUrl || undefined,
+        poolSize,
+        poolUnit: poolUnit || undefined,
+        order,
+        startDate,
+        endDate,
+        joinRequirement: joinRequirement
+          ? JSON.parse(joinRequirement)
+          : undefined,
+        shareUrls: processedShareUrls,
+      });
+
+      return { success: true, message: 'Campaign updated successfully' };
     }
 
     if (intent === 'delete') {
-      const id = formData.get('id') as string;
       await deleteCampaign(id);
       return { success: true, message: 'Campaign deleted successfully' };
     }
@@ -213,12 +241,14 @@ type Campaign = {
   name: string;
   description: string | null;
   image: string | null;
+  homepageUrl: string | null;
   poolSize: number;
   poolUnit: string | null;
   order: number;
   startDate: Date;
   endDate: Date;
   joinRequirement: unknown;
+  shareUrls: unknown;
   createdAt: Date;
   updatedAt: Date;
   _count: {
@@ -456,16 +486,27 @@ function DynamicJSONInput({
       '- Must include a brief overview of InfinityGround and its features.\n- Highlight the benefits of using Web3IDE for AI development.\n- Include a call-to-action encouraging users to try out InfinityGround.',
   };
 
-  const [jsonData, setJsonData] = useState<Record<string, unknown>>(
-    defaultValue || defaultJoinRequirement
-  );
+  // Add stable keys to prevent focus issues
+  const [jsonData, setJsonData] = useState<
+    Record<string, { id: string; value: unknown }>
+  >(() => {
+    const initialData = defaultValue || defaultJoinRequirement;
+    const result: Record<string, { id: string; value: unknown }> = {};
+    Object.entries(initialData).forEach(([key, value], index) => {
+      result[key] = { id: `field-${Date.now()}-${index}`, value };
+    });
+    return result;
+  });
   const [newFieldKey, setNewFieldKey] = useState('');
 
   const addNewField = () => {
     if (newFieldKey && !jsonData[newFieldKey]) {
       setJsonData((prev) => ({
         ...prev,
-        [newFieldKey]: '',
+        [newFieldKey]: {
+          id: `field-${Date.now()}-${Object.keys(prev).length}`,
+          value: '',
+        },
       }));
       setNewFieldKey('');
     }
@@ -479,10 +520,10 @@ function DynamicJSONInput({
     });
   };
 
-  const updateField = (key: string, value: unknown) => {
+  const updateFieldValue = (key: string, value: unknown) => {
     setJsonData((prev) => ({
       ...prev,
-      [key]: value,
+      [key]: { ...prev[key], value },
     }));
   };
 
@@ -497,18 +538,22 @@ function DynamicJSONInput({
     }
   };
 
-  const renderValueInput = (key: string, value: unknown) => {
+  const renderValueInput = (
+    key: string,
+    fieldData: { id: string; value: unknown }
+  ) => {
+    const value = fieldData.value;
     if (Array.isArray(value)) {
       return (
         <div className="space-y-2">
           {value.map((item, index) => (
-            <div className="flex gap-2" key={`${key}-${index}`}>
+            <div className="flex gap-2" key={`${fieldData.id}-item-${index}`}>
               <input
                 className="flex-1 rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
                 onChange={(e) => {
                   const newArray = [...value];
                   newArray[index] = e.target.value;
-                  updateField(key, newArray);
+                  updateFieldValue(key, newArray);
                 }}
                 placeholder={`Item ${index + 1}`}
                 type="text"
@@ -518,7 +563,7 @@ function DynamicJSONInput({
                 className="rounded-md bg-red-600 px-3 py-2 text-white text-xs hover:bg-red-700"
                 onClick={() => {
                   const newArray = value.filter((_, i) => i !== index);
-                  updateField(key, newArray);
+                  updateFieldValue(key, newArray);
                 }}
                 type="button"
               >
@@ -529,7 +574,7 @@ function DynamicJSONInput({
           <button
             className="rounded-md bg-green-600 px-3 py-1 text-white text-xs hover:bg-green-700"
             onClick={() => {
-              updateField(key, [...value, '']);
+              updateFieldValue(key, [...value, '']);
             }}
             type="button"
           >
@@ -543,7 +588,7 @@ function DynamicJSONInput({
       return (
         <textarea
           className="w-full rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
-          onChange={(e) => updateField(key, e.target.value)}
+          onChange={(e) => updateFieldValue(key, e.target.value)}
           rows={4}
           value={value}
         />
@@ -554,14 +599,14 @@ function DynamicJSONInput({
       <div className="flex gap-2">
         <input
           className="flex-1 rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
-          onChange={(e) => updateField(key, e.target.value)}
+          onChange={(e) => updateFieldValue(key, e.target.value)}
           type="text"
           value={value as string}
         />
         <button
           className="rounded-md bg-blue-600 px-3 py-2 text-white text-xs hover:bg-blue-700"
           onClick={() => {
-            updateField(key, [value as string]);
+            updateFieldValue(key, [value as string]);
           }}
           type="button"
         >
@@ -574,8 +619,11 @@ function DynamicJSONInput({
   return (
     <div className="space-y-4">
       <div className="space-y-4">
-        {Object.entries(jsonData).map(([key, value]) => (
-          <div className="rounded-lg border border-gray-600 p-4" key={key}>
+        {Object.entries(jsonData).map(([key, fieldData]) => (
+          <div
+            className="rounded-lg border border-gray-600 p-4"
+            key={fieldData.id}
+          >
             <div className="mb-3 flex items-center gap-2">
               <input
                 className="flex-1 rounded-md border-gray-600 bg-gray-700 px-3 py-2 font-medium text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
@@ -592,7 +640,7 @@ function DynamicJSONInput({
                 Remove Field
               </button>
             </div>
-            {renderValueInput(key, value)}
+            {renderValueInput(key, fieldData)}
           </div>
         ))}
       </div>
@@ -622,8 +670,191 @@ function DynamicJSONInput({
         </div>
       </div>
 
-      {/* Hidden input that contains the JSON data */}
-      <input name={name} type="hidden" value={JSON.stringify(jsonData)} />
+      {/* Hidden input that contains the JSON data - strip IDs before serializing */}
+      <input
+        name={name}
+        type="hidden"
+        value={JSON.stringify(
+          Object.fromEntries(
+            Object.entries(jsonData).map(([key, fieldData]) => [
+              key,
+              fieldData.value,
+            ])
+          )
+        )}
+      />
+    </div>
+  );
+}
+
+// ShareUrls Input Component
+function ShareUrlsInput({
+  name,
+  defaultValue,
+}: {
+  name: string;
+  defaultValue?: Array<{ url: string; icon: string }>;
+}) {
+  const defaultShareUrls = [
+    { url: 'http://x.com/@example', icon: '/assets/user-upload/x.svg' },
+    { url: 'http://t.me/example', icon: '/assets/user-upload/tg.svg' },
+    {
+      url: 'http://discord.gg/@example',
+      icon: '/assets/user-upload/discord.svg',
+    },
+  ];
+
+  // Add unique IDs to prevent focus issues
+  const [shareUrls, setShareUrls] = useState<
+    Array<{ id: string; url: string; icon: string }>
+  >(() => {
+    const initialUrls = defaultValue || defaultShareUrls;
+    return initialUrls.map((item, index) => ({
+      id: `share-url-${Date.now()}-${index}`,
+      ...item,
+    }));
+  });
+
+  const addShareUrl = () => {
+    setShareUrls((prev) => [
+      ...prev,
+      { id: `share-url-${Date.now()}-${prev.length}`, url: '', icon: '' },
+    ]);
+  };
+
+  const removeShareUrl = (id: string) => {
+    setShareUrls((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const updateShareUrl = (id: string, field: 'url' | 'icon', value: string) => {
+    setShareUrls((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item))
+    );
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-3">
+        {shareUrls.map((shareUrl, index) => (
+          <div
+            className="rounded-lg border border-gray-600 p-4"
+            key={shareUrl.id}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <span className="font-medium text-sm text-white">
+                Share URL #{index + 1}
+              </span>
+              <button
+                className="rounded-md bg-red-600 px-3 py-2 text-white text-xs hover:bg-red-700"
+                onClick={() => removeShareUrl(shareUrl.id)}
+                type="button"
+              >
+                Remove
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label
+                  className="mb-1 block text-gray-400 text-xs"
+                  htmlFor={`url-${shareUrl.id}`}
+                >
+                  URL
+                </label>
+                <input
+                  className="w-full rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
+                  id={`url-${shareUrl.id}`}
+                  onChange={(e) =>
+                    updateShareUrl(shareUrl.id, 'url', e.target.value)
+                  }
+                  placeholder="https://example.com/@username"
+                  type="url"
+                  value={shareUrl.url}
+                />
+              </div>
+              <div>
+                <label
+                  className="mb-1 block text-gray-400 text-xs"
+                  htmlFor={`icon-${shareUrl.id}`}
+                >
+                  Icon Path
+                </label>
+                <div className="space-y-3">
+                  <div>
+                    <label
+                      className="block text-gray-400 text-xs"
+                      htmlFor={`icon-file-${shareUrl.id}`}
+                    >
+                      Upload Icon File
+                    </label>
+                    <input
+                      accept="image/*"
+                      className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm file:mr-4 file:rounded-md file:border-0 file:bg-indigo-600 file:px-4 file:py-2 file:text-sm file:text-white hover:file:bg-indigo-700 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      id={`icon-file-${shareUrl.id}`}
+                      name={`icon-${shareUrl.id}`}
+                      type="file"
+                    />
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-gray-600 border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="bg-gray-900 px-2 text-gray-400">OR</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      className="block text-gray-400 text-xs"
+                      htmlFor={`icon-url-${shareUrl.id}`}
+                    >
+                      Enter Icon Path/URL
+                    </label>
+                    <input
+                      className="w-full rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
+                      id={`icon-url-${shareUrl.id}`}
+                      onChange={(e) =>
+                        updateShareUrl(shareUrl.id, 'icon', e.target.value)
+                      }
+                      placeholder="/assets/user-upload/platform.svg"
+                      type="text"
+                      value={shareUrl.icon}
+                    />
+                  </div>
+                  {shareUrl.icon &&
+                    (shareUrl.icon.startsWith('/assets') ||
+                      shareUrl.icon.startsWith('http')) && (
+                      <div className="mt-2">
+                        <p className="mb-1 text-gray-400 text-xs">
+                          Current Icon Preview
+                        </p>
+                        <img
+                          alt="Icon preview"
+                          className="h-6 w-6 rounded object-contain"
+                          src={shareUrl.icon}
+                        />
+                      </div>
+                    )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        className="w-full rounded-md bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700"
+        onClick={addShareUrl}
+        type="button"
+      >
+        Add Share URL
+      </button>
+
+      {/* Hidden input that contains the shareUrls data - strip IDs before serializing */}
+      <input
+        name={name}
+        type="hidden"
+        value={JSON.stringify(shareUrls.map(({ id, ...rest }) => rest))}
+      />
     </div>
   );
 }
@@ -765,10 +996,26 @@ function CampaignModal({
                 id="imageUrl"
                 name="imageUrl"
                 placeholder="https://example.com/image.jpg"
-                type="url"
               />
             </div>
           </div>
+        </div>
+
+        <div>
+          <label
+            className="block font-medium text-gray-300 text-sm"
+            htmlFor="homepageUrl"
+          >
+            Homepage URL
+          </label>
+          <input
+            className="mt-1 block w-full rounded-md border-gray-600 bg-gray-800 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            defaultValue={isEdit ? campaign.homepageUrl || '' : ''}
+            id="homepageUrl"
+            name="homepageUrl"
+            placeholder="https://example.com"
+            type="url"
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -862,6 +1109,25 @@ function CampaignModal({
                   : undefined
               }
               name="joinRequirement"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label
+            className="block font-medium text-gray-300 text-sm"
+            htmlFor="shareUrls"
+          >
+            Share URLs
+          </label>
+          <div className="mt-1">
+            <ShareUrlsInput
+              defaultValue={
+                isEdit && campaign.shareUrls
+                  ? (campaign.shareUrls as Array<{ url: string; icon: string }>)
+                  : undefined
+              }
+              name="shareUrls"
             />
           </div>
         </div>

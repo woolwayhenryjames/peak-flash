@@ -2,6 +2,7 @@ import type { Campaign } from '@prisma/client';
 import { Link } from 'react-router';
 import { cn } from '~/lib/utils';
 import GlowContainer from '../GlowContainer';
+import sharIcon from './assets/share.svg';
 
 interface CampaignWithParticipation extends Campaign {
   isParticipating: boolean;
@@ -58,6 +59,8 @@ export default function CampaignCard({
     userRank,
     endDate,
     startDate,
+    shareUrls = [],
+    homepageUrl,
   },
   className,
   type,
@@ -87,11 +90,37 @@ export default function CampaignCard({
                   <h3 className="truncate font-medium text-white text-xl leading-tight">
                     {name}
                   </h3>
+                  {type === 'invite' && (
+                    <Link className="ml-auto" to="/invite" viewTransition>
+                      <img alt="Share" className="size-6" src={sharIcon} />
+                    </Link>
+                  )}
                 </div>
                 {/* Description */}
                 <p className="line-clamp-2 min-h-[2lh] text-white text-xs leading-relaxed">
                   {description}
                 </p>
+                {type === 'invite' && (
+                  <div className="flex items-center gap-4">
+                    {(shareUrls as Array<{ url: string; icon: string }>)?.map(
+                      (share) => (
+                        <a
+                          className="mr-2 inline-block"
+                          href={share.url}
+                          key={share.url}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          <img
+                            alt="Share Icon"
+                            className="size-4"
+                            src={share.icon}
+                          />
+                        </a>
+                      )
+                    )}
+                  </div>
+                )}
               </div>
               {/* Status Badge */}
               {type === 'detail' && (
@@ -175,11 +204,16 @@ export default function CampaignCard({
               </Link>
             </div>
           ) : (
-            <Link className="flex justify-end" to="/invite" viewTransition>
+            <a
+              className="flex justify-end"
+              href={homepageUrl || '#'}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
               <GlowContainer className="w-1/2 text-sm text-white">
-                Invite
+                Check Details
               </GlowContainer>
-            </Link>
+            </a>
           )}
         </div>
       </div>
