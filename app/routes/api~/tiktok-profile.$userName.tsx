@@ -9,20 +9,19 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Get the requested user ID from params
-  const requestedUserId = params.userId;
-  if (!requestedUserId) {
-    return Response.json({ error: 'User ID is required' }, { status: 400 });
+  // Get the requested user name from params
+  const requestedUserName = params.userName;
+  if (!requestedUserName) {
+    return Response.json({ error: 'User name is required' }, { status: 400 });
   }
 
   // Get user's TikTok profile data
-  const profile = await getUserInfo(requestedUserId);
+  const profile = await getUserInfo(requestedUserName);
 
   if (profile.isErr()) {
     return Response.json(
       {
-        error: 'TikTok profile not found or access token invalid',
-        suggestion: 'Please reconnect your TikTok account',
+        error: profile.error,
       },
       { status: 404 }
     );

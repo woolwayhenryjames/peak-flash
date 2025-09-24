@@ -44,9 +44,9 @@ export default function StartEarningSection() {
             <path
               d="M1 11.6667L5.58 6.66584L0.999999 1.66666"
               stroke="white"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.4"
             />
           </svg>
         </GlowContainer>

@@ -1,63 +1,42 @@
 import { err, ok, type Result } from 'neverthrow';
-import { auth } from '~/services/auth.server';
 
 export interface TikTokUserInfo {
-  open_id: string;
-  union_id: string;
-  avatar_large_url: string;
-  display_name: string;
-  bio_description: string;
-  profile_deep_link: string;
-  is_verified: boolean;
+  nickname: string;
+  signature: string;
   follower_count: number;
   following_count: number;
-  likes_count: number;
-  video_count: number;
-}
-
-interface TikTokApiResponse<T> {
-  data: T;
-  error: {
-    code: string;
-    message: string;
-    log_id: string;
+  is_star: boolean;
+  visible_videos_count: number;
+  total_favorited: number;
+  avatar_larger: {
+    url_list: string[];
+  };
+  share_info: {
+    share_url: string;
   };
 }
 
-const BASE_URL = 'https://open.tiktokapis.com/v2';
+interface TikHubApiResponse<T> {
+  data: T;
+  code: number;
+  message: string;
+}
 
 /**
  * Get user's TikTok account information including stats
  */
 export async function getUserInfo(
-  userId: string
+  username: string
 ): Promise<Result<TikTokUserInfo, string>> {
-  const { accessToken } = await auth.api.getAccessToken({
-    body: {
-      providerId: 'tiktok', // or any other provider id
-      userId,
-    },
-  });
-
   try {
-    const response = await fetch(
-      `${BASE_URL}/user/info/?fields=${[
-        'open_id',
-        'union_id',
-        'avatar_large_url',
-        'display_name',
-        'bio_description',
-        'profile_deep_link',
-        'is_verified',
-        'follower_count',
-        'following_count',
-        'likes_count',
-        'video_count',
-      ].join(',')}}`,
+    const response = await await fetch(
+      process.env.TIKHUB_BASE_URL +
+        '/api/v1/tiktok/app/v3/handler_user_profile?unique_id=' +
+        encodeURIComponent(username),
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${process.env.TIKHUB_API_KEY}`,
         },
       }
     );
@@ -67,12 +46,13 @@ export async function getUserInfo(
       return err('Failed to fetch TikTok user info');
     }
 
-    const result: TikTokApiResponse<{ user: TikTokUserInfo }> =
+    const result: TikHubApiResponse<{ user: TikTokUserInfo }> =
       await response.json();
 
-    if (result.error.code !== 'ok') {
-      console.error('TikTok API error:', result.error);
-      return err(result.error.message);
+    console.log('TikTok API response:', result);
+    if (result.code !== 200) {
+      console.error('TikTok API error:', result.message);
+      return err(result.message);
     }
 
     return ok(result.data.user);

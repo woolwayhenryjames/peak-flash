@@ -3,17 +3,19 @@ import { useFetcher } from 'react-router';
 import GlowContainer from '~/components/GlowContainer';
 
 interface TikTokProfile {
-  open_id: string;
-  union_id: string;
-  avatar_large_url: string;
-  display_name: string;
-  bio_description: string;
-  profile_deep_link: string;
-  is_verified: boolean;
+  nickname: string;
+  signature: string;
   follower_count: number;
   following_count: number;
-  likes_count: number;
-  video_count: number;
+  is_star: boolean;
+  visible_videos_count: number;
+  total_favorited: number;
+  avatar_larger: {
+    url_list: string[];
+  };
+  share_info: {
+    share_url: string;
+  };
 }
 
 interface ApiResponse {
@@ -34,17 +36,18 @@ export default function ExpandedUserProfile({
 }) {
   const fetcher = useFetcher<ApiResponse>();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only want to run on userId change
   useEffect(() => {
     console.log(
-      'Fetching TikTok profile for user.id:',
-      user.id,
+      'Fetching TikTok profile for user.email:',
+      user.email,
       fetcher.state,
       fetcher.data
     );
-    if (user.id && fetcher.state === 'idle' && !fetcher.data) {
-      fetcher.load(`/api/tiktok-profile/${user.id}`);
+    if (user.email && fetcher.state === 'idle' && !fetcher.data) {
+      fetcher.load(`/api/tiktok-profile/${user.email}`);
     }
-  }, [user.id, fetcher]);
+  }, [user.email]);
 
   const isLoading = fetcher.state === 'loading';
   const profile = fetcher.data?.data;
@@ -83,11 +86,11 @@ export default function ExpandedUserProfile({
             <img
               alt="User avatar"
               className="h-full w-full object-cover"
-              src={profile.avatar_large_url}
+              src={profile.avatar_larger.url_list[0]}
             />
           </div>
           {/* Verified badge */}
-          {profile.is_verified && (
+          {profile.is_star && (
             <div className="-bottom-1 -right-1 absolute flex h-4 w-4 items-center justify-center rounded-full border border-white bg-gradient-to-b from-[#37edb9] to-[#4725df]">
               <svg
                 className="h-2 w-2 text-white"
@@ -109,14 +112,14 @@ export default function ExpandedUserProfile({
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-0.5">
             <h3 className="font-medium text-base text-white tracking-tight">
-              {profile.display_name}
+              {profile.nickname}
             </h3>
             <p className="font-normal text-[#979797] text-[10px]">
               @{user.email}
             </p>
           </div>
           <p className="font-normal text-[#bdbdbd] text-xs">
-            {profile.bio_description}
+            {profile.signature}
           </p>
         </div>
       </div>
@@ -148,7 +151,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile?.likes_count || 0)}
+                {formatter.format(profile?.total_favorited || 0)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Likes</p>
             </div>
@@ -156,7 +159,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile?.video_count || 0)}
+                {formatter.format(profile?.visible_videos_count || 0)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Videos</p>
             </div>
@@ -167,7 +170,7 @@ export default function ExpandedUserProfile({
       {/* Visit Profile Button */}
       <a
         className="ml-auto w-2/3"
-        href={profile.profile_deep_link}
+        href={profile.share_info.share_url}
         rel="noopener noreferrer"
         target="_blank"
       >

@@ -239,6 +239,7 @@ export async function createCampaign(data: Prisma.CampaignCreateInput) {
   const result = await db.campaign.create({
     data,
   });
+  await new Promise((res) => setTimeout(res, 1000));
   checkUserCampaignAlgo();
   return result;
 }

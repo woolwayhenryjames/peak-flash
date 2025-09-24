@@ -81,7 +81,6 @@ BEGIN
         cu.updatedAt = NOW()
     WHERE 
         ks.total_score IS NOT NULL
-				AND ks.total_score != 0
         AND (
         SELECT
             JSON_ARRAYAGG(jt1.item ORDER BY jt1.item)
@@ -107,8 +106,12 @@ BEGIN
     );
     
     SET updated_campaigns = ROW_COUNT();
-    
-    -- Step 4: Recalculate all bonus scores based on invitation relationships
+    -- Step 4: Remove CampaignUser records where baseScore is NULL or zero
+    DELETE cu
+    FROM CampaignUser cu
+    WHERE cu.baseScore IS NULL OR cu.baseScore = 0;
+
+    -- Step 5: Recalculate all bonus scores based on invitation relationships
     UPDATE CampaignUser cu
     INNER JOIN User u ON cu.userId = u.id
     SET cu.bonusScore = (
@@ -119,7 +122,7 @@ BEGIN
         AND cu_invitee.campaignId = cu.campaignId
     );
     
-    -- Step 5: Recalculate total scores after all updates
+    -- Step 6: Recalculate total scores after all updates
     UPDATE CampaignUser 
     SET score = baseScore + bonusScore;
     

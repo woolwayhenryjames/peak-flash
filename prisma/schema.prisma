@@ -51,6 +51,7 @@ model Campaign {
   endDate         DateTime
   description     String?  @db.Text
   joinRequirement Json?    @db.Json
+  shareUrls       Json     @default("[{\"url\":\"http://x.com/@example\", \"icon\":\"/assets/user-upload/x.svg\"},{\"url\":\"http://t.me/example\", \"icon\":\"/assets/user-upload/tg.svg\"},{\"url\":\"http://discord.gg/@example\", \"icon\":\"/assets/user-upload/discord.svg\"}]") @db.Json
   createdAt       DateTime @default(now())
   updatedAt       DateTime @default(now()) @updatedAt
   order           Int      @default(0)
