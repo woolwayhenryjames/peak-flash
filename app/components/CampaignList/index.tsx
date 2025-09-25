@@ -6,7 +6,7 @@ interface CampaignWithParticipation
   extends Omit<Campaign, "createdAt" | "updatedAt"> {
   isParticipating: boolean;
   userRank?: number | null;
-  userPoints?: number;
+  userScore?: number | null;
   videoCount?: number;
 }
 
@@ -73,7 +73,7 @@ export default function CampaignList({
                       {" • "}
                       <span>
                         Spark Points:{" "}
-                        {formatter.format(campaign.userPoints || 0)}
+                        {formatter.format(campaign.userScore || 0)}
                       </span>
                     </p>
                   )}

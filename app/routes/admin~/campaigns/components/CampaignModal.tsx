@@ -159,7 +159,6 @@ export function CampaignModal({
                     id="imageUrl"
                     name="imageUrl"
                     placeholder="https://example.com/image.jpg"
-                    type="url"
                   />
                 </div>
               </div>
