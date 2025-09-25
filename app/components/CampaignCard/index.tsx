@@ -163,7 +163,7 @@ export default function CampaignCard({
                 <div className="font-light text-[#C5C5C5] text-xs leading-relaxed">
                   Prize Pool
                   {type === 'invite' && poolDescription && (
-                    <div className="font-normal text-[#F3A858] text-[10px]">
+                    <div className="font-normal text-[#F3A857]/80 text-[10px]">
                       {poolDescription}
                     </div>
                   )}
