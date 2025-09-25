@@ -49,7 +49,7 @@ FROM
       )
         .then((res) => {
           if (!res.ok) {
-            logger.error('Failed to send task:', res.statusText);
+            logger.error('Failed to send task:', { res, task });
           }
           logger.info('Task sent successfully for', {
             username: task.email,
