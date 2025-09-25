@@ -77,9 +77,9 @@ export default function CampaignCard({
           {/* Header Section */}
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-4">
-              <div className="flex flex-grow-0 flex-col gap-3 overflow-hidden">
+              <div className="flex flex-1 flex-col gap-3 overflow-hidden">
                 {/* Title and Logo */}
-                <div className="flex items-center gap-2">
+                <div className="flex w-full items-center gap-2">
                   {image && (
                     <img
                       alt={`${name} logo`}
