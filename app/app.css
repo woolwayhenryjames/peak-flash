@@ -1,6 +1,8 @@
+/** biome-ignore-all lint/correctness/noUnknownProperty: biome doesn't support tailwind */
 @import "tailwindcss";
-@plugin "daisyui";
-
+@plugin "daisyui" {
+  themes: black --default;
+}
 @theme {
   --font-sans:
     "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
