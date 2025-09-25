@@ -63,7 +63,7 @@ export default function CampaignList({
                   </div>
                   {type === "default" ? (
                     <p className="text-[#878788] text-xs">
-                      Pool: {formatter.format(campaign.poolSize)} Tokens
+                      Pool: ${formatter.format(campaign.poolSize)}
                     </p>
                   ) : (
                     <p className="text-[#878788] text-xs">
