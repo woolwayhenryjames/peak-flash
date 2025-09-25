@@ -27,11 +27,13 @@ export async function transformFormData(request: Request) {
   };
 
   const formData = await parseFormData(request, formUploadHandler);
-  const inputData = Object.fromEntries(formData) as Record<string, string>;
+  const inputData = Object.fromEntries(formData) as Record<
+    string,
+    string | null
+  >;
 
   // Use uploaded image path if file was uploaded, otherwise use URL if provided
-  const image =
-    (inputData.imageFile as string) || inputData.imageUrl || undefined;
+  const image = inputData.image || inputData.imageUrl || undefined;
 
   // Process shareUrls and update with uploaded icon paths
   let processedShareUrls: Array<{ url: string; icon: string }> | undefined;
@@ -68,12 +70,12 @@ export async function transformFormData(request: Request) {
     description: inputData.description || undefined,
     image,
     homepageUrl: inputData.homepageUrl || undefined,
-    poolSize: Number.parseInt(inputData.poolSize, 10) || 0,
+    poolSize: Number.parseInt(inputData.poolSize || "0", 10),
     poolUnit: inputData.poolUnit || undefined,
     poolDescription: inputData.poolDescription || undefined,
-    order: Number.parseInt(inputData.order, 10) || 0,
-    startDate: new Date(inputData.startDate),
-    endDate: new Date(inputData.endDate),
+    order: Number.parseInt(inputData.order || "0", 10),
+    startDate: inputData.startDate ? new Date(inputData.startDate) : undefined,
+    endDate: inputData.endDate ? new Date(inputData.endDate) : undefined,
     joinRequirement: inputData.joinRequirement
       ? JSON.parse(inputData.joinRequirement)
       : undefined,

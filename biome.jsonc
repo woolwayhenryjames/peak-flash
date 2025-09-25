@@ -44,5 +44,24 @@
         "noImgElement": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["app/services/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": {
+              "level": "warn",
+              "options": {
+                "strictCase": false,
+                "requireAscii": true,
+                "filenameCases": ["kebab-case", "export"]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }
