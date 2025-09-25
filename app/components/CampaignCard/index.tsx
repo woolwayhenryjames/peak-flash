@@ -160,10 +160,10 @@ export default function CampaignCard({
                     <span className="font-light text-xs">in {poolUnit}</span>
                   )}
                 </div>
-                <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
+                <div className="font-light text-[#C5C5C5] text-xs leading-relaxed">
                   Prize Pool
                   {type === 'invite' && poolDescription && (
-                    <div className="font-normal text-[#626262] text-[10px]">
+                    <div className="font-normal text-[#F3A858] text-[10px]">
                       {poolDescription}
                     </div>
                   )}
@@ -180,7 +180,7 @@ export default function CampaignCard({
                 >
                   {participants}
                 </div>
-                <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
+                <div className="font-light text-[#C5C5C5] text-xs leading-relaxed">
                   Participants
                 </div>
               </div>
