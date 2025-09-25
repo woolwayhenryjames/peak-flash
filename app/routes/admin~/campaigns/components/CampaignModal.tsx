@@ -170,7 +170,6 @@ export function CampaignModal({
         <div className="form-control">
           <label className="label" htmlFor="homepageUrl">
             <span className="label-text font-semibold">Homepage URL</span>
-            <span className="label-text-alt">Optional</span>
           </label>
           <input
             className="input input-bordered focus:input-primary w-full"
