@@ -61,6 +61,7 @@ export default function CampaignCard({
     startDate,
     shareUrls = [],
     homepageUrl,
+    poolDescription,
   },
   className,
   type,
@@ -161,6 +162,11 @@ export default function CampaignCard({
                 </div>
                 <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
                   Prize Pool
+                  {type === 'invite' && poolDescription && (
+                    <div className="font-normal text-[#626262] text-[10px]">
+                      {poolDescription}
+                    </div>
+                  )}
                 </div>
               </div>
 
