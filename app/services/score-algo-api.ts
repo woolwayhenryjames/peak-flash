@@ -1,6 +1,6 @@
-import type { JsonObject } from '@prisma/client/runtime/library';
-import { db } from '~/services/db.server';
-import { logger } from '~/services/logger.server';
+import type { JsonObject } from "@prisma/client/runtime/library";
+import { db } from "~/services/db.server";
+import { logger } from "~/services/logger.server";
 
 export async function checkUserCampaignAlgo() {
   const users = await db.user.findMany({ select: { email: true } });
@@ -11,7 +11,7 @@ export async function checkUserCampaignAlgo() {
   const keywordsList = campains.map(
     (campaign) =>
       ((campaign.joinRequirement as JsonObject)?.[
-        'Required Tags'
+        "Required Tags"
       ] as string[]) || []
   );
   const taskList = [...emailSet].flatMap((email) =>
@@ -32,15 +32,15 @@ FROM
     const matchingTask = algoTasks.find(
       (algoTask) =>
         algoTask.username === task.email &&
-        algoTask.keyword.split(' | ').sort().join(' | ') ===
-          task.keywords.sort().join(' | ')
+        algoTask.keyword.split(" | ").sort().join(" | ") ===
+          task.keywords.sort().join(" | ")
     );
     if (!matchingTask) {
       fetch(
-        `${import.meta.env.MODE === 'production' ? 'http://172.31.28.161:3333' : 'http://localhost:3333'}/api/addUser`,
+        `${import.meta.env.MODE === "production" ? "http://172.31.28.161:3333" : "http://localhost:3333"}/api/addUser`,
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             username: task.email,
             keywords: task.keywords,
@@ -49,15 +49,15 @@ FROM
       )
         .then((res) => {
           if (!res.ok) {
-            logger.error('Failed to send task:', { res, task });
+            logger.error("Failed to send task:", { res, task });
           }
-          logger.info('Task sent successfully for', {
+          logger.info("Task sent successfully for", {
             username: task.email,
             keywords: task.keywords,
           });
         })
         .catch((error) => {
-          logger.error('Error sending task:', error);
+          logger.error("Error sending task:", error);
         });
     }
   }
@@ -71,6 +71,6 @@ export async function updateUserPoints() {
     ON \`User\`.email = tiktok_creator_score.users.username
   SET \`User\`.kindleScore = COALESCE(tiktok_creator_score.users.account_total_score, \`User\`.kindleScore);`;
   } catch (error) {
-    logger.error('Error updating user points:', error);
+    logger.error("Error updating user points:", error);
   }
 }

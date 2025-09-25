@@ -1,6 +1,6 @@
-import GlowContainer from '../GlowContainer';
-import tiktokIcon from './assets/tiktok.svg';
-import twitterIcon from './assets/x.svg';
+import GlowContainer from "../GlowContainer";
+import tiktokIcon from "./assets/tiktok.svg";
+import twitterIcon from "./assets/x.svg";
 
 export default function FollowUs() {
   return (

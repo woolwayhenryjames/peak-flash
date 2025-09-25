@@ -1,11 +1,11 @@
-import type { CampaignUser } from '@prisma/client';
-import { useEffect, useState } from 'react';
-import { useFetcher } from 'react-router';
-import { MoreVideosDialog } from '~/components/Dialogs/MoreVideosDialog';
-import GlowContainer from '~/components/GlowContainer';
-import { cn } from '~/lib/utils';
-import type { GetVideosReturnedData } from '~/routes/api~/getVideos.$cuId';
-import profileIcon from './assets/profile.svg';
+import type { CampaignUser } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { useFetcher } from "react-router";
+import { MoreVideosDialog } from "~/components/Dialogs/MoreVideosDialog";
+import GlowContainer from "~/components/GlowContainer";
+import { cn } from "~/lib/utils";
+import type { GetVideosReturnedData } from "~/routes/api~/getVideos.$cuId";
+import profileIcon from "./assets/profile.svg";
 
 export default function ParticipationInfo({
   expand,
@@ -16,7 +16,7 @@ export default function ParticipationInfo({
   expand: boolean;
   setExpand: (expand: boolean) => void;
   campaignUser:
-    | Pick<CampaignUser, 'id' | 'videoCount' | 'score'>
+    | Pick<CampaignUser, "id" | "videoCount" | "score">
     | null
     | undefined;
   userRank: number | null | undefined;
@@ -49,11 +49,11 @@ export default function ParticipationInfo({
                   type="button"
                 >
                   <GlowContainer className="rounded-sm px-4 py-1 text-sm">
-                    {expand ? 'Collapse' : 'Expand'}
+                    {expand ? "Collapse" : "Expand"}
                     <svg
                       className={cn(
-                        'ml-2 inline size-5 transition-transform',
-                        expand ? 'rotate-180' : ''
+                        "ml-2 inline size-5 transition-transform",
+                        expand ? "rotate-180" : ""
                       )}
                       fill="none"
                       stroke="currentColor"
@@ -122,7 +122,7 @@ export default function ParticipationInfo({
               </div>
               <div className="flex flex-1 flex-col gap-2 rounded-lg border border-[#9c9c9c]/20 p-3">
                 <p className="bg-gradient-to-r from-[#694AFF] to-[#69D7FF] bg-clip-text font-medium text-transparent text-xl">
-                  #{userRank ?? '-'}
+                  #{userRank ?? "-"}
                 </p>
                 <p className="text-gray-500 text-xs">Current Rank</p>
               </div>
@@ -134,8 +134,8 @@ export default function ParticipationInfo({
             {/* Recent Videos */}
             <div
               className={cn(
-                'flex w-full gap-4',
-                fetcher.data && fetcher.data.length > 1 && 'justify-center'
+                "flex w-full gap-4",
+                fetcher.data && fetcher.data.length > 1 && "justify-center"
               )}
             >
               {fetcher.data?.slice(0, 3).map((video) => (

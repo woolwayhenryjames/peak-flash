@@ -1,12 +1,12 @@
-import { Link, useLocation } from 'react-router';
-import homeIcon from './assets/home-icon.svg';
-import homeIconActive from './assets/home-icon-active.svg';
-import rocketIcon from './assets/rocket-icon.svg';
-import rocketIconActive from './assets/rocket-icon-active.svg';
-import userIcon from './assets/user-icon.svg';
-import userIconActive from './assets/user-icon-active.svg';
-import usersIcon from './assets/users-icon.svg';
-import usersIconActive from './assets/users-icon-active.svg';
+import { Link, useLocation } from "react-router";
+import homeIcon from "./assets/home-icon.svg";
+import homeIconActive from "./assets/home-icon-active.svg";
+import rocketIcon from "./assets/rocket-icon.svg";
+import rocketIconActive from "./assets/rocket-icon-active.svg";
+import userIcon from "./assets/user-icon.svg";
+import userIconActive from "./assets/user-icon-active.svg";
+import usersIcon from "./assets/users-icon.svg";
+import usersIconActive from "./assets/users-icon-active.svg";
 
 interface NavItem {
   href: string;
@@ -16,24 +16,24 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: '/', icon: homeIcon, activeIcon: homeIconActive, label: 'Home' },
+  { href: "/", icon: homeIcon, activeIcon: homeIconActive, label: "Home" },
   {
-    href: '/ascent',
+    href: "/ascent",
     icon: rocketIcon,
     activeIcon: rocketIconActive,
-    label: 'Ascent',
+    label: "Ascent",
   },
   {
-    href: '/invite',
+    href: "/invite",
     icon: usersIcon,
     activeIcon: usersIconActive,
-    label: 'Invite',
+    label: "Invite",
   },
   {
-    href: '/profile',
+    href: "/profile",
     icon: userIcon,
     activeIcon: userIconActive,
-    label: 'Profile',
+    label: "Profile",
   },
 ];
 
@@ -51,7 +51,7 @@ export default function BottomNav() {
             return (
               <Link
                 className={`flex flex-col items-center gap-1 transition-colors duration-200 ${
-                  isActive ? 'text-white' : 'text-gray-400 hover:text-gray-300'
+                  isActive ? "text-white" : "text-gray-400 hover:text-gray-300"
                 }`}
                 key={item.href}
                 to={item.href}

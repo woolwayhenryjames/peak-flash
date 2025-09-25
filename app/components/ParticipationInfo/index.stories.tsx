@@ -1,11 +1,11 @@
-import type { CampaignUser } from '@prisma/client';
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
-import ParticipationInfo from './index';
+import type { CampaignUser } from "@prisma/client";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useState } from "react";
+import ParticipationInfo from "./index";
 
 interface WrapperProps {
   initialExpand?: boolean;
-  campaignUser?: Pick<CampaignUser, 'id' | 'videoCount' | 'score'> | null;
+  campaignUser?: Pick<CampaignUser, "id" | "videoCount" | "score"> | null;
   userRank?: number | null;
 }
 
@@ -27,18 +27,18 @@ const ParticipationInfoWrapper = ({
 };
 
 const meta = {
-  title: 'Components/ParticipationInfo',
+  title: "Components/ParticipationInfo",
   component: ParticipationInfoWrapper,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component:
-          'A collapsible profile performance component displaying Spark Points, performance stats, and recent video thumbnails.',
+          "A collapsible profile performance component displaying Spark Points, performance stats, and recent video thumbnails.",
       },
     },
     backgrounds: {
-      default: 'dark',
+      default: "dark",
     },
   },
   decorators: [
@@ -50,16 +50,16 @@ const meta = {
   ],
   argTypes: {
     initialExpand: {
-      control: 'boolean',
-      description: 'Initial expanded state',
+      control: "boolean",
+      description: "Initial expanded state",
     },
     campaignUser: {
-      control: 'object',
-      description: 'Campaign user data with score and video count',
+      control: "object",
+      description: "Campaign user data with score and video count",
     },
     userRank: {
-      control: 'number',
-      description: 'User ranking position',
+      control: "number",
+      description: "User ranking position",
     },
   },
   args: {

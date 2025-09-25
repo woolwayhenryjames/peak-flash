@@ -1,24 +1,24 @@
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { createAuthMiddleware } from 'better-auth/api';
-import { err, ok } from 'neverthrow';
-import { logger } from '~/services/logger.server';
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { createAuthMiddleware } from "better-auth/api";
+import { err, ok } from "neverthrow";
+import { logger } from "~/services/logger.server";
 import {
   checkUserCampaignAlgo,
   updateUserPoints,
-} from '~/services/score-algo-api';
-import { persistUserImage } from '~/services/user.server';
-import { db } from './db.server';
+} from "~/services/score-algo-api";
+import { persistUserImage } from "~/services/user.server";
+import { db } from "./db.server";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
-    provider: 'mysql',
+    provider: "mysql",
   }),
   account: {
     updateAccountOnSignIn: true,
     accountLinking: {
       enabled: true,
-      trustedProviders: ['tiktok'],
+      trustedProviders: ["tiktok"],
       updateUserInfoOnLink: true,
     },
   },
@@ -31,14 +31,14 @@ export const auth = betterAuth({
       clientId: process.env.TIKTOK_CLIENT_ID as string,
       clientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
       clientKey: process.env.TIKTOK_CLIENT_KEY as string,
-      scope: ['user.info.basic', 'user.info.profile', 'user.info.stats'],
+      scope: ["user.info.basic", "user.info.profile", "user.info.stats"],
       overrideUserInfoOnSignIn: true,
     },
   },
   hooks: {
     after: createAuthMiddleware((ctx) => {
       const newSession = ctx.context.newSession;
-      logger.debug('New session created:', newSession);
+      logger.debug("New session created:", newSession);
       if (newSession) {
         persistUserImage(newSession.user);
         checkUserCampaignAlgo();
@@ -48,12 +48,12 @@ export const auth = betterAuth({
     }),
   },
   trustedOrigins: [
-    'http://localhost:5173',
-    'https://staging.peakboom.ai',
-    'https://www.peakboom.ai',
-    'https://peakboom.ai',
-    'https://www.takeapeak.ai',
-    'https://takeapeak.ai',
+    "http://localhost:5173",
+    "https://staging.peakboom.ai",
+    "https://www.peakboom.ai",
+    "https://peakboom.ai",
+    "https://www.takeapeak.ai",
+    "https://takeapeak.ai",
   ],
 });
 
@@ -62,7 +62,7 @@ export const getSessionUser = async ({ headers }: Request) => {
     headers,
   });
   if (!session?.user) {
-    return err('Unauthorized');
+    return err("Unauthorized");
   }
   return ok(session.user);
 };
@@ -79,7 +79,7 @@ export const getDbUser = async (request: Request) => {
     },
   });
   if (!dbUser) {
-    return err('User not found');
+    return err("User not found");
   }
   return ok(dbUser);
 };

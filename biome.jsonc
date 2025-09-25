@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
   "extends": ["ultracite"],
   "formatter": {
     "indentStyle": "space",
@@ -10,16 +10,20 @@
     "rules": {
       // tailwind uses @apply which is not a valid at-rule
       "nursery": {
-        "noUnknownAtRule": "off",
-        "useSortedClasses": "warn"
+        "useImageSize": "off",
+        "useSortedClasses": "warn",
+        "useConsistentTypeDefinitions": "off"
       },
       // vite strips the console.log statements anyway
       "suspicious": {
         "noConsole": "off",
         "noExplicitAny": "warn",
-        "noArrayIndexKey": "warn"
+        "noArrayIndexKey": "warn",
+        "noUnknownAtRules": "off"
       },
       "style": {
+        "useNamingConvention": "off",
+        "noMagicNumbers": "off",
         "noEnum": "off",
         "useFilenamingConvention": {
           "level": "warn",

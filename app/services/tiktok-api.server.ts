@@ -1,5 +1,5 @@
-import { err, ok, type Result } from 'neverthrow';
-import { logger } from '~/services/logger.server';
+import { err, ok, type Result } from "neverthrow";
+import { logger } from "~/services/logger.server";
 
 export interface TikTokUserInfo {
   nickname: string;
@@ -32,33 +32,33 @@ export async function getUserInfo(
   try {
     const response = await await fetch(
       process.env.TIKHUB_BASE_URL +
-        '/api/v1/tiktok/app/v3/handler_user_profile?unique_id=' +
+        "/api/v1/tiktok/app/v3/handler_user_profile?unique_id=" +
         encodeURIComponent(username),
       {
         headers: {
-          Accept: 'application/json',
+          Accept: "application/json",
           Authorization: `Bearer ${process.env.TIKHUB_API_KEY}`,
         },
       }
     );
 
     if (!response.ok) {
-      logger.error('TikTok API error:', response.status, response.statusText);
-      return err('Failed to fetch TikTok user info');
+      logger.error("TikTok API error:", response.status, response.statusText);
+      return err("Failed to fetch TikTok user info");
     }
 
     const result: TikHubApiResponse<{ user: TikTokUserInfo }> =
       await response.json();
 
-    logger.debug('TikTok API response:', result);
+    logger.debug("TikTok API response:", result);
     if (result.code !== 200) {
-      logger.error('TikTok API error:', result.message);
+      logger.error("TikTok API error:", result.message);
       return err(result.message);
     }
 
     return ok(result.data.user);
   } catch (error) {
-    logger.error('Error fetching TikTok user info:', error);
-    return err('Failed to fetch TikTok user info');
+    logger.error("Error fetching TikTok user info:", error);
+    return err("Failed to fetch TikTok user info");
   }
 }

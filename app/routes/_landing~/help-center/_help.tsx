@@ -1,48 +1,48 @@
-import { useState } from 'react';
-import FollowUs from '~/components/FollowUs';
-import GlowContainer from '~/components/GlowContainer';
-import aiDetectionIcon from './assets/ai-detection-icon.svg';
-import bg from './assets/bg.avif';
-import hierarchyIcon from './assets/hierarchy-icon.svg';
-import moneyReceiveIcon from './assets/money-receive-icon.svg';
-import faqIcon from './assets/notification-square.svg';
-import penToolIcon from './assets/pen-tool-icon.svg';
-import smsBoldIcon from './assets/sms-bold-icon.svg';
-import smsNotificationIcon from './assets/sms-notification-icon.svg';
+import { useState } from "react";
+import FollowUs from "~/components/FollowUs";
+import GlowContainer from "~/components/GlowContainer";
+import aiDetectionIcon from "./assets/ai-detection-icon.svg";
+import bg from "./assets/bg.avif";
+import hierarchyIcon from "./assets/hierarchy-icon.svg";
+import moneyReceiveIcon from "./assets/money-receive-icon.svg";
+import faqIcon from "./assets/notification-square.svg";
+import penToolIcon from "./assets/pen-tool-icon.svg";
+import smsBoldIcon from "./assets/sms-bold-icon.svg";
+import smsNotificationIcon from "./assets/sms-notification-icon.svg";
 
 export function meta() {
   return [
-    { title: 'Help Center - Peak AI Support & FAQ' },
+    { title: "Help Center - Peak AI Support & FAQ" },
     {
-      name: 'description',
+      name: "description",
       content:
-        'Get help with Peak AI! Find answers to frequently asked questions, learn about Kindle Score, campaign participation, AI detection, ranking systems, and earnings. Contact our support team at ask@takeapeak.ai.',
+        "Get help with Peak AI! Find answers to frequently asked questions, learn about Kindle Score, campaign participation, AI detection, ranking systems, and earnings. Contact our support team at ask@takeapeak.ai.",
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content:
-        'Peak AI help, FAQ, support center, Kindle Score help, campaign questions, AI detection, ranking system, earnings help, customer support',
+        "Peak AI help, FAQ, support center, Kindle Score help, campaign questions, AI detection, ranking system, earnings help, customer support",
     },
-    { name: 'robots', content: 'index, follow' },
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "index, follow" },
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
-    { property: 'og:title', content: 'Peak AI Help Center - Get Support' },
+    { property: "og:title", content: "Peak AI Help Center - Get Support" },
     {
-      property: 'og:description',
+      property: "og:description",
       content:
-        'Need help with Peak AI? Find answers to your questions about campaigns, Kindle Score, rankings, and more in our comprehensive help center.',
+        "Need help with Peak AI? Find answers to your questions about campaigns, Kindle Score, rankings, and more in our comprehensive help center.",
     },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Peak AI" },
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary' },
-    { name: 'twitter:title', content: 'Peak AI Help Center' },
+    { name: "twitter:card", content: "summary" },
+    { name: "twitter:title", content: "Peak AI Help Center" },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content:
-        'Get answers to your Peak AI questions. Learn about campaigns, Kindle Score, and how to maximize your earnings.',
+        "Get answers to your Peak AI questions. Learn about campaigns, Kindle Score, and how to maximize your earnings.",
     },
   ];
 }
@@ -52,11 +52,11 @@ export default function Help() {
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText('ask@takeapeak.ai');
+      await navigator.clipboard.writeText("ask@takeapeak.ai");
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 1000);
     } catch (error) {
-      console.error('Failed to copy link:', error);
+      console.error("Failed to copy link:", error);
     }
   };
   return (
@@ -103,7 +103,7 @@ export default function Help() {
             </div>
             <button onClick={handleCopyLink} type="button">
               <GlowContainer className="rounded-sm px-2 py-px">
-                {isCopied ? 'Copied' : 'Copy'}
+                {isCopied ? "Copied" : "Copy"}
               </GlowContainer>
             </button>
           </div>
@@ -145,19 +145,19 @@ export default function Help() {
 
 const faqs = [
   {
-    question: 'How does AI auto-detection work?',
+    question: "How does AI auto-detection work?",
     answer:
-      'Our AI system automatically monitors your TikTok account and detects videos that match campaign requirements within 24 hours. Make sure to use relevant hashtags to improve detection accuracy.',
+      "Our AI system automatically monitors your TikTok account and detects videos that match campaign requirements within 24 hours. Make sure to use relevant hashtags to improve detection accuracy.",
     icon: aiDetectionIcon,
   },
   {
-    question: 'How do I earn rewards?',
+    question: "How do I earn rewards?",
     answer:
-      'Participate in campaigns by posting TikTok videos that meet the requirements. Your Spark Point is calculated based on video performance, and rewards are distributed accordingly.',
+      "Participate in campaigns by posting TikTok videos that meet the requirements. Your Spark Point is calculated based on video performance, and rewards are distributed accordingly.",
     icon: moneyReceiveIcon,
   },
   {
-    question: 'How does the referral system work?',
+    question: "How does the referral system work?",
     answer:
       "Invite friends using your unique referral link. You'll earn 10% of their rewards from campaigns. The more friends you invite, the more passive income you can generate.",
     icon: penToolIcon,

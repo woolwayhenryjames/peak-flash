@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Form, redirect, useActionData, useNavigation } from 'react-router';
-import { cn } from '~/lib/utils';
-import { getSessionUser } from '~/services/auth.server';
+import { useEffect, useState } from "react";
+import { Form, redirect, useActionData, useNavigation } from "react-router";
+import { cn } from "~/lib/utils";
+import { getSessionUser } from "~/services/auth.server";
 import {
   createCampaign,
   deleteCampaign,
   getAllCampaigns,
   updateCampaign,
-} from '~/services/campaign.server';
-import { logger } from '~/services/logger.server';
-import type { Route } from './+types/_a_campaign';
-import { CampaignModal } from './components/CampaignModal';
-import { transformFormData } from './transformFormData';
+} from "~/services/campaign.server";
+import { logger } from "~/services/logger.server";
+import type { Route } from "./+types/_a_campaign";
+import { CampaignModal } from "./components/CampaignModal";
+import { transformFormData } from "./transformFormData";
 
-const formatter = new Intl.NumberFormat('en', {
-  notation: 'compact',
-  compactDisplay: 'short',
+const formatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
 });
 
 export function meta({ data }: Route.MetaArgs) {
@@ -27,27 +27,27 @@ export function meta({ data }: Route.MetaArgs) {
   const endedCampaigns = totalCampaigns - activeCampaigns;
 
   return [
-    { title: 'Admin - Campaign Management - Peak AI' },
+    { title: "Admin - Campaign Management - Peak AI" },
     {
-      name: 'description',
+      name: "description",
       content: `Peak AI admin panel for campaign management. View and manage ${totalCampaigns} campaigns (${activeCampaigns} active, ${endedCampaigns} ended). Create, edit, and monitor campaign performance.`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content:
-        'Peak AI admin, campaign management, admin panel, campaign dashboard, create campaigns, edit campaigns, campaign analytics',
+        "Peak AI admin, campaign management, admin panel, campaign dashboard, create campaigns, edit campaigns, campaign analytics",
     },
-    { name: 'robots', content: 'noindex, nofollow' }, // Admin pages should not be indexed
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "noindex, nofollow" }, // Admin pages should not be indexed
+    { name: "author", content: "Peak AI" },
 
     // Open Graph - minimal for admin pages
-    { property: 'og:title', content: 'Peak AI Admin - Campaign Management' },
+    { property: "og:title", content: "Peak AI Admin - Campaign Management" },
     {
-      property: 'og:description',
-      content: 'Administrative interface for Peak AI campaign management.',
+      property: "og:description",
+      content: "Administrative interface for Peak AI campaign management.",
     },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Peak AI" },
   ];
 }
 
@@ -56,16 +56,16 @@ type ActionData =
   | { success: false; error: string };
 
 const allowedAdminEmails = [
-  'arslanablikim',
-  'jenniffergzz',
-  'jen_sunny0',
-  'qtchcom',
+  "arslanablikim",
+  "jenniffergzz",
+  "jen_sunny0",
+  "qtchcom",
 ];
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getSessionUser(request);
   if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
-    throw redirect('/login');
+    throw redirect("/login");
   }
 
   const campaigns = await getAllCampaigns();
@@ -75,33 +75,33 @@ export async function loader({ request }: Route.LoaderArgs) {
 export async function action({ request }: Route.ActionArgs) {
   const user = await getSessionUser(request);
   if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
-    throw redirect('/login');
+    throw redirect("/login");
   }
   const { intent, id, data } = await transformFormData(request);
   try {
-    if (intent === 'create') {
+    if (intent === "create") {
       await createCampaign(data);
 
-      return { success: true, message: 'Campaign created successfully' };
+      return { success: true, message: "Campaign created successfully" };
     }
 
-    if (intent === 'update') {
+    if (intent === "update") {
       await updateCampaign(id, data);
 
-      return { success: true, message: 'Campaign updated successfully' };
+      return { success: true, message: "Campaign updated successfully" };
     }
 
-    if (intent === 'delete') {
+    if (intent === "delete") {
       await deleteCampaign(id);
-      return { success: true, message: 'Campaign deleted successfully' };
+      return { success: true, message: "Campaign deleted successfully" };
     }
 
-    return { success: false, error: 'Invalid intent' };
+    return { success: false, error: "Invalid intent" };
   } catch (error) {
-    logger.error('Campaign action error:', error);
+    logger.error("Campaign action error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'An error occurred',
+      error: error instanceof Error ? error.message : "An error occurred",
     };
   }
 }
@@ -117,7 +117,7 @@ export default function AdminCampaigns({
     (typeof campaigns)[number] | null
   >(null);
 
-  const isSubmitting = navigation.state === 'submitting';
+  const isSubmitting = navigation.state === "submitting";
 
   // Close modal on successful submission
   useEffect(() => {
@@ -197,12 +197,12 @@ export default function AdminCampaigns({
                 const now = new Date();
                 const startDate = new Date(campaign.startDate);
                 const endDate = new Date(campaign.endDate);
-                let status = 'upcoming';
+                let status = "upcoming";
 
                 if (now >= startDate && now <= endDate) {
-                  status = 'active';
+                  status = "active";
                 } else if (now > endDate) {
-                  status = 'ended';
+                  status = "ended";
                 }
 
                 return (
@@ -219,7 +219,7 @@ export default function AdminCampaigns({
                             src={campaign.image}
                           />
                         )}
-                        <div className={cn('ml-4', !campaign.image && 'ml-0')}>
+                        <div className={cn("ml-4", !campaign.image && "ml-0")}>
                           <div className="font-medium text-sm text-white">
                             {campaign.name}
                           </div>
@@ -251,13 +251,13 @@ export default function AdminCampaigns({
                     <td className="whitespace-nowrap px-6 py-4">
                       <span
                         className={cn(
-                          'inline-flex rounded-full px-2 py-1 font-semibold text-xs',
+                          "inline-flex rounded-full px-2 py-1 font-semibold text-xs",
                           {
-                            'bg-green-900/30 text-green-300':
-                              status === 'active',
-                            'bg-yellow-900/30 text-yellow-300':
-                              status === 'upcoming',
-                            'bg-gray-700 text-gray-300': status === 'ended',
+                            "bg-green-900/30 text-green-300":
+                              status === "active",
+                            "bg-yellow-900/30 text-yellow-300":
+                              status === "upcoming",
+                            "bg-gray-700 text-gray-300": status === "ended",
                           }
                         )}
                       >
@@ -281,8 +281,9 @@ export default function AdminCampaigns({
                             disabled={isSubmitting}
                             onClick={(e) => {
                               if (
+                                // biome-ignore lint/suspicious/noAlert: admin only page it's fine
                                 !confirm(
-                                  'Are you sure you want to delete this campaign?'
+                                  "Are you sure you want to delete this campaign?"
                                 )
                               ) {
                                 e.preventDefault();

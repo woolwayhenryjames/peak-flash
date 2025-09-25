@@ -15,11 +15,11 @@ declare global {
 export const pageview = (url: string, trackingId: string) => {
   if (!window.gtag) {
     console.warn(
-      'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.'
+      "window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet."
     );
     return;
   }
-  window.gtag('config', trackingId, {
+  window.gtag("config", trackingId, {
     page_path: url,
   });
 };
@@ -36,11 +36,11 @@ export const event = ({
 }: Record<string, string>) => {
   if (!window.gtag) {
     console.warn(
-      'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.'
+      "window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet."
     );
     return;
   }
-  window.gtag('event', action, {
+  window.gtag("event", action, {
     event_category: category,
     event_label: label,
     value,

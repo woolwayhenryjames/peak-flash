@@ -1,13 +1,13 @@
-import type { User } from 'better-auth';
-import { useState } from 'react';
-import { Link } from 'react-router';
-import { Popover } from 'react-tiny-popover';
-import DialogWithCloseButton from '~/components/Dialogs/DialogWithCloseButton';
-import GlowContainer from '~/components/GlowContainer';
-import { authClient } from '~/lib/auth-client';
-import helpCenterIcon from './assets/help-center-icon.svg';
-import signOutIcon from './assets/sign-out-icon.svg';
-import userIcon from './assets/user-icon.svg';
+import type { User } from "better-auth";
+import { useState } from "react";
+import { Link } from "react-router";
+import { Popover } from "react-tiny-popover";
+import DialogWithCloseButton from "~/components/Dialogs/DialogWithCloseButton";
+import GlowContainer from "~/components/GlowContainer";
+import { authClient } from "~/lib/auth-client";
+import helpCenterIcon from "./assets/help-center-icon.svg";
+import signOutIcon from "./assets/sign-out-icon.svg";
+import userIcon from "./assets/user-icon.svg";
 
 interface ProfileDetailsProps {
   user: User;
@@ -33,7 +33,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
           <div className="w-max rounded-[10px] border border-[#7C7C7C] bg-black/70 backdrop-blur-sm">
             {/* Username Section */}
             <div className="flex items-center gap-[10px] px-7 py-4 text-center font-normal text-white text-xs leading-[1.5]">
-              @{user.email || 'user'}
+              @{user.email || "user"}
             </div>
 
             {/* Divider */}
@@ -97,7 +97,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
         isOpen={isPopoverOpen} // equivalent to dropdown-end positioning
         onClickOutside={() => setIsPopoverOpen(false)} // mt-2 equivalent
         padding={12}
-        positions={['bottom', 'left']}
+        positions={["bottom", "left"]}
       >
         <button
           className="cursor-pointer text-base md:text-xs min-[100rem]:text-base"
@@ -105,9 +105,9 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
           type="button"
         >
           <img
-            alt={user.name || 'User avatar'}
+            alt={user.name || "User avatar"}
             className="size-8 rounded-full object-cover"
-            src={user.image || ''}
+            src={user.image || ""}
           />
         </button>
       </Popover>

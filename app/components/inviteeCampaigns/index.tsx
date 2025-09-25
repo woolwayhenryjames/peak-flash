@@ -1,10 +1,10 @@
-import type { Campaign, CampaignUser } from '@prisma/client';
-import { useEffect, useState } from 'react';
-import { Link, useFetcher } from 'react-router';
+import type { Campaign, CampaignUser } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { Link, useFetcher } from "react-router";
 
-const formatter = new Intl.NumberFormat('en', {
-  notation: 'compact',
-  compactDisplay: 'short',
+const formatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
 });
 
 export default function InviteeCampaigns({
@@ -24,7 +24,7 @@ export default function InviteeCampaigns({
     fetcher.load(`/api/getCampainUser/${userId}`);
   }, [userId]);
 
-  if (fetcher.state === 'loading' || fetcher.state === 'submitting') {
+  if (fetcher.state === "loading" || fetcher.state === "submitting") {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-gray-400">Loading campaigns...</div>
@@ -76,7 +76,7 @@ export default function InviteeCampaigns({
               <div className="flex flex-col gap-2">
                 <span className="bg-gradient-to-r from-[#E29FF0] via-[#FDCAB4] to-[#FDCAB4] bg-clip-text font-medium text-transparent text-xl leading-tight">
                   {inviter.campaignUsers.some(
-                    (iCU) => iCU.campaignId === cu.campaignId
+                    (iCu) => iCu.campaignId === cu.campaignId
                   )
                     ? formatter.format(cu.score / 10)
                     : 0}
@@ -99,7 +99,7 @@ export default function InviteeCampaigns({
           onClick={() => setShowAll(!showAll)}
           type="button"
         >
-          {showAll ? 'Show Less' : 'Show All'}
+          {showAll ? "Show Less" : "Show All"}
         </button>
       )}
     </div>

@@ -1,10 +1,10 @@
-import { err, ok } from 'neverthrow';
+import { err, ok } from "neverthrow";
 import {
   cleanupOldUserAvatars,
   uploadImageFromUrl,
-} from '~/services/aws-s3.server';
-import { logger } from '~/services/logger.server';
-import { db } from './db.server';
+} from "~/services/aws-s3.server";
+import { logger } from "~/services/logger.server";
+import { db } from "./db.server";
 
 export const getUserInviteRecords = async (userId: string) => {
   const inviteRecords = await db.user.findMany({
@@ -19,7 +19,7 @@ export const getUserInviteRecords = async (userId: string) => {
       createdAt: true,
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
 
@@ -51,16 +51,16 @@ function getTimeAgo(date: Date): string {
   const diffInWeeks = Math.floor(diffInDays / 7);
 
   if (diffInDays === 0) {
-    return 'Today';
+    return "Today";
   }
   if (diffInDays === 1) {
-    return '1 day ago';
+    return "1 day ago";
   }
   if (diffInDays < 7) {
     return `${diffInDays} days ago`;
   }
   if (diffInWeeks === 1) {
-    return '1 week ago';
+    return "1 week ago";
   }
   return `${diffInWeeks} weeks ago`;
 }
@@ -68,9 +68,9 @@ function getTimeAgo(date: Date): string {
 // Helper function to get initials from name
 function getInitials(name: string): string {
   return name
-    .split(' ')
+    .split(" ")
     .map((n) => n[0])
-    .join('')
+    .join("")
     .toUpperCase()
     .substring(0, 2);
 }
@@ -78,11 +78,11 @@ function getInitials(name: string): string {
 // Helper function to check if an image URL needs to be persisted to S3
 function isExternalImageUrl(imageUrl: string): boolean {
   return (
-    imageUrl.includes('tiktok') ||
-    imageUrl.includes('muscdn.com') ||
-    imageUrl.includes('bytedns.net') ||
+    imageUrl.includes("tiktok") ||
+    imageUrl.includes("muscdn.com") ||
+    imageUrl.includes("bytedns.net") ||
     // Add other external image domains that have expiration
-    !imageUrl.startsWith('/')
+    !imageUrl.startsWith("/")
   );
 }
 
@@ -93,7 +93,7 @@ export const validateInviteCode = async (inviterId: string) => {
       where: { id: inviterId },
       select: { id: true },
     });
-    return inviter ? ok(inviter) : err(new Error('inviter not found'));
+    return inviter ? ok(inviter) : err(new Error("inviter not found"));
   } catch (error) {
     return err(error as Error);
   }
@@ -116,7 +116,7 @@ export const processInviteSignup = async (
 
     if (!inviter) {
       logger.error(`Inviter ${inviterId} not found`);
-      return err(new Error('Inviter not found'));
+      return err(new Error("Inviter not found"));
     }
 
     // Check if the new user already has an inviter (prevent duplicate invites)
@@ -141,7 +141,7 @@ export const processInviteSignup = async (
     logger.info(`Successfully set inviter ${inviterId} for user ${newUserId}`);
     return ok(user);
   } catch (error) {
-    logger.error('Error processing invite signup:', error);
+    logger.error("Error processing invite signup:", error);
     return err(error);
   }
 };
@@ -163,10 +163,10 @@ export const persistUserImage = async (user: {
 
           // Cleanup old avatars (keep latest 3) - don't await to avoid blocking
           cleanupOldUserAvatars(user.id, 3).catch((cleanupError) =>
-            logger.error('Failed to cleanup old avatars:', cleanupError)
+            logger.error("Failed to cleanup old avatars:", cleanupError)
           );
         } catch (uploadError) {
-          logger.error('Failed to upload TikTok avatar to S3:', uploadError);
+          logger.error("Failed to upload TikTok avatar to S3:", uploadError);
           // Continue with the original URL if S3 upload fails
           // This ensures the function doesn't fail completely
         }
@@ -178,7 +178,7 @@ export const persistUserImage = async (user: {
       });
       return ok(true);
     } catch (error) {
-      logger.error('Error persisting user image:', error);
+      logger.error("Error persisting user image:", error);
       return err(error as Error);
     }
   }

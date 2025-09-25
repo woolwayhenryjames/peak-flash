@@ -1,6 +1,6 @@
-import type { LoaderFunctionArgs } from 'react-router';
-import { db } from '~/services/db.server';
-import { logger } from '~/services/logger.server';
+import type { LoaderFunctionArgs } from "react-router";
+import { db } from "~/services/db.server";
+import { logger } from "~/services/logger.server";
 
 export interface VideoScoreJson {
   video_id: string;
@@ -45,12 +45,12 @@ export interface AiScoreJson {
 }
 
 export type GetVideosReturnedData = VideoScoreJson &
-  Pick<AiScoreJson, 'media_urls'>;
+  Pick<AiScoreJson, "media_urls">;
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const cuId = params.cuId;
   if (!cuId) {
-    throw new Response('Campaign User ID is required', { status: 400 });
+    throw new Response("Campaign User ID is required", { status: 400 });
   }
 
   try {
@@ -98,8 +98,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
             ) AS jt2
         )
     `;
-    const jsonString = results[0]?.video_scores_json || '[]';
-    const aiJsonString = results[0]?.ai_scores_json || '[]';
+    const jsonString = results[0]?.video_scores_json || "[]";
+    const aiJsonString = results[0]?.ai_scores_json || "[]";
 
     // Parse the JSON strings to ensure they're valid JSON
     const parsedVideoScores = JSON.parse(jsonString) as VideoScoreJson[];
@@ -119,7 +119,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     // Return the parsed data
     return Response.json(parsedData);
   } catch (error) {
-    logger.error('Error fetching TikTok creator scores:', error);
+    logger.error("Error fetching TikTok creator scores:", error);
     return Response.json({ success: false, error }, { status: 500 });
   }
 }

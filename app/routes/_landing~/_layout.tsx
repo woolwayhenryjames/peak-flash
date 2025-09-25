@@ -1,25 +1,25 @@
-import type { User } from 'better-auth';
-import { useEffect } from 'react';
+import type { User } from "better-auth";
+import { useEffect } from "react";
 import {
   Outlet,
   redirect,
   useLocation,
   useNavigate,
   useOutletContext,
-} from 'react-router';
-import { AppKitProvider } from '~/components/AppKitProvider';
-import BottomNav from '~/components/BottomNav';
-import GlowContainer from '~/components/GlowContainer';
-import ProfileDetails from '~/components/ProfileDetails';
-import { auth } from '~/services/auth.server';
-import type { Route } from './+types/_layout';
+} from "react-router";
+import { AppKitProvider } from "~/components/AppKitProvider";
+import BottomNav from "~/components/BottomNav";
+import GlowContainer from "~/components/GlowContainer";
+import ProfileDetails from "~/components/ProfileDetails";
+import { auth } from "~/services/auth.server";
+import type { Route } from "./+types/_layout";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await auth.api.getSession({
     headers: request.headers,
   });
   if (!session) {
-    throw redirect('/login');
+    throw redirect("/login");
   }
   return session.user;
 }
@@ -38,20 +38,20 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
   // Check for pending inviter ID and process it
   useEffect(() => {
     const processPendingInvite = async () => {
-      const pendingInviterId = sessionStorage.getItem('pendingInviterId');
+      const pendingInviterId = sessionStorage.getItem("pendingInviterId");
       if (!pendingInviterId) {
         return;
       }
       try {
-        await fetch('/api/process-invite', {
-          method: 'POST',
+        await fetch("/api/process-invite", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ inviterId: pendingInviterId }),
         });
       } finally {
-        sessionStorage.removeItem('pendingInviterId');
+        sessionStorage.removeItem("pendingInviterId");
       }
     };
 
@@ -59,7 +59,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
   }, []); // Run once on mount
 
   // Check if there are more than one segments (excluding empty strings)
-  const segments = location.pathname.split('/').filter(Boolean);
+  const segments = location.pathname.split("/").filter(Boolean);
   const showBackButton = segments.length > 1;
 
   const handleBackClick = () => {
@@ -117,18 +117,18 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
 // Helper function to get page name from pathname
 const getPageName = (pathname: string) => {
   // Remove leading slash and split by slash
-  const segments = pathname.split('/').filter(Boolean);
+  const segments = pathname.split("/").filter(Boolean);
 
   // If no segments, return 'Home'
   if (segments.length === 0) {
-    return 'Home';
+    return "Home";
   }
 
   // Get the last segment and format it
-  const lastSegment = segments.at(-1) || '';
+  const lastSegment = segments.at(-1) || "";
 
   // Convert kebab-case or snake_case to title case
   return lastSegment
-    .replace(/[-_]/g, ' ')
+    .replace(/[-_]/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
 };

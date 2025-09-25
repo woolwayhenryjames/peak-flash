@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { cn } from '~/lib/utils';
+import { useEffect, useRef } from "react";
+import { cn } from "~/lib/utils";
 
 export interface DialogProps {
   show: boolean;
@@ -40,16 +40,16 @@ export default function MobileBottomDialog({
     >
       <div
         className={cn(
-          'modal-box max-h-[60vh] w-full rounded-t-xl border border-[#84a0ff] p-3 text-[#EDEDED]',
+          "modal-box max-h-[60vh] w-full rounded-t-xl border border-[#84a0ff] p-3 text-[#EDEDED]",
           className
         )}
         style={{
           background:
-            'linear-gradient(-18deg, rgba(0, 0, 0, 1) 43%, rgba(42, 38, 89, 1) 90%, rgba(53, 93, 191, 1) 100%)',
+            "linear-gradient(-18deg, rgba(0, 0, 0, 1) 43%, rgba(42, 38, 89, 1) 90%, rgba(53, 93, 191, 1) 100%)",
         }}
       >
         <button
-          className={cn('absolute top-2.5 right-2.5', closeButtonClassName)}
+          className={cn("absolute top-2.5 right-2.5", closeButtonClassName)}
           onClick={() => setShow(false)}
           type="button"
         >

@@ -1,23 +1,23 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import component from './index';
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import component from "./index";
 
 const meta = {
-  title: 'Dialogs',
+  title: "Dialogs",
   component,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     backgrounds: {
-      default: 'dark',
+      default: "dark",
     },
   },
   argTypes: {
     score: {
-      control: 'number',
-      description: 'The KINDLE score to display in the dialog',
+      control: "number",
+      description: "The KINDLE score to display in the dialog",
     },
     forceShow: {
-      control: 'boolean',
-      description: 'Force the dialog to show (useful for Storybook)',
+      control: "boolean",
+      description: "Force the dialog to show (useful for Storybook)",
     },
   },
   args: {

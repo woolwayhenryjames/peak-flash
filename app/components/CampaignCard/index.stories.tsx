@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import CampaignCard from './index';
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import CampaignCard from "./index";
 
 const meta = {
-  title: 'Components/CampaignCard',
+  title: "Components/CampaignCard",
   component: CampaignCard,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component:
-          'A campaign card component displaying campaign information including status, token pool, participants count, and user ranking.',
+          "A campaign card component displaying campaign information including status, token pool, participants count, and user ranking.",
       },
     },
   },
@@ -22,8 +22,8 @@ const meta = {
   ],
   argTypes: {
     campaign: {
-      control: 'object',
-      description: 'Campaign object containing all campaign data',
+      control: "object",
+      description: "Campaign object containing all campaign data",
     },
   },
 } satisfies Meta<typeof CampaignCard>;
@@ -34,11 +34,11 @@ type Story = StoryObj<typeof meta>;
 // Default story based on the Figma design
 export const InfinityGround: Story = {
   args: {
-    type: 'detail',
+    type: "detail",
     campaign: {
-      id: 'infinity-ground',
-      name: 'Infinity Ground',
-      description: 'AI-powered gaming platform',
+      id: "infinity-ground",
+      name: "Infinity Ground",
+      description: "AI-powered gaming platform",
       poolSize: 50_000,
       participants: 1234,
       userRank: 8,
@@ -56,11 +56,11 @@ export const InfinityGround: Story = {
 // 0G Campaign with logo
 export const ZeroGCampaign: Story = {
   args: {
-    type: 'detail',
+    type: "detail",
     campaign: {
-      id: '0g-campaign',
-      name: '0G Campaign',
-      description: 'Decentralized storage network',
+      id: "0g-campaign",
+      name: "0G Campaign",
+      description: "Decentralized storage network",
       poolSize: 30_000,
       participants: 856,
       isParticipating: false,
@@ -69,7 +69,7 @@ export const ZeroGCampaign: Story = {
       createdAt: new Date(),
       updatedAt: new Date(),
       image:
-        'https://images.unsplash.com/photo-1634193295627-1cdddf751ebf?w=100&h=100&fit=crop&crop=center',
+        "https://images.unsplash.com/photo-1634193295627-1cdddf751ebf?w=100&h=100&fit=crop&crop=center",
       joinRequirement: null,
     },
   },
@@ -78,11 +78,11 @@ export const ZeroGCampaign: Story = {
 // Kaito AI campaign with new status
 export const KaitoAI: Story = {
   args: {
-    type: 'detail',
+    type: "detail",
     campaign: {
-      id: 'kaito-ai',
-      name: 'Kaito AI',
-      description: 'AI-powered crypto analysis',
+      id: "kaito-ai",
+      name: "Kaito AI",
+      description: "AI-powered crypto analysis",
       poolSize: 75_000,
       participants: 234,
       userRank: 15,
@@ -92,7 +92,7 @@ export const KaitoAI: Story = {
       createdAt: new Date(),
       updatedAt: new Date(),
       image:
-        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop&crop=center',
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=100&h=100&fit=crop&crop=center",
       joinRequirement: null,
     },
   },
@@ -101,11 +101,11 @@ export const KaitoAI: Story = {
 // Galxe campaign
 export const Galxe: Story = {
   args: {
-    type: 'detail',
+    type: "detail",
     campaign: {
-      id: 'galxe',
-      name: 'Galxe',
-      description: 'Web3 credential data network',
+      id: "galxe",
+      name: "Galxe",
+      description: "Web3 credential data network",
       poolSize: 100_000,
       participants: 2156,
       userRank: 15,
@@ -115,7 +115,7 @@ export const Galxe: Story = {
       createdAt: new Date(),
       updatedAt: new Date(),
       image:
-        'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=100&h=100&fit=crop&crop=center',
+        "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=100&h=100&fit=crop&crop=center",
       joinRequirement: null,
     },
   },
@@ -124,12 +124,12 @@ export const Galxe: Story = {
 // Card with long content
 export const LongContent: Story = {
   args: {
-    type: 'detail',
+    type: "detail",
     campaign: {
-      id: 'long-content',
-      name: 'Very Long Campaign Title That Might Wrap',
+      id: "long-content",
+      name: "Very Long Campaign Title That Might Wrap",
       description:
-        'This is a much longer description that demonstrates how the card handles extended content and text wrapping in the description area',
+        "This is a much longer description that demonstrates how the card handles extended content and text wrapping in the description area",
       poolSize: 999_999,
       participants: 50_000,
       userRank: 999,
@@ -146,7 +146,7 @@ export const LongContent: Story = {
     docs: {
       description: {
         story:
-          'Campaign card with longer content to test text wrapping and layout',
+          "Campaign card with longer content to test text wrapping and layout",
       },
     },
   },
@@ -155,11 +155,11 @@ export const LongContent: Story = {
 // Minimal data
 export const MinimalData: Story = {
   args: {
-    type: 'detail',
+    type: "detail",
     campaign: {
-      id: 'minimal',
-      name: 'Test',
-      description: 'Short',
+      id: "minimal",
+      name: "Test",
+      description: "Short",
       poolSize: 100,
       participants: 1,
       userRank: 1,
@@ -175,7 +175,7 @@ export const MinimalData: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Campaign card with minimal data',
+        story: "Campaign card with minimal data",
       },
     },
   },

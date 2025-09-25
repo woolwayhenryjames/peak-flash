@@ -1,45 +1,45 @@
-import { useSearchParams } from 'react-router';
-import GlowContainer from '~/components/GlowContainer';
-import { authClient } from '~/lib/auth-client';
-import bg from './assets/bg.avif';
-import tiktokIcon from './assets/tiktok-icon.svg';
-import FeatureItems from './components/FeatureItems';
+import { useSearchParams } from "react-router";
+import GlowContainer from "~/components/GlowContainer";
+import { authClient } from "~/lib/auth-client";
+import bg from "./assets/bg.avif";
+import tiktokIcon from "./assets/tiktok-icon.svg";
+import FeatureItems from "./components/FeatureItems";
 export function meta() {
   return [
-    { title: 'Sign In to Peak AI - Start Earning with Crypto & AI Campaigns' },
+    { title: "Sign In to Peak AI - Start Earning with Crypto & AI Campaigns" },
     {
-      name: 'description',
+      name: "description",
       content:
-        'Join Peak AI and start earning Kindle Score points through crypto and AI campaigns. Connect with TikTok to participate in exclusive campaigns and climb the leaderboard.',
+        "Join Peak AI and start earning Kindle Score points through crypto and AI campaigns. Connect with TikTok to participate in exclusive campaigns and climb the leaderboard.",
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content:
-        'Peak AI login, TikTok sign in, crypto campaigns, AI campaigns, social earning, Kindle Score, referral rewards, campaign participation',
+        "Peak AI login, TikTok sign in, crypto campaigns, AI campaigns, social earning, Kindle Score, referral rewards, campaign participation",
     },
-    { name: 'robots', content: 'index, follow' },
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "index, follow" },
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
-    { property: 'og:title', content: 'Join Peak AI - Start Earning Today' },
+    { property: "og:title", content: "Join Peak AI - Start Earning Today" },
     {
-      property: 'og:description',
+      property: "og:description",
       content:
-        'Connect your TikTok account and start earning rewards through crypto and AI campaigns. Join thousands of users already earning on Peak AI.',
+        "Connect your TikTok account and start earning rewards through crypto and AI campaigns. Join thousands of users already earning on Peak AI.",
     },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Peak AI" },
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: "twitter:card", content: "summary_large_image" },
     {
-      name: 'twitter:title',
-      content: 'Join Peak AI - Crypto & AI Campaign Platform',
+      name: "twitter:title",
+      content: "Join Peak AI - Crypto & AI Campaign Platform",
     },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content:
-        'Connect with TikTok and start earning through exclusive campaigns. Track your progress and compete with others!',
+        "Connect with TikTok and start earning through exclusive campaigns. Track your progress and compete with others!",
     },
   ];
 }
@@ -49,18 +49,18 @@ export default function SignIn() {
 
   const signIn = async () => {
     try {
-      const inviterId = searchParams.get('inviter');
+      const inviterId = searchParams.get("inviter");
       if (inviterId) {
         console.log(`Starting OAuth flow with inviter: ${inviterId}`);
         // Store inviter ID in session storage so it persists through OAuth redirect
-        sessionStorage.setItem('pendingInviterId', inviterId);
+        sessionStorage.setItem("pendingInviterId", inviterId);
       }
 
       await authClient.signIn.social({
-        provider: 'tiktok',
+        provider: "tiktok",
       });
     } catch (error) {
-      console.error('Error during sign in:', error);
+      console.error("Error during sign in:", error);
       // You could show a user-friendly error message here
     }
   };
@@ -95,7 +95,7 @@ export default function SignIn() {
         </div>
 
         {/* Invite Banner */}
-        {searchParams.get('inviter') && (
+        {searchParams.get("inviter") && (
           <div className="mx-auto mt-4 max-w-sm rounded-lg border border-purple-500/30 bg-gradient-to-r from-purple-900/20 to-pink-900/20 p-3">
             <p className="text-center text-purple-200 text-sm">
               🎉 You've been invited to join Peak AI!

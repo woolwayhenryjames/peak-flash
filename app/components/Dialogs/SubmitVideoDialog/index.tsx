@@ -1,5 +1,5 @@
-import GlowContainer from '~/components/GlowContainer';
-import DialogWithCloseButton from '../DialogWithCloseButton';
+import GlowContainer from "~/components/GlowContainer";
+import DialogWithCloseButton from "../DialogWithCloseButton";
 
 export default function SubmitVideoDialog({
   show,

@@ -2,9 +2,9 @@ import {
   useAppKit,
   useAppKitAccount,
   useDisconnect,
-} from '@reown/appkit/react';
-import { useEffect, useState } from 'react';
-import walletIcon from './assets/wallet-icon.svg';
+} from "@reown/appkit/react";
+import { useEffect, useState } from "react";
+import walletIcon from "./assets/wallet-icon.svg";
 
 export default function ConnectWallet({
   userWalletAddress,
@@ -25,10 +25,10 @@ export default function ConnectWallet({
   useEffect(() => {
     if (isConnected && address) {
       // Bind wallet to user account
-      fetch('/api/bindWallet', {
-        method: 'POST',
+      fetch("/api/bindWallet", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ walletAddress: address }),
       })
@@ -36,11 +36,11 @@ export default function ConnectWallet({
           if (response.ok) {
             setCurrentAddress(address);
           } else {
-            console.error('Failed to bind wallet');
+            console.error("Failed to bind wallet");
           }
         })
         .catch((error) => {
-          console.error('Error binding wallet:', error);
+          console.error("Error binding wallet:", error);
         });
     }
   }, [address, isConnected]);
@@ -48,21 +48,21 @@ export default function ConnectWallet({
   const handleClick = () => {
     if (address) {
       disconnect();
-      fetch('/api/bindWallet', {
-        method: 'DELETE',
+      fetch("/api/bindWallet", {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       })
         .then((response) => {
           if (response.ok) {
             setCurrentAddress(null);
           } else {
-            console.error('Failed to unbind wallet');
+            console.error("Failed to unbind wallet");
           }
         })
         .catch((error) => {
-          console.error('Error unbinding wallet:', error);
+          console.error("Error unbinding wallet:", error);
         });
     } else {
       open();
@@ -75,7 +75,7 @@ export default function ConnectWallet({
       <div className="text-[#c5c5c5] text-xl">
         {currentAddress
           ? `${currentAddress.slice(0, 8)}...${currentAddress.slice(-4)}`
-          : 'Connect Wallet'}
+          : "Connect Wallet"}
       </div>
       <button
         className="flex flex-1 justify-end text-white underline decoration-dashed"
@@ -83,7 +83,7 @@ export default function ConnectWallet({
         type="button"
       >
         {currentAddress ? (
-          'Disconnect'
+          "Disconnect"
         ) : (
           <svg
             fill="none"

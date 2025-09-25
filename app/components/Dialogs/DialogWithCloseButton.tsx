@@ -1,5 +1,5 @@
-import { cn } from '~/lib/utils';
-import Dialog, { type DialogProps } from '.';
+import { cn } from "~/lib/utils";
+import Dialog, { type DialogProps } from ".";
 
 export type DialogWithCloseButtonProps = DialogProps & {
   closeButtonClassName?: string;
@@ -14,17 +14,17 @@ export default function DialogWithCloseButton({
   return (
     <Dialog
       className={cn(
-        'rounded-2xl border border-[#84a0ff] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] md:border-2',
+        "rounded-2xl border border-[#84a0ff] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] md:border-2",
         className
       )}
       style={{
         background:
-          'linear-gradient(-18deg, rgba(0, 0, 0, 1) 43%, rgba(42, 38, 89, 1) 90%, rgba(53, 93, 191, 1) 100%)',
+          "linear-gradient(-18deg, rgba(0, 0, 0, 1) 43%, rgba(42, 38, 89, 1) 90%, rgba(53, 93, 191, 1) 100%)",
       }}
       {...props}
     >
       <button
-        className={cn('absolute top-2.5 right-2.5', closeButtonClassName)}
+        className={cn("absolute top-2.5 right-2.5", closeButtonClassName)}
         onClick={() => props.setShow(false)}
         type="button"
       >

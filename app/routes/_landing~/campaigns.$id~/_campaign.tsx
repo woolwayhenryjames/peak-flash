@@ -1,71 +1,71 @@
-import { Fragment, useMemo, useState } from 'react';
-import Markdown from 'react-markdown';
-import { Link, redirect } from 'react-router';
-import CampaignCard from '~/components/CampaignCard';
-import FirstOpenCampainDetailsDialog from '~/components/Dialogs/FirstOpenCampainDetailsDialog';
-import SubmitVideoDialog from '~/components/Dialogs/SubmitVideoDialog';
-import GlowContainer from '~/components/GlowContainer';
-import ParticipationInfo from '~/components/ParticipationInfo';
-import { cn } from '~/lib/utils';
-import { getDbUser } from '~/services/auth.server';
-import { getCampaignsWithUserRanks } from '~/services/campaign.server';
-import { db } from '~/services/db.server';
-import type { Route } from './+types/_campaign';
-import videoIcon from './assets/video.svg';
+import { Fragment, useMemo, useState } from "react";
+import Markdown from "react-markdown";
+import { Link, redirect } from "react-router";
+import CampaignCard from "~/components/CampaignCard";
+import FirstOpenCampainDetailsDialog from "~/components/Dialogs/FirstOpenCampainDetailsDialog";
+import SubmitVideoDialog from "~/components/Dialogs/SubmitVideoDialog";
+import GlowContainer from "~/components/GlowContainer";
+import ParticipationInfo from "~/components/ParticipationInfo";
+import { cn } from "~/lib/utils";
+import { getDbUser } from "~/services/auth.server";
+import { getCampaignsWithUserRanks } from "~/services/campaign.server";
+import { db } from "~/services/db.server";
+import type { Route } from "./+types/_campaign";
+import videoIcon from "./assets/video.svg";
 
 export function meta({ data }: Route.MetaArgs) {
   const campaign = data?.campaign;
   const topParticipants = data?.topParticipants || [];
   const userRank = data?.campaign?.userRank;
 
-  const campaignName = campaign?.name || 'Campaign';
+  const campaignName = campaign?.name || "Campaign";
   const campaignDescription =
-    campaign?.description || 'Join this exciting campaign';
+    campaign?.description || "Join this exciting campaign";
   const poolSize = campaign?.poolSize || 0;
   const participantCount = topParticipants.length;
 
   const isActive = campaign?.endDate
     ? new Date(campaign.endDate) > new Date()
     : false;
-  const status = isActive ? 'Active' : 'Ended';
+  const status = isActive ? "Active" : "Ended";
 
   return [
     { title: `${campaignName} - Peak AI Campaign` },
     {
-      name: 'description',
-      content: `${campaignDescription.substring(0, 150)}${campaignDescription.length > 150 ? '...' : ''} Pool: $${poolSize}. ${status} campaign with ${participantCount}+ participants.${userRank ? ` You're ranked #${userRank}` : ''}`,
+      name: "description",
+      content: `${campaignDescription.substring(0, 150)}${campaignDescription.length > 150 ? "..." : ""} Pool: $${poolSize}. ${status} campaign with ${participantCount}+ participants.${userRank ? ` You're ranked #${userRank}` : ""}`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content: `Peak AI campaign, ${campaignName}, crypto rewards, AI campaign, ${status.toLowerCase()} campaign, earn money, TikTok campaign`,
     },
-    { name: 'robots', content: 'index, follow' },
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "index, follow" },
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
     {
-      property: 'og:title',
+      property: "og:title",
       content: `${campaignName} - Join Peak AI Campaign`,
     },
     {
-      property: 'og:description',
-      content: `${status} campaign with $${poolSize} prize pool! ${campaignDescription.substring(0, 100)}${campaignDescription.length > 100 ? '...' : ''}`,
+      property: "og:description",
+      content: `${status} campaign with $${poolSize} prize pool! ${campaignDescription.substring(0, 100)}${campaignDescription.length > 100 ? "..." : ""}`,
     },
-    { property: 'og:type', content: 'article' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "article" },
+    { property: "og:site_name", content: "Peak AI" },
     ...(campaign?.image
-      ? [{ property: 'og:image', content: campaign.image }]
+      ? [{ property: "og:image", content: campaign.image }]
       : []),
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: `${campaignName} - Peak AI` },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: `${campaignName} - Peak AI` },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content: `${status} campaign with $${poolSize} prize pool. Join now and compete for rewards!`,
     },
     ...(campaign?.image
-      ? [{ name: 'twitter:image', content: campaign.image }]
+      ? [{ name: "twitter:image", content: campaign.image }]
       : []),
   ];
 }
@@ -73,14 +73,14 @@ export function meta({ data }: Route.MetaArgs) {
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw redirect('/login');
+    throw redirect("/login");
   }
 
   const campaign = await db.campaign.findUnique({
     where: { id: params.id },
   });
   if (!campaign) {
-    throw redirect('/');
+    throw redirect("/");
   }
 
   const [campaignWithRank] = await getCampaignsWithUserRanks(
@@ -91,7 +91,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   // Get top 5 participants for leaderboard
   const topParticipants = await db.campaignUser.findMany({
     where: { campaignId: params.id },
-    orderBy: { score: 'desc' },
+    orderBy: { score: "desc" },
     take: 5,
     include: {
       user: {
@@ -127,7 +127,7 @@ export default function CampaignDetails({
         className="px-10 py-8 md:px-18"
         style={{
           backgroundImage:
-            'radial-gradient(93.1% 93.1% at 50% 0%, #707070 0%, #524532 36.21%, #272117 68.11%, #120D0C 87.69%, #0A0A0A 100%)',
+            "radial-gradient(93.1% 93.1% at 50% 0%, #707070 0%, #524532 36.21%, #272117 68.11%, #120D0C 87.69%, #0A0A0A 100%)",
         }}
       >
         <div className="flex flex-col gap-9">
@@ -168,7 +168,7 @@ export default function CampaignDetails({
                   <button
                     onClick={() =>
                       setExpandedSection(
-                        expandedSection === 'video' ? null : 'video'
+                        expandedSection === "video" ? null : "video"
                       )
                     }
                     type="button"
@@ -176,8 +176,8 @@ export default function CampaignDetails({
                     <GlowContainer className="rounded-sm px-2 py-2">
                       <svg
                         className={cn(
-                          'h-4 w-4 transition-transform',
-                          expandedSection === 'video' ? 'rotate-180' : ''
+                          "h-4 w-4 transition-transform",
+                          expandedSection === "video" ? "rotate-180" : ""
                         )}
                         fill="none"
                         stroke="currentColor"
@@ -197,8 +197,8 @@ export default function CampaignDetails({
 
                 {/* Expanded Content */}
                 <div
-                  className={cn('flex flex-col items-center', {
-                    hidden: expandedSection !== 'video',
+                  className={cn("flex flex-col items-center", {
+                    hidden: expandedSection !== "video",
                   })}
                 >
                   <VideoRequirementsContent
@@ -216,9 +216,9 @@ export default function CampaignDetails({
             {campaign.isParticipating && (
               <ParticipationInfo
                 campaignUser={campaignUser}
-                expand={expandedSection === 'profile'}
+                expand={expandedSection === "profile"}
                 setExpand={(expand) =>
-                  setExpandedSection(expand ? 'profile' : null)
+                  setExpandedSection(expand ? "profile" : null)
                 }
                 userRank={campaign.userRank}
               />
@@ -243,16 +243,16 @@ export default function CampaignDetails({
                         alt={
                           user?.name
                             ? user.name.substring(0, 4).toUpperCase()
-                            : 'U'
+                            : "U"
                         }
                         className="h-full w-full object-cover"
-                        src={user?.image || ''}
+                        src={user?.image || ""}
                       />
                     </div>
 
                     <div className="flex flex-col gap-2">
                       <h3 className="font-medium text-white">
-                        @{user?.email || 'User'}
+                        @{user?.email || "User"}
                       </h3>
                       <div className="flex items-center gap-3">
                         <span className="text-gray-400 text-sm">
@@ -301,7 +301,7 @@ export default function CampaignDetails({
                           <td className="truncate whitespace-nowrap py-4">
                             <div className="flex flex-col gap-1">
                               <span className="font-medium text-white">
-                                @{participant.user.email || 'user'}
+                                @{participant.user.email || "user"}
                               </span>
                               <span className="text-gray-500 text-xs">
                                 {participant.videoCount || 0} videos
@@ -360,13 +360,13 @@ function VideoRequirementsContent({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 1000);
     } catch (error) {
-      console.error('Failed to copy link:', error);
+      console.error("Failed to copy link:", error);
     }
   };
   const requirements: [string, unknown][] = useMemo(() => {
     try {
       const requirementsObj =
-        typeof joinRequirement === 'string'
+        typeof joinRequirement === "string"
           ? JSON.parse(joinRequirement)
           : (joinRequirement ?? {});
       return Object.entries(requirementsObj);
@@ -384,9 +384,9 @@ function VideoRequirementsContent({
             <GlowContainer
               className="w-fit cursor-pointer rounded-sm px-3 py-1 text-sm"
               noShimmer
-              onClick={() => handleCopyLink(value.join(', '))}
+              onClick={() => handleCopyLink(value.join(", "))}
             >
-              {isCopied ? 'Copied!' : 'Copy'}
+              {isCopied ? "Copied!" : "Copy"}
             </GlowContainer>
           )}
         </div>
@@ -402,7 +402,7 @@ function VideoRequirementsContent({
                 </span>
               </div>
             ))}
-          {typeof value === 'string' && (
+          {typeof value === "string" && (
             <div className="text-gray-500 text-sm [&_*]:list-image-[linear-gradient(114deg,#FFA44A_12.87%,#69D7FF_51.12%)]">
               <Markdown>{value}</Markdown>
             </div>

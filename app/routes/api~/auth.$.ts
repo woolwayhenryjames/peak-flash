@@ -1,5 +1,5 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
-import { auth } from '~/services/auth.server';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import { auth } from "~/services/auth.server";
 
 export function loader({ request }: LoaderFunctionArgs) {
   return auth.handler(request);

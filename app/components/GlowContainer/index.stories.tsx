@@ -1,31 +1,31 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import GlowContainer from './index';
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import GlowContainer from "./index";
 
 const meta = {
-  title: 'Components/GlowContainer',
+  title: "Components/GlowContainer",
   component: GlowContainer,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     backgrounds: {
-      default: 'dark',
+      default: "dark",
     },
   },
   argTypes: {
     children: {
-      control: 'text',
-      description: 'Content inside the glow container',
+      control: "text",
+      description: "Content inside the glow container",
     },
     noShimmer: {
-      control: 'boolean',
-      description: 'Disable the shimmer animation effect',
+      control: "boolean",
+      description: "Disable the shimmer animation effect",
     },
     className: {
-      control: 'text',
-      description: 'Additional CSS classes',
+      control: "text",
+      description: "Additional CSS classes",
     },
   },
   args: {
-    children: 'Glow Button',
+    children: "Glow Button",
     noShimmer: false,
   },
 } satisfies Meta<typeof GlowContainer>;
@@ -43,14 +43,14 @@ export const NoShimmer: Story = {
 
 export const CustomContent: Story = {
   args: {
-    children: 'Follow on Twitter',
+    children: "Follow on Twitter",
   },
 };
 
 export const SmallButton: Story = {
   args: {
-    children: 'Copy',
-    className: 'w-fit rounded-sm px-3 py-1 text-sm',
+    children: "Copy",
+    className: "w-fit rounded-sm px-3 py-1 text-sm",
   },
 };
 

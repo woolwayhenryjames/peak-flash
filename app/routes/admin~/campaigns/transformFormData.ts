@@ -1,12 +1,12 @@
-import { type FileUpload, parseFormData } from '@remix-run/form-data-parser';
-import { uploadHandler } from '~/services/aws-s3.server';
+import { type FileUpload, parseFormData } from "@remix-run/form-data-parser";
+import { uploadHandler } from "~/services/aws-s3.server";
 
 export async function transformFormData(request: Request) {
   // Handle file uploads for image field
   const formUploadHandler = async (fileUpload: FileUpload) => {
     if (
-      fileUpload.fieldName === 'image' &&
-      fileUpload.type.startsWith('image/')
+      fileUpload.fieldName === "image" &&
+      fileUpload.type.startsWith("image/")
     ) {
       // Use the existing uploadHandler from aws-s3.server.ts
       const uploadPath = await uploadHandler(fileUpload);
@@ -16,8 +16,8 @@ export async function transformFormData(request: Request) {
 
     // Handle icon uploads for shareUrls
     if (
-      fileUpload.fieldName.startsWith('icon-') &&
-      fileUpload.type.startsWith('image/')
+      fileUpload.fieldName.startsWith("icon-") &&
+      fileUpload.type.startsWith("image/")
     ) {
       const uploadPath = await uploadHandler(fileUpload);
       return `/assets${uploadPath}`;
@@ -43,7 +43,7 @@ export async function transformFormData(request: Request) {
     processedShareUrls = parsedShareUrls.map((shareUrl, index) => {
       // Look for uploaded icon files that match icon- pattern
       const iconKeys = Array.from(formData.keys()).filter((key) =>
-        key.startsWith('icon-')
+        key.startsWith("icon-")
       );
       const matchingIconFile = iconKeys.find((key) => {
         const iconFile = formData.get(key) as string;

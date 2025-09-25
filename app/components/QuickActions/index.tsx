@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Link } from 'react-router';
-import { useUser } from '~/routes/_landing~/_layout';
-import GlowContainer from '../GlowContainer';
-import diamondIcon from './assets/diamond-icon.svg';
-import usersIcon from './assets/users-icon.svg';
+import { useState } from "react";
+import { Link } from "react-router";
+import { useUser } from "~/routes/_landing~/_layout";
+import GlowContainer from "../GlowContainer";
+import diamondIcon from "./assets/diamond-icon.svg";
+import usersIcon from "./assets/users-icon.svg";
 
 export default function QuickActions() {
   const { user } = useUser();
@@ -17,7 +17,7 @@ export default function QuickActions() {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 1000);
     } catch (error) {
-      console.error('Failed to copy link:', error);
+      console.error("Failed to copy link:", error);
     }
   };
 
@@ -62,7 +62,7 @@ export default function QuickActions() {
               noShimmer
               onClick={handleCopyLink}
             >
-              {isCopied ? 'Copied!' : 'Copy'}
+              {isCopied ? "Copied!" : "Copy"}
             </GlowContainer>
           </div>
 

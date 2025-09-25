@@ -1,87 +1,87 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, useFetcher } from 'react-router';
-import { getDbUser } from '~/services/auth.server';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useFetcher } from "react-router";
+import { getDbUser } from "~/services/auth.server";
 import {
   getCampaignLeaderboard,
   getCampaignsWithUserRanks,
-} from '~/services/campaign.server';
-import { db } from '~/services/db.server';
-import type { Route } from './+types/_cleaderboard';
-import bg from './assets/bg.avif';
+} from "~/services/campaign.server";
+import { db } from "~/services/db.server";
+import type { Route } from "./+types/_cleaderboard";
+import bg from "./assets/bg.avif";
 
 export function meta({ data }: Route.MetaArgs) {
   const campaign = data?.campaignWithRanks;
   const currentPage = data?.pagination?.page || 1;
   const totalParticipants = data?.pagination?.total || 0;
 
-  const campaignName = campaign?.name || 'Campaign';
+  const campaignName = campaign?.name || "Campaign";
   const poolSize = campaign?.poolSize || 0;
   const isActive = campaign?.endDate
     ? new Date(campaign.endDate) > new Date()
     : false;
-  const status = isActive ? 'Active' : 'Ended';
+  const status = isActive ? "Active" : "Ended";
 
   return [
     {
-      title: `${campaignName} Leaderboard - Peak AI ${currentPage > 1 ? `(Page ${currentPage})` : ''}`,
+      title: `${campaignName} Leaderboard - Peak AI ${currentPage > 1 ? `(Page ${currentPage})` : ""}`,
     },
     {
-      name: 'description',
+      name: "description",
       content: `View the leaderboard for ${campaignName} campaign on Peak AI. ${status} campaign with $${poolSize} prize pool and ${totalParticipants} participants competing for rewards.`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content: `${campaignName} leaderboard, Peak AI campaign ranking, crypto campaign results, AI campaign winners, ${status.toLowerCase()} campaign`,
     },
-    { name: 'robots', content: 'index, follow' },
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "index, follow" },
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
-    { property: 'og:title', content: `${campaignName} Leaderboard - Peak AI` },
+    { property: "og:title", content: `${campaignName} Leaderboard - Peak AI` },
     {
-      property: 'og:description',
+      property: "og:description",
       content: `Check out who's leading in the ${campaignName} campaign! ${status} with $${poolSize} prize pool and ${totalParticipants} participants.`,
     },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Peak AI" },
     ...(campaign?.image
-      ? [{ property: 'og:image', content: campaign.image }]
+      ? [{ property: "og:image", content: campaign.image }]
       : []),
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: `${campaignName} Leaderboard` },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: `${campaignName} Leaderboard` },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content: `See who's winning the ${campaignName} campaign on Peak AI! $${poolSize} prize pool up for grabs.`,
     },
     ...(campaign?.image
-      ? [{ name: 'twitter:image', content: campaign.image }]
+      ? [{ name: "twitter:image", content: campaign.image }]
       : []),
   ];
 }
 
-const formatter = new Intl.NumberFormat('en', {
-  notation: 'compact',
-  compactDisplay: 'short',
+const formatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
 });
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw new Response('Unauthorized', { status: 401 });
+    throw new Response("Unauthorized", { status: 401 });
   }
   if (!params.id) {
-    throw new Response('Campaign ID is required', { status: 400 });
+    throw new Response("Campaign ID is required", { status: 400 });
   }
   const campaign = await db.campaign.findUnique({
     where: { id: params.id },
   });
   if (!campaign) {
-    throw new Response('Campaign not found', { status: 404 });
+    throw new Response("Campaign not found", { status: 404 });
   }
   const url = new URL(request.url);
-  const page = Number.parseInt(url.searchParams.get('page') || '1', 10);
+  const page = Number.parseInt(url.searchParams.get("page") || "1", 10);
   const [leaderboard, campaignWithRanks] = await Promise.all([
     getCampaignLeaderboard(params.id, page, 10),
     getCampaignsWithUserRanks([campaign], user.value),
@@ -114,7 +114,7 @@ export default function Leaderboard({
 
   // Load more campaigns
   const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== 'idle') {
+    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
       return;
     }
 
@@ -126,7 +126,7 @@ export default function Leaderboard({
 
   // Handle fetcher data
   useEffect(() => {
-    if (fetcher.data && fetcher.state === 'idle') {
+    if (fetcher.data && fetcher.state === "idle") {
       const data = fetcher.data;
       setCampaignUsers((prev) => [...prev, ...data.campaignUsers]);
       currentPage.current = data.pagination.page;
@@ -187,7 +187,7 @@ export default function Leaderboard({
         className="container mx-auto min-h-screen md:px-18"
         style={{
           backgroundImage:
-            'linear-gradient(180deg, #000001 0%, #151411 30.78%, #241F1A 71.63%, #151512 100%)',
+            "linear-gradient(180deg, #000001 0%, #151411 30.78%, #241F1A 71.63%, #151512 100%)",
         }}
       >
         <div className="mx-auto mb-6 h-px w-[80%] bg-[#6c6c6c]/50" />
@@ -198,16 +198,16 @@ export default function Leaderboard({
                 alt={
                   loaderData.user?.name
                     ? loaderData.user.name.substring(0, 4).toUpperCase()
-                    : 'U'
+                    : "U"
                 }
                 className="h-full w-full object-cover"
-                src={loaderData.user?.image || ''}
+                src={loaderData.user?.image || ""}
               />
             </div>
 
             <div className="flex flex-col items-start gap-2">
               <h3 className="font-medium text-white">
-                @{loaderData.user?.email || 'User'}
+                @{loaderData.user?.email || "User"}
               </h3>
               {loaderData.campaignWithRanks.userRank && (
                 <div className="rounded bg-linear-57 from-[#fdffa7] to-[#57ffd5] px-3 py-0.5 font-medium text-black text-xs">

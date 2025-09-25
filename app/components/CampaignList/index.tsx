@@ -1,9 +1,9 @@
-import type { Campaign } from '@prisma/client';
-import { Link } from 'react-router';
-import GlowContainer from '../GlowContainer';
+import type { Campaign } from "@prisma/client";
+import { Link } from "react-router";
+import GlowContainer from "../GlowContainer";
 
 interface CampaignWithParticipation
-  extends Omit<Campaign, 'createdAt' | 'updatedAt'> {
+  extends Omit<Campaign, "createdAt" | "updatedAt"> {
   isParticipating: boolean;
   userRank?: number | null;
   userPoints?: number;
@@ -12,17 +12,17 @@ interface CampaignWithParticipation
 
 interface CampaignListProps {
   campaigns?: CampaignWithParticipation[];
-  type?: 'default' | 'spark-points';
+  type?: "default" | "spark-points";
 }
 
-const formatter = new Intl.NumberFormat('en', {
-  notation: 'compact',
-  compactDisplay: 'short',
+const formatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
 });
 
 export default function CampaignList({
   campaigns = [],
-  type = 'default',
+  type = "default",
 }: CampaignListProps) {
   return (
     <div className="flex flex-col justify-center gap-2.5 md:gap-6">
@@ -61,7 +61,7 @@ export default function CampaignList({
                       {campaign.name}
                     </h4>
                   </div>
-                  {type === 'default' ? (
+                  {type === "default" ? (
                     <p className="text-[#878788] text-xs">
                       Pool: {formatter.format(campaign.poolSize)} Tokens
                     </p>
@@ -70,9 +70,9 @@ export default function CampaignList({
                       <span>
                         {formatter.format(campaign.videoCount || 0)} videos
                       </span>
-                      {' • '}
+                      {" • "}
                       <span>
-                        Spark Points:{' '}
+                        Spark Points:{" "}
                         {formatter.format(campaign.userPoints || 0)}
                       </span>
                     </p>
@@ -80,7 +80,7 @@ export default function CampaignList({
                 </div>
                 <div className="w-[40%] border-[#2D3338] border-l pl-3">
                   <div className="text-right">
-                    {type === 'default' && (
+                    {type === "default" && (
                       <span
                         className={`bg-gradient-to-r ${status.gradient} bg-clip-text font-normal text-transparent text-xs`}
                       >
@@ -118,10 +118,10 @@ function calculateRemainingDays(endDate: string | Date): string {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   if (diffDays <= 0) {
-    return 'Ended';
+    return "Ended";
   }
   if (diffDays === 1) {
-    return 'Remaining 1 day';
+    return "Remaining 1 day";
   }
   return `Remaining ${diffDays} days`;
 }
@@ -129,20 +129,20 @@ function calculateRemainingDays(endDate: string | Date): string {
 function getStatusDisplay(campaign: CampaignWithParticipation) {
   if (!campaign.endDate || new Date(campaign.endDate) < new Date()) {
     return {
-      text: 'Ended',
-      gradient: 'from-[#878788] to-[#575655]',
+      text: "Ended",
+      gradient: "from-[#878788] to-[#575655]",
     };
   }
 
   if (campaign.isParticipating) {
     return {
-      text: 'Participating',
-      gradient: 'from-[#2BDACE] to-[#C4FFFB]',
+      text: "Participating",
+      gradient: "from-[#2BDACE] to-[#C4FFFB]",
     };
   }
 
   return {
-    text: 'Available',
-    gradient: 'from-[#FD2B70] to-[#FF89B0]',
+    text: "Available",
+    gradient: "from-[#FD2B70] to-[#FF89B0]",
   };
 }

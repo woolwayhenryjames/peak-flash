@@ -1,7 +1,7 @@
-import GlowContainer from '~/components/GlowContainer';
-import aiRobotIcon from '../assets/ai-robot-icon.svg';
-import coinIcon from '../assets/coin-icon.svg';
-import peopleIcon from '../assets/people-icon.svg';
+import GlowContainer from "~/components/GlowContainer";
+import aiRobotIcon from "../assets/ai-robot-icon.svg";
+import coinIcon from "../assets/coin-icon.svg";
+import peopleIcon from "../assets/people-icon.svg";
 
 interface Feature {
   icon: string;
@@ -13,21 +13,21 @@ interface Feature {
 const features: Feature[] = [
   {
     icon: aiRobotIcon,
-    iconAlt: 'AI Robot',
-    title: 'AI smart detection',
-    description: '24/7 auto-monitor your TikTok content',
+    iconAlt: "AI Robot",
+    title: "AI smart detection",
+    description: "24/7 auto-monitor your TikTok content",
   },
   {
     icon: coinIcon,
-    iconAlt: 'Coin',
-    title: 'Real token rewards',
-    description: 'Earn project tokens,not just poins',
+    iconAlt: "Coin",
+    title: "Real token rewards",
+    description: "Earn project tokens,not just poins",
   },
   {
     icon: peopleIcon,
-    iconAlt: 'People',
-    title: '10% score rewards',
-    description: 'Invite friends, earn scoring rewards',
+    iconAlt: "People",
+    title: "10% score rewards",
+    description: "Invite friends, earn scoring rewards",
   },
 ];
 

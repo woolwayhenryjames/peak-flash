@@ -1,10 +1,10 @@
-import type { Preview } from '@storybook/react-vite';
-import { initialize, mswLoader } from 'msw-storybook-addon';
+import type { Preview } from "@storybook/react-vite";
+import { initialize, mswLoader } from "msw-storybook-addon";
 
-import '../app/app.css';
-import { createRoutesStub } from 'react-router';
-import { INITIAL_VIEWPORTS } from 'storybook/viewport';
-import getVideosMockData from './getVideos.mockData';
+import "../app/app.css";
+import { createRoutesStub } from "react-router";
+import { INITIAL_VIEWPORTS } from "storybook/viewport";
+import getVideosMockData from "./getVideos.mockData";
 
 // Initialize MSW
 initialize();
@@ -20,18 +20,18 @@ const preview: Preview = {
     },
     // Mock router context for Link components
     reactRouter: {
-      routePath: '/',
+      routePath: "/",
     },
     backgrounds: {
-      default: 'dark',
+      default: "dark",
       values: [
         {
-          name: 'dark',
-          value: 'linear-gradient(to bottom, black 25%, #9595FF 125%)',
+          name: "dark",
+          value: "linear-gradient(to bottom, black 25%, #9595FF 125%)",
         },
         {
-          name: 'light',
-          value: '#ffffff',
+          name: "light",
+          value: "#ffffff",
         },
       ],
     },
@@ -41,11 +41,11 @@ const preview: Preview = {
     (Story) => {
       const RoutesStub = createRoutesStub([
         {
-          path: '/',
+          path: "/",
           Component: () => <Story />,
         },
         {
-          path: '/api/getVideos/:campaignUserId',
+          path: "/api/getVideos/:campaignUserId",
           loader: getVideosMockData,
         },
       ]);

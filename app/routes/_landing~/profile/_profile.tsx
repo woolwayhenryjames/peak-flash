@@ -1,50 +1,50 @@
-import { useState } from 'react';
-import { redirect } from 'react-router';
-import CampaignList from '~/components/CampaignList';
-import ConnectWallet from '~/components/ConnectWallet';
-import { getDbUser } from '~/services/auth.server';
-import { getCampaignsForUser } from '~/services/campaign.server';
-import { getUserKindleRank } from '~/services/user-ranking.server';
-import type { Route } from './+types/_profile';
-import starIcon from './assets/star-icon.svg';
-import walletIcon from './assets/wallet-icon.svg';
+import { useState } from "react";
+import { redirect } from "react-router";
+import CampaignList from "~/components/CampaignList";
+import ConnectWallet from "~/components/ConnectWallet";
+import { getDbUser } from "~/services/auth.server";
+import { getCampaignsForUser } from "~/services/campaign.server";
+import { getUserKindleRank } from "~/services/user-ranking.server";
+import type { Route } from "./+types/_profile";
+import starIcon from "./assets/star-icon.svg";
+import walletIcon from "./assets/wallet-icon.svg";
 
 export function meta({ data }: Route.MetaArgs) {
   const user = data?.user;
   const campaigns = data?.campaigns || [];
   const totalVideos = data?.totalVideos || 0;
-  const userRank = user?.kindleRank || 'N/A';
+  const userRank = user?.kindleRank || "N/A";
   const userScore = user?.kindleScore || 0;
-  const username = 'User';
+  const username = "User";
 
   return [
     { title: `${username}'s Profile - Peak AI` },
     {
-      name: 'description',
+      name: "description",
       content: `View ${username}'s Peak AI profile. Ranked #${userRank} with ${userScore} Kindle Score points across ${campaigns.length} campaigns and ${totalVideos} videos submitted.`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content:
-        'Peak AI profile, user stats, Kindle Score, campaign history, leaderboard ranking, video submissions, crypto rewards',
+        "Peak AI profile, user stats, Kindle Score, campaign history, leaderboard ranking, video submissions, crypto rewards",
     },
-    { name: 'robots', content: 'noindex, nofollow' }, // Private user profiles should not be indexed
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "noindex, nofollow" }, // Private user profiles should not be indexed
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
-    { property: 'og:title', content: `${username}'s Peak AI Profile` },
+    { property: "og:title", content: `${username}'s Peak AI Profile` },
     {
-      property: 'og:description',
+      property: "og:description",
       content: `Peak AI user profile for ${username}. Ranked #${userRank} with ${userScore} points across ${campaigns.length} campaigns.`,
     },
-    { property: 'og:type', content: 'profile' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "profile" },
+    { property: "og:site_name", content: "Peak AI" },
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary' },
-    { name: 'twitter:title', content: `${username} on Peak AI` },
+    { name: "twitter:card", content: "summary" },
+    { name: "twitter:title", content: `${username} on Peak AI` },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content: `Check out ${username}'s performance on Peak AI - ${userScore} Kindle Score points and ranked #${userRank}!`,
     },
   ];
@@ -53,7 +53,7 @@ export function meta({ data }: Route.MetaArgs) {
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw redirect('/login');
+    throw redirect("/login");
   }
 
   // Get user with kindle rank and their campaigns
@@ -146,7 +146,7 @@ export default function Profile({
             <span className="font-semibold text-2xl text-white">
               {user.kindleScore != null
                 ? Math.round(user.kindleScore)
-                : 'Grading'}
+                : "Grading"}
             </span>
             <span className="font-light text-[#C0C0C0] text-xs">
               KINDLE Score
@@ -157,7 +157,7 @@ export default function Profile({
 
           <div className="flex flex-col items-center gap-1">
             <span className="font-semibold text-2xl text-white">
-              {user.kindleScore != null ? `#${user.kindleRank}` : 'N/A'}
+              {user.kindleScore != null ? `#${user.kindleRank}` : "N/A"}
             </span>
             <span className="font-light text-[#C0C0C0] text-xs">
               Global Rank
@@ -216,7 +216,7 @@ export default function Profile({
             onClick={() => setShowAllCampaigns(!showAllCampaigns)}
             type="button"
           >
-            {showAllCampaigns ? 'Show Less' : 'Show All'}
+            {showAllCampaigns ? "Show Less" : "Show All"}
           </button>
         )}
       </div>

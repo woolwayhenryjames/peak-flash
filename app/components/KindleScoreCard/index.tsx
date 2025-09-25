@@ -1,6 +1,6 @@
-import { Link } from 'react-router';
-import { cn } from '~/lib/utils';
-import GlowContainer from '../GlowContainer';
+import { Link } from "react-router";
+import { cn } from "~/lib/utils";
+import GlowContainer from "../GlowContainer";
 
 export default function KindleScoreCard({
   score,
@@ -31,11 +31,11 @@ export default function KindleScoreCard({
           <div className="text-center">
             <div
               className={cn(
-                'mb-1 font-semibold text-[#8080DA]',
-                score != null ? 'text-2xl' : 'text-lg'
+                "mb-1 font-semibold text-[#8080DA]",
+                score != null ? "text-2xl" : "text-lg"
               )}
             >
-              {score != null ? score : 'Grading'}
+              {score != null ? score : "Grading"}
             </div>
           </div>
         </div>
@@ -53,11 +53,11 @@ export default function KindleScoreCard({
 
           <GlowContainer
             className={cn(
-              'ml-auto w-fit rounded-md py-1 text-white text-xs',
-              score != null || 'px-6'
+              "ml-auto w-fit rounded-md py-1 text-white text-xs",
+              score != null || "px-6"
             )}
           >
-            {score != null ? `#${rank}` : ''}
+            {score != null ? `#${rank}` : ""}
             <svg
               fill="none"
               height={score != null ? 13 : 18}

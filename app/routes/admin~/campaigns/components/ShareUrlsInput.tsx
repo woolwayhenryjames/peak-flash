@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export function ShareUrlsInput({
   name,
@@ -8,11 +8,11 @@ export function ShareUrlsInput({
   defaultValue?: Array<{ url: string; icon: string }>;
 }) {
   const defaultShareUrls = [
-    { url: 'http://x.com/@example', icon: '/assets/user-upload/x.svg' },
-    { url: 'http://t.me/example', icon: '/assets/user-upload/tg.svg' },
+    { url: "http://x.com/@example", icon: "/assets/user-upload/x.svg" },
+    { url: "http://t.me/example", icon: "/assets/user-upload/tg.svg" },
     {
-      url: 'http://discord.gg/@example',
-      icon: '/assets/user-upload/discord.svg',
+      url: "http://discord.gg/@example",
+      icon: "/assets/user-upload/discord.svg",
     },
   ];
 
@@ -30,7 +30,7 @@ export function ShareUrlsInput({
   const addShareUrl = () => {
     setShareUrls((prev) => [
       ...prev,
-      { id: `share-url-${Date.now()}-${prev.length}`, url: '', icon: '' },
+      { id: `share-url-${Date.now()}-${prev.length}`, url: "", icon: "" },
     ]);
   };
 
@@ -38,7 +38,7 @@ export function ShareUrlsInput({
     setShareUrls((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const updateShareUrl = (id: string, field: 'url' | 'icon', value: string) => {
+  const updateShareUrl = (id: string, field: "url" | "icon", value: string) => {
     setShareUrls((prev) =>
       prev.map((item) => (item.id === id ? { ...item, [field]: value } : item))
     );
@@ -76,7 +76,7 @@ export function ShareUrlsInput({
                   className="w-full rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
                   id={`url-${shareUrl.id}`}
                   onChange={(e) =>
-                    updateShareUrl(shareUrl.id, 'url', e.target.value)
+                    updateShareUrl(shareUrl.id, "url", e.target.value)
                   }
                   placeholder="https://example.com/@username"
                   type="url"
@@ -93,8 +93,8 @@ export function ShareUrlsInput({
                 <div className="flex max-md:flex-col">
                   <div className="flex flex-1 items-center gap-2">
                     {shareUrl.icon &&
-                      (shareUrl.icon.startsWith('/assets') ||
-                        shareUrl.icon.startsWith('http')) && (
+                      (shareUrl.icon.startsWith("/assets") ||
+                        shareUrl.icon.startsWith("http")) && (
                         <img
                           alt="Icon preview"
                           className="size-14 rounded object-contain"
@@ -131,7 +131,7 @@ export function ShareUrlsInput({
                       className="w-full rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
                       id={`icon-url-${shareUrl.id}`}
                       onChange={(e) =>
-                        updateShareUrl(shareUrl.id, 'icon', e.target.value)
+                        updateShareUrl(shareUrl.id, "icon", e.target.value)
                       }
                       placeholder="/assets/user-upload/platform.svg"
                       type="text"

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import GlowContainer from '~/components/GlowContainer';
-import DialogWithCloseButton from '../DialogWithCloseButton';
-import flower from './assets/flower.svg';
+import { useEffect, useState } from "react";
+import GlowContainer from "~/components/GlowContainer";
+import DialogWithCloseButton from "../DialogWithCloseButton";
+import flower from "./assets/flower.svg";
 
 export default function FirstGetScoreDialog({
   score,
@@ -40,7 +40,7 @@ export default function FirstGetScoreDialog({
       show={show}
       style={{
         background:
-          'linear-gradient(-12deg,#000 21%, #2A2659 76.3362%, #355DBF 100%)',
+          "linear-gradient(-12deg,#000 21%, #2A2659 76.3362%, #355DBF 100%)",
       }}
     >
       <div className="flex flex-col items-center gap-9">

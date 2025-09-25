@@ -1,5 +1,5 @@
-import MobileBottomDialog from '~/components/Dialogs/MobileBottomDialog';
-import type { GetVideosReturnedData } from '~/routes/api~/getVideos.$cuId';
+import MobileBottomDialog from "~/components/Dialogs/MobileBottomDialog";
+import type { GetVideosReturnedData } from "~/routes/api~/getVideos.$cuId";
 
 export function MoreVideosDialog({
   show,
@@ -49,7 +49,7 @@ export function MoreVideosDialog({
             <div className="flex h-full flex-1 flex-col justify-between">
               {/* Title */}
               <h3 className="font-medium text-sm text-white leading-[1.5em]">
-                {video.desc || 'Untitled Video'}
+                {video.desc || "Untitled Video"}
               </h3>
 
               {/* Metrics */}

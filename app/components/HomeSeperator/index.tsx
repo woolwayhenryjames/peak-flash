@@ -4,7 +4,7 @@ export const HomeSeparator = () => {
     id: `dot-${i}-${Math.random().toString(36).substr(2, 9)}`, // Unique ID
     cx: 50 + i * 30 + Math.random() * 20, // Spread across width with some randomness
     r: 0.8 + Math.random() * 0.8, // Random size between 0.8 and 1.6
-    color: ['#A8A3FF', '#6366f1', '#8b5cf6', '#a855f7'][
+    color: ["#A8A3FF", "#6366f1", "#8b5cf6", "#a855f7"][
       Math.floor(Math.random() * 4)
     ],
     duration: 3 + Math.random() * 3, // Random duration between 3-6 seconds

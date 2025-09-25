@@ -1,8 +1,8 @@
-import type { Campaign } from '@prisma/client';
-import { Form, useActionData } from 'react-router';
-import DialogWithCloseButton from '~/components/Dialogs/DialogWithCloseButton';
-import { DynamicJSONInput } from './DynamicJSONInput';
-import { ShareUrlsInput } from './ShareUrlsInput';
+import type { Campaign } from "@prisma/client";
+import { Form, useActionData } from "react-router";
+import DialogWithCloseButton from "~/components/Dialogs/DialogWithCloseButton";
+import { DynamicJSONInput } from "./DynamicJSONInput";
+import { ShareUrlsInput } from "./ShareUrlsInput";
 
 type ActionData =
   | { success: true; message: string }
@@ -32,7 +32,7 @@ export function CampaignModal({
       className="min-w-[80vw] max-w-4xl"
       setShow={onClose}
       show={isOpen}
-      title={isEdit ? 'Edit Campaign' : 'Create Campaign'}
+      title={isEdit ? "Edit Campaign" : "Create Campaign"}
     >
       <Form
         className="space-y-6 overflow-y-scroll"
@@ -42,7 +42,7 @@ export function CampaignModal({
         <input
           name="intent"
           type="hidden"
-          value={isEdit ? 'update' : 'create'}
+          value={isEdit ? "update" : "create"}
         />
         {isEdit && <input name="id" type="hidden" value={campaign.id} />}
 
@@ -90,7 +90,7 @@ export function CampaignModal({
             </label>
             <input
               className="input input-bordered focus:input-primary w-full"
-              defaultValue={isEdit ? campaign.name : ''}
+              defaultValue={isEdit ? campaign.name : ""}
               id="name"
               name="name"
               placeholder="Enter campaign name"
@@ -107,7 +107,7 @@ export function CampaignModal({
           </label>
           <textarea
             className="textarea textarea-bordered focus:textarea-primary w-full"
-            defaultValue={isEdit ? campaign.description || '' : ''}
+            defaultValue={isEdit ? campaign.description || "" : ""}
             id="description"
             name="description"
             placeholder="Describe your campaign..."
@@ -155,7 +155,7 @@ export function CampaignModal({
                   </label>
                   <input
                     className="input input-bordered focus:input-primary w-full"
-                    defaultValue={isEdit ? campaign.image || '' : ''}
+                    defaultValue={isEdit ? campaign.image || "" : ""}
                     id="imageUrl"
                     name="imageUrl"
                     placeholder="https://example.com/image.jpg"
@@ -173,7 +173,7 @@ export function CampaignModal({
           </label>
           <input
             className="input input-bordered focus:input-primary w-full"
-            defaultValue={isEdit ? campaign.homepageUrl || '' : ''}
+            defaultValue={isEdit ? campaign.homepageUrl || "" : ""}
             id="homepageUrl"
             name="homepageUrl"
             placeholder="https://example.com"
@@ -191,7 +191,7 @@ export function CampaignModal({
                 </label>
                 <input
                   className="input input-bordered focus:input-primary w-full"
-                  defaultValue={isEdit ? campaign.poolSize : ''}
+                  defaultValue={isEdit ? campaign.poolSize : ""}
                   id="poolSize"
                   min="0"
                   name="poolSize"
@@ -209,7 +209,7 @@ export function CampaignModal({
                 </label>
                 <input
                   className="input input-bordered focus:input-primary w-full"
-                  defaultValue={isEdit ? campaign.poolUnit || '' : ''}
+                  defaultValue={isEdit ? campaign.poolUnit || "" : ""}
                   id="poolUnit"
                   maxLength={10}
                   name="poolUnit"
@@ -228,7 +228,7 @@ export function CampaignModal({
               </label>
               <input
                 className="input input-bordered focus:input-primary w-full"
-                defaultValue={isEdit ? campaign.poolDescription || '' : ''}
+                defaultValue={isEdit ? campaign.poolDescription || "" : ""}
                 id="poolDescription"
                 maxLength={50}
                 name="poolDescription"
@@ -252,7 +252,7 @@ export function CampaignModal({
                 <input
                   className="input input-bordered focus:input-primary w-full"
                   defaultValue={
-                    isEdit ? formatDateForInput(campaign.startDate) : ''
+                    isEdit ? formatDateForInput(campaign.startDate) : ""
                   }
                   id="startDate"
                   name="startDate"
@@ -270,7 +270,7 @@ export function CampaignModal({
                 <input
                   className="input input-bordered focus:input-primary w-full"
                   defaultValue={
-                    isEdit ? formatDateForInput(campaign.endDate) : ''
+                    isEdit ? formatDateForInput(campaign.endDate) : ""
                   }
                   id="endDate"
                   name="endDate"
@@ -347,7 +347,7 @@ export function CampaignModal({
                   </>
                 );
               }
-              return isEdit ? '✏️ Update Campaign' : '✨ Create Campaign';
+              return isEdit ? "✏️ Update Campaign" : "✨ Create Campaign";
             })()}
           </button>
         </div>

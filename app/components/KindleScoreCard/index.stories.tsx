@@ -1,19 +1,19 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import KindleScoreCard from './index';
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import KindleScoreCard from "./index";
 
 const meta = {
-  title: 'Components/KindleScoreCard',
+  title: "Components/KindleScoreCard",
   component: KindleScoreCard,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component:
-          'A Kindle Score card component displaying user score, rank, and progress with a gradient design.',
+          "A Kindle Score card component displaying user score, rank, and progress with a gradient design.",
       },
     },
     backgrounds: {
-      default: 'dark',
+      default: "dark",
     },
   },
   decorators: [
@@ -27,12 +27,12 @@ const meta = {
   ],
   argTypes: {
     score: {
-      control: { type: 'number', min: 0, max: 1000, step: 1 },
-      description: 'User Kindle Score value',
+      control: { type: "number", min: 0, max: 1000, step: 1 },
+      description: "User Kindle Score value",
     },
     rank: {
-      control: { type: 'number', min: 1, max: 10_000, step: 1 },
-      description: 'User rank position',
+      control: { type: "number", min: 1, max: 10_000, step: 1 },
+      description: "User rank position",
     },
   },
   args: {

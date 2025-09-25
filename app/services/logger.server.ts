@@ -1,8 +1,8 @@
-import { createLogger, format, transports } from 'winston';
+import { createLogger, format, transports } from "winston";
 
 export const logger = createLogger();
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   logger.add(
     new transports.Console({
       format: format.combine(
@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production') {
       ),
     })
   );
-} else if (process.env.NODE_ENV === 'test') {
+} else if (process.env.NODE_ENV === "test") {
   logger.add(
     new transports.Console({
       format: format.combine(

@@ -1,5 +1,5 @@
-import { Link } from 'react-router';
-import GlowContainer from '../GlowContainer';
+import { Link } from "react-router";
+import GlowContainer from "../GlowContainer";
 
 export default function StartEarningSection() {
   return (

@@ -1,54 +1,54 @@
-import { redirect } from 'react-router';
-import CampaignList from '~/components/CampaignList';
-import FirstGetScoreDialog from '~/components/Dialogs/FirstGetScoreDialog';
-import FirstOpenHomeDialog from '~/components/Dialogs/FirstOpenHomeDialog';
-import FollowUs from '~/components/FollowUs';
-import { HomeSeparator } from '~/components/HomeSeperator';
-import KindleScoreCard from '~/components/KindleScoreCard';
-import QuickActions from '~/components/QuickActions';
-import StartEarningSection from '~/components/StartEarningSection';
-import { getDbUser } from '~/services/auth.server';
-import { getCampaignsForUser } from '~/services/campaign.server';
-import { getUserKindleRank } from '~/services/user-ranking.server';
-import type { Route } from './+types/_index';
+import { redirect } from "react-router";
+import CampaignList from "~/components/CampaignList";
+import FirstGetScoreDialog from "~/components/Dialogs/FirstGetScoreDialog";
+import FirstOpenHomeDialog from "~/components/Dialogs/FirstOpenHomeDialog";
+import FollowUs from "~/components/FollowUs";
+import { HomeSeparator } from "~/components/HomeSeperator";
+import KindleScoreCard from "~/components/KindleScoreCard";
+import QuickActions from "~/components/QuickActions";
+import StartEarningSection from "~/components/StartEarningSection";
+import { getDbUser } from "~/services/auth.server";
+import { getCampaignsForUser } from "~/services/campaign.server";
+import { getUserKindleRank } from "~/services/user-ranking.server";
+import type { Route } from "./+types/_index";
 
 export function meta({ data }: Route.MetaArgs) {
   const user = data?.user;
   const campaigns = data?.campaigns || [];
-  const userRank = user?.kindleRank || 'N/A';
+  const userRank = user?.kindleRank || "N/A";
   const userScore = user?.kindleScore || 0;
 
   return [
-    { title: 'Peak AI - Your Crypto & AI Campaign Dashboard' },
+    { title: "Peak AI - Your Crypto & AI Campaign Dashboard" },
     {
-      name: 'description',
+      name: "description",
       content: `Welcome to Peak AI! Track your Kindle Score (${userScore} points), compete in campaigns, and earn rewards. Currently ranked #${userRank} with ${campaigns.length} active campaigns.`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content:
-        'Peak AI, crypto campaigns, AI campaigns, Kindle Score, leaderboard, TikTok rewards, campaign dashboard, social earning',
+        "Peak AI, crypto campaigns, AI campaigns, Kindle Score, leaderboard, TikTok rewards, campaign dashboard, social earning",
     },
-    { name: 'robots', content: 'index, follow' },
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "index, follow" },
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
     {
-      property: 'og:title',
-      content: 'Peak AI - Your Crypto & AI Campaign Dashboard',
+      property: "og:title",
+      content: "Peak AI - Your Crypto & AI Campaign Dashboard",
     },
     {
-      property: 'og:description',
+      property: "og:description",
       content: `Track your progress with ${userScore} Kindle Score points, ranked #${userRank}. Join campaigns and earn rewards on Peak AI.`,
     },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Peak AI" },
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Peak AI - Your Campaign Dashboard' },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "Peak AI - Your Campaign Dashboard" },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content: `Track campaigns, earn Kindle Score points, and compete on leaderboards. Currently at ${userScore} points!`,
     },
   ];
@@ -57,7 +57,7 @@ export function meta({ data }: Route.MetaArgs) {
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw redirect('/login');
+    throw redirect("/login");
   }
 
   // Get user with kindle rank and active campaigns with user participation

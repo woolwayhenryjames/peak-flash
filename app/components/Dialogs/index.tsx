@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { cn } from '~/lib/utils';
+import { useEffect, useRef } from "react";
+import { cn } from "~/lib/utils";
 
 export interface DialogProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   show: boolean;
   setShow: (show: boolean) => void;
   title?: React.ReactNode;
@@ -40,7 +40,7 @@ export default function Dialog({
     >
       <div
         className={cn(
-          'modal-box flex max-h-[80vh] w-auto max-w-[80vh] flex-col gap-4 bg-[#414442] p-7 md:bg-[#202020]',
+          "modal-box flex max-h-[80vh] w-auto max-w-[80vh] flex-col gap-4 bg-[#414442] p-7 md:bg-[#202020]",
           className
         )}
         {...props}

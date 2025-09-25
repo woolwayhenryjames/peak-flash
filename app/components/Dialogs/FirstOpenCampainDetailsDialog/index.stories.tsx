@@ -1,33 +1,33 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import component from './index';
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import component from "./index";
 
 const meta = {
-  title: 'Dialogs',
+  title: "Dialogs",
   component,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     backgrounds: {
-      default: 'dark',
+      default: "dark",
     },
   },
   argTypes: {
     tags: {
-      control: 'object',
-      description: 'The tags to display in the dialog',
+      control: "object",
+      description: "The tags to display in the dialog",
     },
     forceShow: {
-      control: 'boolean',
-      description: 'Force the dialog to show (useful for Storybook)',
+      control: "boolean",
+      description: "Force the dialog to show (useful for Storybook)",
     },
     id: {
-      control: 'text',
-      description: 'The ID of the campaign',
+      control: "text",
+      description: "The ID of the campaign",
     },
   },
   args: {
-    tags: ['AI', 'Web3', 'TikTok'],
+    tags: ["AI", "Web3", "TikTok"],
     forceShow: true,
-    id: 'campaign-1',
+    id: "campaign-1",
   },
 } satisfies Meta<typeof component>;
 

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import GlowContainer from '~/components/GlowContainer';
-import DialogWithCloseButton from '../DialogWithCloseButton';
-import flower from './assets/flower.svg';
+import { useEffect, useMemo, useState } from "react";
+import GlowContainer from "~/components/GlowContainer";
+import DialogWithCloseButton from "../DialogWithCloseButton";
+import flower from "./assets/flower.svg";
 
 export default function FirstOpenCampainDetailsDialog({
   id,
@@ -14,9 +14,9 @@ export default function FirstOpenCampainDetailsDialog({
 }) {
   const [show, setShow] = useState(forceShow);
   const tags = useMemo(() => {
-    if (joinRequirement && typeof joinRequirement === 'object') {
+    if (joinRequirement && typeof joinRequirement === "object") {
       const tagsKey = Object.keys(joinRequirement).find((key) =>
-        key.toLowerCase().includes('tag')
+        key.toLowerCase().includes("tag")
       );
       if (tagsKey) {
         return (joinRequirement as any)[tagsKey] as string[];
@@ -48,14 +48,14 @@ export default function FirstOpenCampainDetailsDialog({
   };
 
   const instructions: React.ReactNode[] = [
-    'Create TikTok video',
+    "Create TikTok video",
     <>
-      Make sure to use hashtags in video description:{' '}
+      Make sure to use hashtags in video description:{" "}
       <span className="text-[#99FFF8]">
-        {tags?.map((tag) => `#${tag}`).join(', ')}
+        {tags?.map((tag) => `#${tag}`).join(", ")}
       </span>
     </>,
-    'AI will complete scoring within 24 hours (scoring will be continuously updated)',
+    "AI will complete scoring within 24 hours (scoring will be continuously updated)",
   ];
 
   return (

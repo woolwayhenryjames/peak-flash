@@ -5,10 +5,10 @@ import {
   ListObjectsV2Command,
   NoSuchKey,
   S3Client,
-} from '@aws-sdk/client-s3';
-import { Upload } from '@aws-sdk/lib-storage';
-import type { FileUpload } from '@remix-run/form-data-parser';
-import { logger } from '~/services/logger.server';
+} from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import type { FileUpload } from "@remix-run/form-data-parser";
+import { logger } from "~/services/logger.server";
 
 const {
   AWS_S3_BUCKET_NAME,
@@ -24,15 +24,15 @@ if (!AWS_S3_BUCKET_NAME) {
 }
 
 if (!AWS_S3_REGION_NAME) {
-  throw new Error('Storage is missing required configuration.');
+  throw new Error("Storage is missing required configuration.");
 }
 
 if (!AWS_ACCESS_KEY_ID) {
-  throw new Error('Storage is missing required configuration.');
+  throw new Error("Storage is missing required configuration.");
 }
 
 if (!AWS_SECRET_ACCESS_KEY) {
-  throw new Error('Storage is missing required configuration.');
+  throw new Error("Storage is missing required configuration.");
 }
 
 const storage = new S3Client({
@@ -59,7 +59,7 @@ export const uploadHandler = async (fileUpload: FileUpload) => {
   }).done();
 
   if (upload.$metadata.httpStatusCode !== 200) {
-    throw new Error('Failed to upload image to S3');
+    throw new Error("Failed to upload image to S3");
   }
 
   return `/${fileName}`;
@@ -74,13 +74,13 @@ export const getAsset = async (s3Key: string) => {
   try {
     const response = await storage.send(command);
     if (!response.Body) {
-      throw new Response('Failed to get asset from S3', { status: 500 });
+      throw new Response("Failed to get asset from S3", { status: 500 });
     }
 
     return response;
   } catch (error) {
     if (error instanceof NoSuchKey) {
-      throw new Response('Not found', { status: 404 });
+      throw new Response("Not found", { status: 404 });
     }
   }
 };
@@ -94,13 +94,13 @@ export const deleteAsset = async (fullPath: string) => {
   try {
     await storage.send(command);
   } catch (error) {
-    logger.error('Error deleting asset:', error);
+    logger.error("Error deleting asset:", error);
   }
 };
 
 export const deleteFolder = async (prefix: string) => {
   // Ensure the prefix ends with a slash to avoid deleting files with similar prefixes
-  const folderPrefix = prefix.endsWith('/') ? prefix : `${prefix}/`;
+  const folderPrefix = prefix.endsWith("/") ? prefix : `${prefix}/`;
 
   try {
     let continuationToken: string | undefined;
@@ -113,7 +113,6 @@ export const deleteFolder = async (prefix: string) => {
         ContinuationToken: continuationToken,
       });
 
-      // biome-ignore lint/nursery/noAwaitInLoop: won't hit the next iteration on most cases
       const listResponse = await storage.send(listCommand);
 
       if (listResponse.Contents && listResponse.Contents.length > 0) {
@@ -136,7 +135,7 @@ export const deleteFolder = async (prefix: string) => {
 
     return true;
   } catch (error) {
-    logger.error('Error deleting folder:', error);
+    logger.error("Error deleting folder:", error);
     return false;
   }
 };
@@ -146,13 +145,13 @@ export const uploadFilesToS3 = async (
   prefix: string,
   mimeType: string
 ) => {
-  const folderPrefix = prefix.endsWith('/') ? prefix : `${prefix}/`;
+  const folderPrefix = prefix.endsWith("/") ? prefix : `${prefix}/`;
   await Promise.all(
     files.map(async (file) => {
-      const ContentType = mimeType || 'application/octet-stream';
+      const ContentType = mimeType || "application/octet-stream";
       // If the file is binary, decode the base64 string to a Buffer
       const body = file.isBinary
-        ? Buffer.from(file.content, 'base64')
+        ? Buffer.from(file.content, "base64")
         : file.content;
       const upload = await new Upload({
         client: storage,
@@ -174,7 +173,7 @@ export const uploadFilesToS3 = async (
 export const listFilesInS3Folder = async (
   prefix: string
 ): Promise<string[]> => {
-  const folderPrefix = prefix.endsWith('/') ? prefix : `${prefix}/`;
+  const folderPrefix = prefix.endsWith("/") ? prefix : `${prefix}/`;
   let continuationToken: string | undefined;
   let allKeys: string[] = [];
   do {
@@ -183,10 +182,10 @@ export const listFilesInS3Folder = async (
       Prefix: folderPrefix,
       ContinuationToken: continuationToken,
     });
-    // biome-ignore lint/nursery/noAwaitInLoop: necessary for paginated S3 listing
+
     const listResponse = await storage.send(listCommand);
     const keys =
-      listResponse.Contents?.map((item) => item.Key || '').filter(Boolean) ||
+      listResponse.Contents?.map((item) => item.Key || "").filter(Boolean) ||
       [];
     allKeys = allKeys.concat(keys);
     continuationToken = listResponse.NextContinuationToken;
@@ -223,11 +222,11 @@ export const uploadImageFromUrl = async (
     const imageBuffer = await response.arrayBuffer();
 
     // Get content type from response or default to image/jpeg
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const contentType = response.headers.get("content-type") || "image/jpeg";
 
     // Generate a unique filename with timestamp
     const timestamp = Date.now();
-    const extension = contentType.includes('png') ? 'png' : 'jpg';
+    const extension = contentType.includes("png") ? "png" : "jpg";
     const fileName = `userAvatar/${userId}/${timestamp}.${extension}`;
 
     // Upload to S3
@@ -243,12 +242,12 @@ export const uploadImageFromUrl = async (
     }).done();
 
     if (upload.$metadata.httpStatusCode !== 200) {
-      throw new Error('Failed to upload avatar to S3');
+      throw new Error("Failed to upload avatar to S3");
     }
 
     return `/assets/${fileName}`;
   } catch (error) {
-    logger.error('Error uploading image from URL:', error);
+    logger.error("Error uploading image from URL:", error);
     throw error;
   }
 };
@@ -277,7 +276,7 @@ export const cleanupOldUserAvatars = async (userId: string, keepLatest = 3) => {
       );
     }
   } catch (error) {
-    logger.error('Error cleaning up old user avatars:', error);
+    logger.error("Error cleaning up old user avatars:", error);
     // Don't throw - cleanup failure shouldn't break the main flow
   }
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 // Dynamic JSON Input Component
 export function DynamicJSONInput({
@@ -9,9 +9,9 @@ export function DynamicJSONInput({
   defaultValue?: Record<string, unknown>;
 }) {
   const defaultJoinRequirement = {
-    'Required Tags': ['InfinityGround', 'Web3IDE', 'AIDevelopment'],
-    'Content Requirements':
-      '- Must include a brief overview of InfinityGround and its features.\n- Highlight the benefits of using Web3IDE for AI development.\n- Include a call-to-action encouraging users to try out InfinityGround.',
+    "Required Tags": ["InfinityGround", "Web3IDE", "AIDevelopment"],
+    "Content Requirements":
+      "- Must include a brief overview of InfinityGround and its features.\n- Highlight the benefits of using Web3IDE for AI development.\n- Include a call-to-action encouraging users to try out InfinityGround.",
   };
 
   // Add stable keys to prevent focus issues
@@ -25,7 +25,7 @@ export function DynamicJSONInput({
     });
     return result;
   });
-  const [newFieldKey, setNewFieldKey] = useState('');
+  const [newFieldKey, setNewFieldKey] = useState("");
 
   const addNewField = () => {
     if (newFieldKey && !jsonData[newFieldKey]) {
@@ -33,10 +33,10 @@ export function DynamicJSONInput({
         ...prev,
         [newFieldKey]: {
           id: `field-${Date.now()}-${Object.keys(prev).length}`,
-          value: '',
+          value: "",
         },
       }));
-      setNewFieldKey('');
+      setNewFieldKey("");
     }
   };
 
@@ -102,7 +102,7 @@ export function DynamicJSONInput({
           <button
             className="rounded-md bg-green-600 px-3 py-1 text-white text-xs hover:bg-green-700"
             onClick={() => {
-              updateFieldValue(key, [...value, '']);
+              updateFieldValue(key, [...value, ""]);
             }}
             type="button"
           >
@@ -112,7 +112,7 @@ export function DynamicJSONInput({
       );
     }
 
-    if (typeof value === 'string' && value.includes('\n')) {
+    if (typeof value === "string" && value.includes("\n")) {
       return (
         <textarea
           className="w-full rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
@@ -179,7 +179,7 @@ export function DynamicJSONInput({
             className="flex-1 rounded-md border-gray-600 bg-gray-700 px-3 py-2 text-sm text-white focus:border-indigo-400 focus:ring-indigo-400"
             onChange={(e) => setNewFieldKey(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === "Enter") {
                 e.preventDefault();
                 addNewField();
               }

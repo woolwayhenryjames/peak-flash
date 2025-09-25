@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { useFetcher } from 'react-router';
-import GlowContainer from '~/components/GlowContainer';
+import { useEffect } from "react";
+import { useFetcher } from "react-router";
+import GlowContainer from "~/components/GlowContainer";
 
 interface TikTokProfile {
   nickname: string;
@@ -24,9 +24,9 @@ interface ApiResponse {
   error?: string;
 }
 
-const formatter = new Intl.NumberFormat('en', {
-  notation: 'compact',
-  compactDisplay: 'short',
+const formatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
 });
 
 export default function ExpandedUserProfile({
@@ -39,17 +39,17 @@ export default function ExpandedUserProfile({
   // biome-ignore lint/correctness/useExhaustiveDependencies: only want to run on userId change
   useEffect(() => {
     console.log(
-      'Fetching TikTok profile for user.email:',
+      "Fetching TikTok profile for user.email:",
       user.email,
       fetcher.state,
       fetcher.data
     );
-    if (user.email && fetcher.state === 'idle' && !fetcher.data) {
+    if (user.email && fetcher.state === "idle" && !fetcher.data) {
       fetcher.load(`/api/tiktok-profile/${user.email}`);
     }
   }, [user.email]);
 
-  const isLoading = fetcher.state === 'loading';
+  const isLoading = fetcher.state === "loading";
   const profile = fetcher.data?.data;
   const hasError =
     fetcher.data?.error || (!profile && fetcher.data?.success === false);
@@ -69,7 +69,7 @@ export default function ExpandedUserProfile({
       <div className="flex flex-col gap-8">
         <div className="flex items-center justify-center p-8">
           <p className="text-red-400 text-sm">
-            {fetcher.data?.error || 'Failed to load TikTok profile'}
+            {fetcher.data?.error || "Failed to load TikTok profile"}
           </p>
         </div>
       </div>

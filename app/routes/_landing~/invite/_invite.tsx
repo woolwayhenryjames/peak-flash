@@ -1,57 +1,57 @@
-import { useState } from 'react';
-import GlowContainer from '~/components/GlowContainer';
-import InviteeCampaigns from '~/components/inviteeCampaigns';
-import { cn } from '~/lib/utils';
-import { getDbUser } from '~/services/auth.server';
+import { useState } from "react";
+import GlowContainer from "~/components/GlowContainer";
+import InviteeCampaigns from "~/components/inviteeCampaigns";
+import { cn } from "~/lib/utils";
+import { getDbUser } from "~/services/auth.server";
 import {
   getUserInviteRecords,
   getUserInviteStats,
-} from '~/services/user.server';
-import type { Route } from './+types/_invite';
-import fb from './assets/fb.svg';
-import gitBranchIcon from './assets/git-branch.svg';
-import head from './assets/head.svg';
-import bg from './assets/header-bg.avif';
-import ins from './assets/ins.png';
-import starsIcon from './assets/stars.svg';
-import tg from './assets/tg.svg';
-import tiktok from './assets/tiktok.svg';
-import whatsapp from './assets/whatsapp.png';
-import x from './assets/x.svg';
+} from "~/services/user.server";
+import type { Route } from "./+types/_invite";
+import fb from "./assets/fb.svg";
+import gitBranchIcon from "./assets/git-branch.svg";
+import head from "./assets/head.svg";
+import bg from "./assets/header-bg.avif";
+import ins from "./assets/ins.png";
+import starsIcon from "./assets/stars.svg";
+import tg from "./assets/tg.svg";
+import tiktok from "./assets/tiktok.svg";
+import whatsapp from "./assets/whatsapp.png";
+import x from "./assets/x.svg";
 
 export function meta({ data }: Route.MetaArgs) {
   const inviteStats = data?.inviteStats;
   const totalInvites = inviteStats?.inviteCount || 0;
 
   return [
-    { title: 'Invite Friends - Earn Rewards on Peak AI' },
+    { title: "Invite Friends - Earn Rewards on Peak AI" },
     {
-      name: 'description',
+      name: "description",
       content: `Invite friends to Peak AI and earn rewards together! You've already invited ${totalInvites} friends. Share your invite code and grow the Peak AI community while earning bonus points.`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content:
-        'Peak AI invite, referral program, earn rewards, invite friends, bonus points, social sharing, referral code, crypto rewards',
+        "Peak AI invite, referral program, earn rewards, invite friends, bonus points, social sharing, referral code, crypto rewards",
     },
-    { name: 'robots', content: 'noindex, nofollow' }, // Personal invite pages should not be indexed
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "noindex, nofollow" }, // Personal invite pages should not be indexed
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
-    { property: 'og:title', content: 'Join Peak AI through My Invite!' },
+    { property: "og:title", content: "Join Peak AI through My Invite!" },
     {
-      property: 'og:description',
+      property: "og:description",
       content:
         "I'm inviting you to join Peak AI! Earn Kindle Score points through crypto and AI campaigns. Join me and let's compete together!",
     },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Peak AI" },
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Join Me on Peak AI!' },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "Join Me on Peak AI!" },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content:
         "Earn rewards through crypto & AI campaigns on Peak AI. Join through my invite and let's earn together!",
     },
@@ -59,13 +59,13 @@ export function meta({ data }: Route.MetaArgs) {
 }
 
 const socialPlatforms = [
-  { name: 'Twitter', icon: x },
-  { name: 'TikTok', icon: tiktok },
-  { name: 'Telegram', icon: tg },
-  { name: 'WhatsApp', icon: whatsapp },
-  { name: 'Facebook', icon: fb },
+  { name: "Twitter", icon: x },
+  { name: "TikTok", icon: tiktok },
+  { name: "Telegram", icon: tg },
+  { name: "WhatsApp", icon: whatsapp },
+  { name: "Facebook", icon: fb },
   {
-    name: 'Instagram',
+    name: "Instagram",
     icon: ins,
   },
 ];
@@ -73,7 +73,7 @@ const socialPlatforms = [
 export async function loader({ request }: Route.LoaderArgs) {
   const userResult = await getDbUser(request);
   if (userResult.isErr()) {
-    throw new Response('Unauthorized', { status: 401 });
+    throw new Response("Unauthorized", { status: 401 });
   }
 
   const user = userResult.value;
@@ -105,13 +105,13 @@ export default function Invite({
       setCopiedLink(true);
       setTimeout(() => setCopiedLink(false), 2000);
     } catch (err) {
-      console.error('Failed to copy link:', err);
+      console.error("Failed to copy link:", err);
     }
   };
 
   const handleSocialShare = (platform: string) => {
     const shareText =
-      'Join me on PEAK AI and start earning rewards! Use my invite link:';
+      "Join me on PEAK AI and start earning rewards! Use my invite link:";
     const fullText = `${shareText} ${inviteLink}`;
 
     const shareUrls = {
@@ -125,7 +125,7 @@ export default function Invite({
 
     const url = shareUrls[platform as keyof typeof shareUrls];
 
-    if (platform === 'TikTok') {
+    if (platform === "TikTok") {
       // For TikTok, copy the link to clipboard and show TikTok-specific feedback
       navigator.clipboard
         .writeText(inviteLink)
@@ -134,9 +134,9 @@ export default function Invite({
           setTimeout(() => setCopiedTikTok(false), 2000);
         })
         .catch((err) => {
-          console.error('Failed to copy link:', err);
+          console.error("Failed to copy link:", err);
         });
-    } else if (platform === 'Instagram') {
+    } else if (platform === "Instagram") {
       // For Instagram, copy the link to clipboard and show Instagram-specific feedback
       navigator.clipboard
         .writeText(inviteLink)
@@ -145,11 +145,11 @@ export default function Invite({
           setTimeout(() => setCopiedInstagram(false), 2000);
         })
         .catch((err) => {
-          console.error('Failed to copy link:', err);
+          console.error("Failed to copy link:", err);
         });
     } else {
       // Open sharing URL in new window
-      window.open(url, '_blank');
+      window.open(url, "_blank");
     }
   };
 
@@ -268,7 +268,7 @@ export default function Invite({
                 type="button"
               >
                 <GlowContainer className="rounded bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] px-3 py-2 text-sm">
-                  {copiedLink ? 'Copied!' : 'Copy'}
+                  {copiedLink ? "Copied!" : "Copy"}
                 </GlowContainer>
               </button>
             </div>
@@ -278,8 +278,8 @@ export default function Invite({
           <div className="grid grid-cols-2 gap-2">
             {socialPlatforms.map((platform) => {
               const isCopied =
-                (platform.name === 'TikTok' && copiedTikTok) ||
-                (platform.name === 'Instagram' && copiedInstagram);
+                (platform.name === "TikTok" && copiedTikTok) ||
+                (platform.name === "Instagram" && copiedInstagram);
 
               return (
                 <button
@@ -297,7 +297,7 @@ export default function Invite({
                       src={platform.icon}
                     />
                     <span className="font-normal text-sm text-white">
-                      {isCopied ? 'Copied!' : platform.name}
+                      {isCopied ? "Copied!" : platform.name}
                     </span>
                   </GlowContainer>
                 </button>
@@ -366,8 +366,8 @@ export default function Invite({
                           <GlowContainer className="rounded-sm px-2 py-2">
                             <svg
                               className={cn(
-                                'h-4 w-4 transition-transform',
-                                expandedUserId === record.id ? 'rotate-180' : ''
+                                "h-4 w-4 transition-transform",
+                                expandedUserId === record.id ? "rotate-180" : ""
                               )}
                               fill="none"
                               stroke="currentColor"

@@ -1,54 +1,54 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { Link, redirect, useFetcher } from 'react-router';
-import GlowContainer from '~/components/GlowContainer';
-import { cn } from '~/lib/utils';
-import ExpandedUserProfile from '~/routes/_landing~/leaderboard/ExpandedUserProfile';
-import { getDbUser } from '~/services/auth.server';
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Link, redirect, useFetcher } from "react-router";
+import GlowContainer from "~/components/GlowContainer";
+import { cn } from "~/lib/utils";
+import ExpandedUserProfile from "~/routes/_landing~/leaderboard/ExpandedUserProfile";
+import { getDbUser } from "~/services/auth.server";
 import {
   getGlobalLeaderboard,
   getUserKindleRank,
-} from '~/services/user-ranking.server';
-import type { Route } from './+types/_leaderboard';
-import bg from './assets/bg.avif';
+} from "~/services/user-ranking.server";
+import type { Route } from "./+types/_leaderboard";
+import bg from "./assets/bg.avif";
 
 export function meta({ data }: Route.MetaArgs) {
-  const userRank = data?.user?.rank || 'N/A';
+  const userRank = data?.user?.rank || "N/A";
   const currentPage = data?.pagination?.page || 1;
   const totalUsers = data?.pagination?.total || 0;
 
   return [
     {
-      title: `Global Leaderboard - Peak AI Rankings ${currentPage > 1 ? `(Page ${currentPage})` : ''}`,
+      title: `Global Leaderboard - Peak AI Rankings ${currentPage > 1 ? `(Page ${currentPage})` : ""}`,
     },
     {
-      name: 'description',
+      name: "description",
       content: `Explore Peak AI's global leaderboard with ${totalUsers} users competing for the top Kindle Score rankings. See who's leading in crypto and AI campaigns, track your position at rank #${userRank}.`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content:
-        'Peak AI leaderboard, global rankings, Kindle Score rankings, crypto campaign leaders, AI campaign winners, user competition, top performers',
+        "Peak AI leaderboard, global rankings, Kindle Score rankings, crypto campaign leaders, AI campaign winners, user competition, top performers",
     },
-    { name: 'robots', content: 'index, follow' },
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "index, follow" },
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
     {
-      property: 'og:title',
+      property: "og:title",
       content: "Peak AI Global Leaderboard - See Who's Leading",
     },
     {
-      property: 'og:description',
+      property: "og:description",
       content: `Check out the top performers on Peak AI! ${totalUsers} users competing for Kindle Score supremacy. Where do you rank?`,
     },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Peak AI" },
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Peak AI Global Leaderboard' },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: "Peak AI Global Leaderboard" },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content: `Discover the top Kindle Score performers across ${totalUsers} Peak AI users. Compete in campaigns and climb the rankings!`,
     },
   ];
@@ -57,11 +57,11 @@ export function meta({ data }: Route.MetaArgs) {
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw redirect('/login');
+    throw redirect("/login");
   }
 
   const url = new URL(request.url);
-  const page = Number.parseInt(url.searchParams.get('page') || '1', 10);
+  const page = Number.parseInt(url.searchParams.get("page") || "1", 10);
 
   // Get global leaderboard data with pagination
   const [leaderboardData, userKindleRank] = await Promise.all([
@@ -95,7 +95,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
 
   // Load more users
   const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== 'idle') {
+    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
       return;
     }
 
@@ -107,7 +107,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
 
   // Handle fetcher data
   useEffect(() => {
-    if (fetcher.data && fetcher.state === 'idle') {
+    if (fetcher.data && fetcher.state === "idle") {
       const data = fetcher.data;
       setUsers((prev) => [...prev, ...data.users]);
       currentPage.current = data.pagination.page;
@@ -153,7 +153,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
     <div
       style={{
         backgroundImage:
-          'linear-gradient(180deg, #0B0B1D 0%, #141419 30.78%, #08080F 71.63%, #0D0D1A 100%)',
+          "linear-gradient(180deg, #0B0B1D 0%, #141419 30.78%, #08080F 71.63%, #0D0D1A 100%)",
       }}
     >
       <div
@@ -177,16 +177,16 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
               alt={
                 loaderData.user?.name
                   ? loaderData.user.name.substring(0, 4).toUpperCase()
-                  : 'U'
+                  : "U"
               }
               className="h-full w-full object-cover"
-              src={loaderData.user?.image || ''}
+              src={loaderData.user?.image || ""}
             />
           </div>
 
           <div className="flex flex-col items-start gap-2">
             <h3 className="font-medium text-white">
-              @{loaderData.user?.email || 'User'}
+              @{loaderData.user?.email || "User"}
             </h3>
             {loaderData.user?.kindleScore != null && (
               <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
@@ -258,8 +258,8 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
                           <GlowContainer className="rounded-sm px-2 py-2">
                             <svg
                               className={cn(
-                                'h-4 w-4 transition-transform',
-                                expandedUserId === user.id ? 'rotate-180' : ''
+                                "h-4 w-4 transition-transform",
+                                expandedUserId === user.id ? "rotate-180" : ""
                               )}
                               fill="none"
                               stroke="currentColor"

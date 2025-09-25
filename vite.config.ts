@@ -1,18 +1,18 @@
-import { reactRouter } from '@react-router/dev/vite';
-import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vite';
-import babel from 'vite-plugin-babel';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { reactRouter } from "@react-router/dev/vite";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
+import babel from "vite-plugin-babel";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ command, mode }) => ({
   plugins: [
-    ...(command === 'build'
+    ...(command === "build"
       ? [
           babel({
             filter: /\.[jt]sx?$/,
             babelConfig: {
-              presets: ['@babel/preset-typescript'],
-              plugins: ['babel-plugin-react-compiler'],
+              presets: ["@babel/preset-typescript"],
+              plugins: ["babel-plugin-react-compiler"],
             },
           }),
         ]
@@ -22,17 +22,17 @@ export default defineConfig(({ command, mode }) => ({
     tsconfigPaths(),
   ],
   esbuild:
-    command === 'build' && mode === 'production'
+    command === "build" && mode === "production"
       ? {
-          drop: ['debugger', 'console'],
-          legalComments: 'none',
+          drop: ["debugger", "console"],
+          legalComments: "none",
         }
       : undefined,
   resolve: {
     alias:
-      command === 'build'
+      command === "build"
         ? {
-            'react-dom/server': 'react-dom/server.node',
+            "react-dom/server": "react-dom/server.node",
           }
         : undefined,
   },

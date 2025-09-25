@@ -1,8 +1,8 @@
-import type { Campaign, User } from '@prisma/client';
-import { Prisma } from '@prisma/client';
-import { logger } from '~/services/logger.server';
-import { checkUserCampaignAlgo } from '~/services/score-algo-api';
-import { db } from './db.server';
+import type { Campaign, User } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { logger } from "~/services/logger.server";
+import { checkUserCampaignAlgo } from "~/services/score-algo-api";
+import { db } from "./db.server";
 
 export interface CampaignWithUserRank extends Campaign {
   userRank: number | null;
@@ -57,7 +57,7 @@ export async function getCampaignsWithUserRanks(
 
   // Get participant counts for all campaigns
   const participantCounts = await db.campaignUser.groupBy({
-    by: ['campaignId'],
+    by: ["campaignId"],
     where: {
       campaignId: {
         in: campaignIds,
@@ -102,7 +102,7 @@ export async function getCampaignsWithUserRanks(
   try {
     ranksResult = await db.$queryRaw<UserRankQueryResult[]>(sqlQuery);
   } catch (error) {
-    logger.error('Failed to get user campaign ranks:', error);
+    logger.error("Failed to get user campaign ranks:", error);
     return campaigns.map((campaign) => ({
       ...campaign,
       userRank: null,
@@ -152,7 +152,7 @@ export async function getCampaignsForUser(
   // Get paginated campaigns
   const campaigns = await db.campaign.findMany({
     where,
-    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    orderBy: [{ order: "asc" }, { createdAt: "desc" }],
     skip: offset,
     take: normalizedLimit,
   });
@@ -191,7 +191,7 @@ export async function getCampaignLeaderboard(id: string, page = 1, limit = 10) {
   // Get paginated campaigns
   const campaignUsers = await db.campaignUser.findMany({
     where: { campaignId: id },
-    orderBy: { score: 'desc' },
+    orderBy: { score: "desc" },
     skip: offset,
     take: normalizedLimit,
     include: {
@@ -227,7 +227,7 @@ export async function getCampaignLeaderboard(id: string, page = 1, limit = 10) {
 // Admin CRUD operations
 export async function getAllCampaigns() {
   return await db.campaign.findMany({
-    orderBy: [{ order: 'asc' }, { createdAt: 'desc' }],
+    orderBy: [{ order: "asc" }, { createdAt: "desc" }],
     include: {
       _count: {
         select: { campaignUsers: true },

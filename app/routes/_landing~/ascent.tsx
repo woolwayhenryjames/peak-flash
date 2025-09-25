@@ -1,86 +1,86 @@
-import type { Prisma } from '@prisma/client';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Link, redirect, useFetcher, useSearchParams } from 'react-router';
-import CampaignCard from '~/components/CampaignCard';
-import GlowContainer from '~/components/GlowContainer';
-import { cn } from '~/lib/utils';
-import { getDbUser } from '~/services/auth.server';
-import { getCampaignsForUser } from '~/services/campaign.server';
-import type { Route } from './+types/ascent';
+import type { Prisma } from "@prisma/client";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, redirect, useFetcher, useSearchParams } from "react-router";
+import CampaignCard from "~/components/CampaignCard";
+import GlowContainer from "~/components/GlowContainer";
+import { cn } from "~/lib/utils";
+import { getDbUser } from "~/services/auth.server";
+import { getCampaignsForUser } from "~/services/campaign.server";
+import type { Route } from "./+types/ascent";
 
 export function meta({ data }: Route.MetaArgs) {
   const pagination = data?.pagination;
   const currentPage = pagination?.page || 1;
   const totalCampaigns = pagination?.total || 0;
 
-  const statusText = 'All Campaigns';
+  const statusText = "All Campaigns";
 
   return [
     {
-      title: `${statusText} - Peak AI Campaign Hub ${currentPage > 1 ? `(Page ${currentPage})` : ''}`,
+      title: `${statusText} - Peak AI Campaign Hub ${currentPage > 1 ? `(Page ${currentPage})` : ""}`,
     },
     {
-      name: 'description',
+      name: "description",
       content: `Discover all campaigns on Peak AI. Browse ${totalCampaigns} campaigns and find the perfect opportunity to earn Kindle Score points and rewards. Join crypto and AI campaigns today!`,
     },
     {
-      name: 'keywords',
+      name: "keywords",
       content:
-        'Peak AI campaigns, all campaigns, crypto campaigns, AI campaigns, earn money, TikTok campaigns, campaign hub, social earning',
+        "Peak AI campaigns, all campaigns, crypto campaigns, AI campaigns, earn money, TikTok campaigns, campaign hub, social earning",
     },
-    { name: 'robots', content: 'index, follow' },
-    { name: 'author', content: 'Peak AI' },
+    { name: "robots", content: "index, follow" },
+    { name: "author", content: "Peak AI" },
 
     // Open Graph
-    { property: 'og:title', content: `${statusText} - Peak AI Campaign Hub` },
+    { property: "og:title", content: `${statusText} - Peak AI Campaign Hub` },
     {
-      property: 'og:description',
+      property: "og:description",
       content: `Explore ${totalCampaigns} campaigns on Peak AI. Find opportunities to earn through crypto and AI campaigns.`,
     },
-    { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'Peak AI' },
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Peak AI" },
 
     // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: `Peak AI ${statusText}` },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: `Peak AI ${statusText}` },
     {
-      name: 'twitter:description',
+      name: "twitter:description",
       content: `Browse ${totalCampaigns} campaigns and start earning Kindle Score points. Join the Peak AI community today!`,
     },
   ];
 }
 
-type CampaignStatus = 'all' | 'active' | 'ended' | 'new';
+type CampaignStatus = "all" | "active" | "ended" | "new";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw redirect('/login');
+    throw redirect("/login");
   }
 
   const url = new URL(request.url);
-  const page = Number.parseInt(url.searchParams.get('page') || '1', 10);
-  const status = (url.searchParams.get('status') || 'all') as CampaignStatus;
+  const page = Number.parseInt(url.searchParams.get("page") || "1", 10);
+  const status = (url.searchParams.get("status") || "all") as CampaignStatus;
 
   // Create filter conditions based on status
   let whereCondition: Prisma.CampaignWhereInput = {};
   const now = new Date();
 
   switch (status) {
-    case 'active': {
+    case "active": {
       whereCondition = {
         startDate: { lte: now },
         endDate: { gt: now },
       };
       break;
     }
-    case 'ended': {
+    case "ended": {
       whereCondition = {
         endDate: { lte: now },
       };
       break;
     }
-    case 'new': {
+    case "new": {
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       whereCondition = {
         startDate: { gte: sevenDaysAgo },
@@ -116,7 +116,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Current status from URL params
-  const currentStatus = (searchParams.get('status') || 'all') as CampaignStatus;
+  const currentStatus = (searchParams.get("status") || "all") as CampaignStatus;
 
   // Intersection observer ref for infinite scroll
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -126,12 +126,12 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
   const handleFilterChange = useCallback(
     (status: CampaignStatus) => {
       const newParams = new URLSearchParams(searchParams);
-      if (status === 'all') {
-        newParams.delete('status');
+      if (status === "all") {
+        newParams.delete("status");
       } else {
-        newParams.set('status', status);
+        newParams.set("status", status);
       }
-      newParams.delete('page'); // Reset to first page
+      newParams.delete("page"); // Reset to first page
       setSearchParams(newParams, { replace: true });
 
       // Reset state
@@ -144,7 +144,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
 
   // Load more campaigns
   const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== 'idle') {
+    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
       return;
     }
 
@@ -157,7 +157,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
 
   // Handle fetcher data
   useEffect(() => {
-    if (fetcher.data && fetcher.state === 'idle') {
+    if (fetcher.data && fetcher.state === "idle") {
       const data = fetcher.data;
       setCampaigns((prev) => [...prev, ...data.campaigns]);
       currentPage.current = data.pagination.page;
@@ -200,10 +200,10 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
   }, [loadMore]);
 
   const filterTabs = [
-    { key: 'all' as const, label: 'All' },
-    { key: 'active' as const, label: 'Active' },
-    { key: 'new' as const, label: 'New' },
-    { key: 'ended' as const, label: 'Ended' },
+    { key: "all" as const, label: "All" },
+    { key: "active" as const, label: "Active" },
+    { key: "new" as const, label: "New" },
+    { key: "ended" as const, label: "Ended" },
   ];
 
   return (
@@ -285,10 +285,10 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
             >
               <GlowContainer
                 className={cn(
-                  'rounded-[10px] px-4 py-1 font-normal text-sm text-white transition-colors',
+                  "rounded-[10px] px-4 py-1 font-normal text-sm text-white transition-colors",
                   currentStatus === tab.key
-                    ? 'bg-linear-70 from-[#5449DB] via-33% via-[#342B86] to-[#0E0A23]'
-                    : 'border-[0.7px] border-gradient-to-b from-[#B8B8B8] to-[#4E4E4E] hover:text-[#8080DA]'
+                    ? "bg-linear-70 from-[#5449DB] via-33% via-[#342B86] to-[#0E0A23]"
+                    : "border-[0.7px] border-gradient-to-b from-[#B8B8B8] to-[#4E4E4E] hover:text-[#8080DA]"
                 )}
               >
                 {tab.label}

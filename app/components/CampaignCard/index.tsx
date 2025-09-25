@@ -1,8 +1,8 @@
-import type { Campaign } from '@prisma/client';
-import { Link } from 'react-router';
-import { cn } from '~/lib/utils';
-import GlowContainer from '../GlowContainer';
-import sharIcon from './assets/share.svg';
+import type { Campaign } from "@prisma/client";
+import { Link } from "react-router";
+import { cn } from "~/lib/utils";
+import GlowContainer from "../GlowContainer";
+import sharIcon from "./assets/share.svg";
 
 interface CampaignWithParticipation extends Campaign {
   isParticipating: boolean;
@@ -11,40 +11,40 @@ interface CampaignWithParticipation extends Campaign {
 }
 
 interface CampaignCardProps {
-  type: 'invite' | 'detail';
+  type: "invite" | "detail";
   className?: string;
   campaign: CampaignWithParticipation;
 }
 
 const statusConfig = {
   active: {
-    label: 'Active',
-    bgColor: 'bg-[#68fff4]',
+    label: "Active",
+    bgColor: "bg-[#68fff4]",
   },
-  'ending-soon': {
-    label: 'Ending soon',
-    bgColor: 'bg-[#ffa444]',
+  "ending-soon": {
+    label: "Ending soon",
+    bgColor: "bg-[#ffa444]",
   },
   new: {
-    label: 'New',
-    bgColor: 'bg-[#7e47ff]',
+    label: "New",
+    bgColor: "bg-[#7e47ff]",
   },
   ended: {
-    label: 'Ended',
-    bgColor: 'bg-[#ff8168]',
+    label: "Ended",
+    bgColor: "bg-[#ff8168]",
   },
 } as const;
 
 const gradientByType = {
   invite:
-    'bg-linear-[114deg] from-[#ffa44a] from-[12.87%] to-[#69D7FF] to-[51.12%]',
+    "bg-linear-[114deg] from-[#ffa44a] from-[12.87%] to-[#69D7FF] to-[51.12%]",
   detail:
-    'bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%]',
+    "bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%]",
 } as const;
 
-const formatter = new Intl.NumberFormat('en', {
-  notation: 'compact',
-  compactDisplay: 'short',
+const formatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
 });
 
 export default function CampaignCard({
@@ -70,7 +70,7 @@ export default function CampaignCard({
   const statusStyle = statusConfig[status];
 
   return (
-    <div className={cn('w-full', className)}>
+    <div className={cn("w-full", className)}>
       {/* Card Container with Gradient Border */}
       <div className="rounded-xl border border-[#2D3338] p-4">
         {/* Inner Container */}
@@ -91,7 +91,7 @@ export default function CampaignCard({
                   <h3 className="truncate font-medium text-white text-xl leading-tight">
                     {name}
                   </h3>
-                  {type === 'invite' && (
+                  {type === "invite" && (
                     <Link className="ml-auto" to="/invite" viewTransition>
                       <img alt="Share" className="size-6" src={sharIcon} />
                     </Link>
@@ -101,7 +101,7 @@ export default function CampaignCard({
                 <p className="line-clamp-2 min-h-[2lh] text-white text-xs leading-relaxed">
                   {description}
                 </p>
-                {type === 'invite' && (
+                {type === "invite" && (
                   <div className="flex items-center gap-4">
                     {(shareUrls as Array<{ url: string; icon: string }>)?.map(
                       (share) => (
@@ -124,11 +124,11 @@ export default function CampaignCard({
                 )}
               </div>
               {/* Status Badge */}
-              {type === 'detail' && (
+              {type === "detail" && (
                 <div className="flex-shrink-0">
                   <div
                     className={cn(
-                      'min-w-18 rounded-xl px-2 py-1 text-center font-normal text-[#010101] text-sm',
+                      "min-w-18 rounded-xl px-2 py-1 text-center font-normal text-[#010101] text-sm",
                       statusStyle.bgColor
                     )}
                   >
@@ -137,7 +137,7 @@ export default function CampaignCard({
                 </div>
               )}
             </div>
-            {type === 'invite' && (
+            {type === "invite" && (
               <div className="flex items-center gap-4 text-[#9D9D9D] text-xs">
                 <DaysLeft daysLeftText={daysLeftText} />
                 <div className="size-1 rounded-full bg-[#9D9D9D]" />
@@ -151,7 +151,7 @@ export default function CampaignCard({
               <div className="flex flex-col gap-2 rounded-lg border border-[#9c9c9c]/20 p-3">
                 <div
                   className={cn(
-                    'bg-clip-text font-medium text-transparent text-xl leading-tight',
+                    "bg-clip-text font-medium text-transparent text-xl leading-tight",
                     gradientByType[type]
                   )}
                 >
@@ -162,7 +162,7 @@ export default function CampaignCard({
                 </div>
                 <div className="font-light text-[#A7A7A7] text-xs leading-relaxed">
                   Prize Pool
-                  {type === 'invite' && poolDescription && (
+                  {type === "invite" && poolDescription && (
                     <div className="font-normal text-[#626262] text-[10px]">
                       {poolDescription}
                     </div>
@@ -174,7 +174,7 @@ export default function CampaignCard({
               <div className="flex flex-col gap-2 rounded-lg border border-[#9c9c9c]/20 p-3">
                 <div
                   className={cn(
-                    'bg-clip-text font-medium text-transparent text-xl leading-tight',
+                    "bg-clip-text font-medium text-transparent text-xl leading-tight",
                     gradientByType[type]
                   )}
                 >
@@ -188,7 +188,7 @@ export default function CampaignCard({
           </div>
 
           {/* Footer Section */}
-          {type === 'detail' ? (
+          {type === "detail" ? (
             <div className="flex flex-col gap-4">
               {/* Days Left and Rank */}
               <div className="flex h-7 items-center justify-between gap-4 text-white">
@@ -212,7 +212,7 @@ export default function CampaignCard({
           ) : (
             <a
               className="flex justify-end"
-              href={homepageUrl || '#'}
+              href={homepageUrl || "#"}
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -253,22 +253,22 @@ function getRemainingDays(startDate: Date, endDate: Date) {
   const timeDiff = endDate.getTime() - now.getTime();
   const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-  let status: 'active' | 'ending-soon' | 'new' | 'ended';
+  let status: "active" | "ending-soon" | "new" | "ended";
   if (daysLeft <= 0) {
-    status = 'ended';
+    status = "ended";
   } else if (daysLeft <= 3) {
-    status = 'ending-soon';
+    status = "ending-soon";
   } else if (now.getTime() - startDate.getTime() <= 7 * 24 * 60 * 60 * 1000) {
-    status = 'new'; // New if started within last 7 days
+    status = "new"; // New if started within last 7 days
   } else {
-    status = 'active';
+    status = "active";
   }
 
   let daysLeftText: string;
   if (daysLeft <= 0) {
-    daysLeftText = 'Ended';
+    daysLeftText = "Ended";
   } else if (daysLeft === 1) {
-    daysLeftText = '1 day left';
+    daysLeftText = "1 day left";
   } else {
     daysLeftText = `${daysLeft} days left`;
   }
