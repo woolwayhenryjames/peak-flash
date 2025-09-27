@@ -155,7 +155,7 @@ export default function ParticipationInfo({
                       <polygon points="0,0 10,5 0,10" />
                     </svg>
                     <span className="text-[10px] text-gray-300">
-                      {video.statistics.view_count}
+                      {video.statistics?.view_count}
                     </span>
                   </div>
                 </a>

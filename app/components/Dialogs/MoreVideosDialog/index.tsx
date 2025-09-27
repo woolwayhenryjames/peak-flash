@@ -40,7 +40,7 @@ export function MoreVideosDialog({
                   <polygon points="0,0 10,5 0,10" />
                 </svg>
                 <span className="text-[10px] text-gray-300">
-                  {video.statistics.view_count}
+                  {video.statistics?.view_count}
                 </span>
               </div>
             </div>
@@ -71,7 +71,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.statistics.like_count}
+                    {video.statistics?.like_count}
                   </span>
                 </div>
 
@@ -98,7 +98,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.statistics.comment_count}
+                    {video.statistics?.comment_count}
                   </span>
                 </div>
 
@@ -125,7 +125,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.statistics.collect_count}
+                    {video.statistics?.collect_count}
                   </span>
                 </div>
               </div>
