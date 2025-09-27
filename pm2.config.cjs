@@ -10,7 +10,7 @@ module.exports = {
         PORT: 9092,
       },
       max_memory_restart: "4000M",
-      node_args: ["--max_old_space_size=4000"],
+      node_args: ["--max_old_space_size=4000 --env-file .env"],
     },
   ],
 };

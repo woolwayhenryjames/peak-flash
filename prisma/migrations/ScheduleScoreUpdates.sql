@@ -9,7 +9,8 @@ ON SCHEDULE EVERY 30 MINUTE
 STARTS NOW()
 DO
 BEGIN
-    CALL UpdateAllScores();
+    CALL UpdateUsers();
+    CALL UpdateCampaignUsers();
 END$$
 
 DELIMITER ;

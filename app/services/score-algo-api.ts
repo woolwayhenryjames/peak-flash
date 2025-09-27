@@ -1,4 +1,4 @@
-import type { JsonObject } from "@prisma/client/runtime/library";
+import type { JsonObject } from ".prisma/main/internal/prismaNamespace";
 import { db } from "~/services/db.server";
 import { logger } from "~/services/logger.server";
 
@@ -65,11 +65,7 @@ FROM
 
 export async function updateUserPoints() {
   try {
-    await db.$executeRaw`
-    UPDATE \`User\`
-    INNER JOIN tiktok_creator_score.users
-    ON \`User\`.email = tiktok_creator_score.users.username
-  SET \`User\`.kindleScore = COALESCE(tiktok_creator_score.users.account_total_score, \`User\`.kindleScore);`;
+    await db.$executeRaw`CALL UpdateUsers();`;
   } catch (error) {
     logger.error("Error updating user points:", error);
   }

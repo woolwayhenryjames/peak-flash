@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from ".prisma/main/client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, redirect, useFetcher, useSearchParams } from "react-router";
 import CampaignCard from "~/components/CampaignCard";

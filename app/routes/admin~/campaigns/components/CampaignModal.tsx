@@ -1,4 +1,4 @@
-import type { Campaign } from "@prisma/client";
+import type { Campaign } from ".prisma/main/client";
 import { Form, useActionData } from "react-router";
 import DialogWithCloseButton from "~/components/Dialogs/DialogWithCloseButton";
 import { DynamicJSONInput } from "./DynamicJSONInput";

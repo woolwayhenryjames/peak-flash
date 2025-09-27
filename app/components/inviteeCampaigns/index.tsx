@@ -1,4 +1,4 @@
-import type { Campaign, CampaignUser } from "@prisma/client";
+import type { Campaign, CampaignUser } from ".prisma/main/client";
 import { useEffect, useState } from "react";
 import { Link, useFetcher } from "react-router";
 

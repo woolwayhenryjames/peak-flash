@@ -1,4 +1,4 @@
-import type { CampaignUser } from "@prisma/client";
+import type { CampaignUser } from ".prisma/main/client";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import ParticipationInfo from "./index";

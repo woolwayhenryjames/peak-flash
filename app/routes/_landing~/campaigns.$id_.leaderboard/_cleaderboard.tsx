@@ -273,9 +273,9 @@ export default function Leaderboard({
                 y1="15"
                 y2="15.5"
               >
-                <stop stop-color="#6D7077" />
-                <stop offset="0.495192" stop-color="#FEFEFE" />
-                <stop offset="1" stop-color="#3C4041" />
+                <stop stopColor="#6D7077" />
+                <stop offset="0.495192" stopColor="#FEFEFE" />
+                <stop offset="1" stopColor="#3C4041" />
               </linearGradient>
             </defs>
           </svg>

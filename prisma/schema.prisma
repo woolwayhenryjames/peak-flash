@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../.prisma/main"
 }
 
 datasource db {
@@ -34,6 +35,7 @@ model User {
   invitees  User[]  @relation("UserInvitations")
 
   walletAddress String? @db.Text
+  rank          Int?
 
   @@unique([email])
   @@index([id])
@@ -75,8 +77,10 @@ model CampaignUser {
   updatedAt  DateTime @default(now()) @updatedAt
   videoCount Int      @default(0)
 
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaign   Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  UserVideos UserVideos[]
+  rank       Int?
 
   @@unique([userId, campaignId])
   @@index([userId])
@@ -123,4 +127,22 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime?
   updatedAt  DateTime?
+}
+
+model UserVideos {
+  id             Int          @id @default(autoincrement())
+  videoId        String
+  videoUrl       String       @db.Text
+  coverUrl       String       @db.Text
+  viewCount      Int
+  likeCount      Int
+  commentCount   Int
+  shareCount     Int
+  collectCount   Int
+  campaignUserId Int
+  campaignUser   CampaignUser @relation(fields: [campaignUserId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignUserId, videoId])
+  @@index([campaignUserId])
+  @@index([videoId])
 }

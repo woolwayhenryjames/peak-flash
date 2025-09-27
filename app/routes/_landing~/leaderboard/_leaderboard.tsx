@@ -246,7 +246,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
                     </td>
                     <td className="whitespace-nowrap py-4">
                       <div className="flex items-center justify-around gap-6">
-                        {Math.round(user.kindleScore)}
+                        {Math.round(user.kindleScore || 0)}
                         <button
                           onClick={() =>
                             setExpandedUserId(

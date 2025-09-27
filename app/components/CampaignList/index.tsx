@@ -1,4 +1,4 @@
-import type { Campaign } from "@prisma/client";
+import type { Campaign } from ".prisma/main/client";
 import { Link } from "react-router";
 import GlowContainer from "../GlowContainer";
 

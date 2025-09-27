@@ -1,21 +1,12 @@
 DELIMITER $$
 
-CREATE PROCEDURE UpdateAllScores ()
+CREATE PROCEDURE UpdateCampaignUsers ()
 BEGIN
-    DECLARE updated_users INT DEFAULT 0;
     DECLARE updated_campaigns INT DEFAULT 0;
     DECLARE created_campaigns INT DEFAULT 0;
+    DECLARE deleted_campaigns INT DEFAULT 0;
     
-    -- Step 1: Update User kindleScore from TikTok data
-    UPDATE User u
-    INNER JOIN tiktok_creator_score.users tcs_users 
-        ON u.email = tcs_users.username
-    SET u.kindleScore = tcs_users.account_total_score
-    WHERE tcs_users.account_total_score IS NOT NULL;
-    
-    SET updated_users = ROW_COUNT();
-    
-    -- Step 2: Create missing CampaignUser records based on keyword matches
+    -- Step 1: Create missing CampaignUser records based on keyword matches
     INSERT INTO CampaignUser (userId, campaignId, baseScore, videoCount, joinedAt, createdAt, updatedAt)
     SELECT DISTINCT 
         u.id as userId,
@@ -65,7 +56,7 @@ BEGIN
         
     SET created_campaigns = ROW_COUNT();
     
-    -- Step 3: Update existing CampaignUser baseScore and videoCount from TikTok keyword scores
+    -- Step 2: Update existing CampaignUser baseScore and videoCount from TikTok keyword scores
     UPDATE CampaignUser cu
     INNER JOIN User u 
         ON cu.userId = u.id
@@ -106,12 +97,13 @@ BEGIN
     );
     
     SET updated_campaigns = ROW_COUNT();
-    -- Step 4: Remove CampaignUser records where baseScore is NULL or zero
+    -- Step 3: Remove CampaignUser records where baseScore is NULL or zero
     DELETE cu
     FROM CampaignUser cu
     WHERE cu.baseScore IS NULL OR cu.baseScore = 0;
+    SET deleted_campaigns = ROW_COUNT();
 
-    -- Step 5: Recalculate all bonus scores based on invitation relationships
+    -- Step 4: Recalculate all bonus scores based on invitation relationships
     UPDATE CampaignUser cu
     INNER JOIN User u ON cu.userId = u.id
     SET cu.bonusScore = (
@@ -122,15 +114,23 @@ BEGIN
         AND cu_invitee.campaignId = cu.campaignId
     );
     
-    -- Step 6: Recalculate total scores after all updates
+    -- Step 5: Recalculate total scores after all updates
     UPDATE CampaignUser 
     SET score = baseScore + bonusScore;
-    
+
+    -- Step 6: Recalculate user ranks based on updated scores (per campaign)
+    UPDATE CampaignUser cu
+    JOIN (
+        SELECT id, ROW_NUMBER() OVER (PARTITION BY campaignId ORDER BY score DESC, createdAt ASC) AS r
+        FROM CampaignUser
+    ) ranked ON cu.id = ranked.id
+    SET cu.rank = ranked.r;
+
     -- Log results
-    SELECT 
-        updated_users as users_updated,
-        updated_campaigns as campaign_users_updated,
-        created_campaigns as campaign_users_created,
+    SELECT
+        updated_campaigns,
+        created_campaigns,
+        deleted_campaigns,
         NOW() as execution_time;
 END$$
 DELIMITER ;

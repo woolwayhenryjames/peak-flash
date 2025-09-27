@@ -9,6 +9,9 @@
 /.react-router/
 /build/
 
+#prisma
+/.prisma/
+
 /.well-known/appspecific/com.chrome.devtools.json
 *storybook.log
 storybook-static

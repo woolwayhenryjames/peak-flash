@@ -1,4 +1,4 @@
-import type { CampaignUser } from "@prisma/client";
+import type { CampaignUser } from ".prisma/main/client";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import { MoreVideosDialog } from "~/components/Dialogs/MoreVideosDialog";

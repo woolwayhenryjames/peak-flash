@@ -1,6 +1,4 @@
-import type { Campaign, User } from "@prisma/client";
-import { Prisma } from "@prisma/client";
-import { logger } from "~/services/logger.server";
+import type { Campaign, Prisma, User } from ".prisma/main/client";
 import { checkUserCampaignAlgo } from "~/services/score-algo-api";
 import { db } from "./db.server";
 
@@ -24,18 +22,8 @@ export interface PaginatedCampaignsResult {
 }
 
 /**
- * Type definition for user rank query results
- */
-type UserRankQueryResult = {
-  campaignId: string;
-  userId: string;
-  score: number;
-  user_rank: bigint;
-};
-
-/**
- * Calculate user ranks and participant counts for campaigns using optimized queries.
- * Uses MySQL's RANK() window function for efficient ranking calculation.
+ * Get campaigns with user ranks and participant counts.
+ * Uses pre-calculated ranks from the database.
  */
 export async function getCampaignsWithUserRanks(
   campaigns: Campaign[],
@@ -73,61 +61,40 @@ export async function getCampaignsWithUserRanks(
     participantCounts.map((result) => [result.campaignId, result._count.userId])
   );
 
-  // If user has no participations, return campaigns with participant counts but no ranks
-  if (!user.campaignUsers.length) {
-    return campaigns.map((campaign) => ({
-      ...campaign,
-      userRank: null,
-      userScore: null,
-      isParticipating: false,
-      participants: participantCountsMap.get(campaign.id) ?? 0,
-    }));
-  }
+  // Get user's campaign participation data with pre-calculated ranks
+  const userCampaignData = await db.campaignUser.findMany({
+    where: {
+      userId: user.id,
+      campaignId: {
+        in: campaignIds,
+      },
+    },
+    select: {
+      campaignId: true,
+      score: true,
+      rank: true,
+    },
+  });
 
-  // Efficient query using COUNT subquery to calculate rank for specific user only
-  const sqlQuery = Prisma.sql`
-    SELECT 
-      cu.campaignId,
-      cu.userId,
-      cu.score,
-      (SELECT COUNT(*) + 1 
-       FROM CampaignUser cu2 
-       WHERE cu2.campaignId = cu.campaignId 
-       AND cu2.score > cu.score) as user_rank
-    FROM CampaignUser cu
-    WHERE cu.campaignId IN (${Prisma.join(campaignIds.map((id) => Prisma.sql`${id}`))})
-      AND cu.userId = ${user.id}
-  `;
-  let ranksResult: UserRankQueryResult[] = [];
-  try {
-    ranksResult = await db.$queryRaw<UserRankQueryResult[]>(sqlQuery);
-  } catch (error) {
-    logger.error("Failed to get user campaign ranks:", error);
-    return campaigns.map((campaign) => ({
-      ...campaign,
-      userRank: null,
-      userScore: null,
-      isParticipating: campaignIds.includes(campaign.id),
-      participants: participantCountsMap.get(campaign.id) ?? 0,
-    }));
-  }
-
-  // Create a lookup map for ranks (convert bigint to number)
-  // Results are already filtered for the current user by the SQL query
-  const userRanksMap = new Map<string, number>(
-    ranksResult.map((result) => [result.campaignId, Number(result.user_rank)])
+  // Create lookup maps for user data
+  const userDataMap = new Map(
+    userCampaignData.map((data) => [
+      data.campaignId,
+      { score: data.score, rank: data.rank },
+    ])
   );
 
   // Add user ranks, participation status, and participant counts to campaigns
-  return campaigns.map((campaign) => ({
-    ...campaign,
-    userRank: userRanksMap.get(campaign.id) ?? null,
-    userScore:
-      user.campaignUsers.find((cu) => cu.campaignId === campaign.id)?.score ??
-      null,
-    isParticipating: userRanksMap.has(campaign.id),
-    participants: participantCountsMap.get(campaign.id) ?? 0,
-  }));
+  return campaigns.map((campaign) => {
+    const userData = userDataMap.get(campaign.id);
+    return {
+      ...campaign,
+      userRank: userData?.rank ?? null,
+      userScore: userData?.score ?? null,
+      isParticipating: userData !== undefined,
+      participants: participantCountsMap.get(campaign.id) ?? 0,
+    };
+  });
 }
 
 /**

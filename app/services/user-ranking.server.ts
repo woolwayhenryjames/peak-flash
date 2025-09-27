@@ -1,4 +1,4 @@
-import type { User } from "@prisma/client";
+import type { User } from ".prisma/main/client";
 import { logger } from "~/services/logger.server";
 import { db } from "./db.server";
 
@@ -11,8 +11,8 @@ export interface GlobalLeaderboardUser {
   name: string | null;
   email: string;
   image: string | null;
-  kindleScore: number;
-  rank: number;
+  kindleScore: number | null;
+  rank: number | null;
 }
 
 export interface PaginatedLeaderboardResult {
@@ -27,22 +27,15 @@ export interface PaginatedLeaderboardResult {
   };
 }
 
-/**
- * Calculate a user's kindle rank based on their kindle score
- * Uses efficient COUNT subquery instead of window function over all users
- */
 export async function getUserKindleRank(userId: string): Promise<number> {
   try {
-    const result = await db.$queryRaw<Array<{ user_rank: number }>>`
-      SELECT 
-        (SELECT COUNT(*) + 1 
-         FROM User u2 
-         WHERE u2.kindleScore > u.kindleScore) as user_rank
-      FROM User u
-      WHERE u.id = ${userId}
-    `;
-
-    return result.length > 0 ? result[0].user_rank : 1;
+    const result = await db.user.findUnique({
+      where: { id: userId },
+      select: {
+        rank: true,
+      },
+    });
+    return result?.rank ?? 1;
   } catch (error) {
     logger.error("Failed to get user kindle rank:", error);
     return 1; // Return default rank on error
@@ -85,37 +78,20 @@ export async function getGlobalLeaderboard(
     const actualLimit = Math.min(normalizedLimit, 100 - offset);
 
     // Get paginated users with ranks using raw query for better performance
-    const result = await db.$queryRaw<
-      Array<{
-        id: string;
-        name: string | null;
-        email: string;
-        image: string | null;
-        kindleScore: number;
-        user_rank: bigint;
-      }>
-    >`
-      SELECT 
-        id,
-        name,
-        email,
-        image,
-        kindleScore,
-        RANK() OVER (ORDER BY kindleScore DESC) as user_rank
-      FROM User
-      ORDER BY kindleScore DESC
-      LIMIT ${actualLimit} OFFSET ${offset}
-    `;
-
-    // Transform the result to match our interface
-    const users: GlobalLeaderboardUser[] = result.map((user) => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      image: user.image,
-      kindleScore: user.kindleScore,
-      rank: Number(user.user_rank),
-    }));
+    const result = await db.user.findMany({
+      where: { rank: { not: null } },
+      orderBy: { rank: "asc" },
+      skip: offset,
+      take: actualLimit,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        kindleScore: true,
+        rank: true,
+      },
+    });
 
     // Calculate pagination metadata (considering top 100 limit)
     const totalPages = Math.ceil(totalCount / normalizedLimit);
@@ -124,7 +100,7 @@ export async function getGlobalLeaderboard(
     const hasPreviousPage = normalizedPage > 1;
 
     return {
-      users,
+      users: result,
       pagination: {
         page: normalizedPage,
         limit: normalizedLimit,
