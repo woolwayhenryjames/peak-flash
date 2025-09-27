@@ -1,5 +1,5 @@
+import type { UserVideo } from ".prisma/main/client";
 import MobileBottomDialog from "~/components/Dialogs/MobileBottomDialog";
-import type { GetVideosReturnedData } from "~/routes/api~/getVideos.$cuId";
 
 export function MoreVideosDialog({
   show,
@@ -8,7 +8,7 @@ export function MoreVideosDialog({
 }: {
   show: boolean;
   setShow: (show: boolean) => void;
-  videos: GetVideosReturnedData[];
+  videos: UserVideo[];
 }) {
   return (
     <MobileBottomDialog
@@ -22,8 +22,8 @@ export function MoreVideosDialog({
         {videos.map((video) => (
           <a
             className="mb-3 flex h-33 w-full items-center gap-4.5 border border-white/20 px-4 py-3 last:mb-0"
-            href={video.media_urls?.video_url}
-            key={video.video_id}
+            href={video.videoUrl ?? undefined}
+            key={video.videoId}
             rel="noopener noreferrer"
             target="_blank"
           >
@@ -31,7 +31,7 @@ export function MoreVideosDialog({
             <div
               className="relative h-full w-[88px] flex-shrink-0 rounded-[5px] bg-center bg-cover bg-gray-800"
               style={{
-                backgroundImage: `url(${video.media_urls?.cover_url})`,
+                backgroundImage: `url(${video.coverUrl})`,
               }}
             >
               <div className="absolute right-2 bottom-2 flex items-center gap-1 rounded bg-black/70 px-2 py-1">
@@ -40,7 +40,7 @@ export function MoreVideosDialog({
                   <polygon points="0,0 10,5 0,10" />
                 </svg>
                 <span className="text-[10px] text-gray-300">
-                  {video.statistics?.view_count}
+                  {video.viewCount ?? 0}
                 </span>
               </div>
             </div>
@@ -49,7 +49,7 @@ export function MoreVideosDialog({
             <div className="flex h-full flex-1 flex-col justify-between">
               {/* Title */}
               <h3 className="font-medium text-sm text-white leading-[1.5em]">
-                {video.desc || "Untitled Video"}
+                {video.description || "Untitled Video"}
               </h3>
 
               {/* Metrics */}
@@ -71,7 +71,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.statistics?.like_count}
+                    {video.likeCount}
                   </span>
                 </div>
 
@@ -98,7 +98,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.statistics?.comment_count}
+                    {video.commentCount}
                   </span>
                 </div>
 
@@ -125,7 +125,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.statistics?.collect_count}
+                    {video.collectCount}
                   </span>
                 </div>
               </div>

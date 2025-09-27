@@ -1,6 +1,6 @@
 import type { Campaign } from ".prisma/main/client";
 import { Link } from "react-router";
-import { cn } from "~/lib/utils";
+import { cn, getRemainingDays } from "~/lib/utils";
 import GlowContainer from "../GlowContainer";
 import sharIcon from "./assets/share.svg";
 
@@ -17,20 +17,16 @@ interface CampaignCardProps {
 }
 
 const statusConfig = {
-  active: {
-    label: "Active",
+  Active: {
     bgColor: "bg-[#68fff4]",
   },
-  "ending-soon": {
-    label: "Ending soon",
+  "Ending soon": {
     bgColor: "bg-[#ffa444]",
   },
-  new: {
-    label: "New",
+  New: {
     bgColor: "bg-[#7e47ff]",
   },
-  ended: {
-    label: "Ended",
+  Ended: {
     bgColor: "bg-[#ff8168]",
   },
 } as const;
@@ -132,7 +128,7 @@ export default function CampaignCard({
                       statusStyle.bgColor
                     )}
                   >
-                    {statusStyle.label}
+                    {status}
                   </div>
                 </div>
               )}
@@ -141,7 +137,7 @@ export default function CampaignCard({
               <div className="flex items-center gap-4 text-[#9D9D9D] text-xs">
                 <DaysLeft daysLeftText={daysLeftText} />
                 <div className="size-1 rounded-full bg-[#9D9D9D]" />
-                {statusStyle.label}
+                {status}
               </div>
             )}
 
@@ -245,32 +241,4 @@ function DaysLeft({ daysLeftText }: { daysLeftText: string }) {
       <span className="text-xs leading-relaxed">{daysLeftText}</span>
     </div>
   );
-}
-
-function getRemainingDays(startDate: Date, endDate: Date) {
-  // Calculate days left and status based on endDate
-  const now = new Date();
-  const timeDiff = endDate.getTime() - now.getTime();
-  const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-  let status: "active" | "ending-soon" | "new" | "ended";
-  if (daysLeft <= 0) {
-    status = "ended";
-  } else if (daysLeft <= 3) {
-    status = "ending-soon";
-  } else if (now.getTime() - startDate.getTime() <= 7 * 24 * 60 * 60 * 1000) {
-    status = "new"; // New if started within last 7 days
-  } else {
-    status = "active";
-  }
-
-  let daysLeftText: string;
-  if (daysLeft <= 0) {
-    daysLeftText = "Ended";
-  } else if (daysLeft === 1) {
-    daysLeftText = "1 day left";
-  } else {
-    daysLeftText = `${daysLeft} days left`;
-  }
-  return { status, daysLeftText };
 }

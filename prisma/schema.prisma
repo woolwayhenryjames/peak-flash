@@ -77,9 +77,9 @@ model CampaignUser {
   updatedAt  DateTime @default(now()) @updatedAt
   videoCount Int      @default(0)
 
-  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  campaign   Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  UserVideos UserVideos[]
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaign   Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userVideos UserVideo[]
   rank       Int?
 
   @@unique([userId, campaignId])
@@ -129,20 +129,28 @@ model Verification {
   updatedAt  DateTime?
 }
 
-model UserVideos {
-  id             Int          @id @default(autoincrement())
-  videoId        String
-  videoUrl       String       @db.Text
-  coverUrl       String       @db.Text
-  viewCount      Int
-  likeCount      Int
-  commentCount   Int
-  shareCount     Int
-  collectCount   Int
-  campaignUserId Int
-  campaignUser   CampaignUser @relation(fields: [campaignUserId], references: [id], onDelete: Cascade)
+model UserVideo {
+  id               Int          @id @default(autoincrement())
+  videoId          String       @unique
+  videoUrl         String?      @db.Text // from ai_scores_json
+  coverUrl         String?      @db.Text // from ai_scores_json
+  createTime       DateTime? // from video_scores_json.create_time
+  description      String?      @db.Text // from video_scores_json.desc
+  viewCount        Int
+  likeCount        Int
+  commentCount     Int
+  shareCount       Int
+  collectCount     Int
+  keywordScore     Float? // from ai_scores_json
+  originalityScore Float?
+  clarityScore     Float?
+  spamScore        Float?
+  promotionScore   Float?
+  totalScore       Float?
+  campaignUserId   Int
+  campaignUser     CampaignUser @relation(fields: [campaignUserId], references: [id], onDelete: Cascade)
+  active           Boolean      @default(true) // mark inactive if missing in source
 
-  @@unique([campaignUserId, videoId])
   @@index([campaignUserId])
   @@index([videoId])
 }

@@ -1,10 +1,9 @@
-import type { CampaignUser } from ".prisma/main/client";
+import type { CampaignUser, UserVideo } from ".prisma/main/client";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import { MoreVideosDialog } from "~/components/Dialogs/MoreVideosDialog";
 import GlowContainer from "~/components/GlowContainer";
 import { cn } from "~/lib/utils";
-import type { GetVideosReturnedData } from "~/routes/api~/getVideos.$cuId";
 import profileIcon from "./assets/profile.svg";
 
 export default function ParticipationInfo({
@@ -22,7 +21,7 @@ export default function ParticipationInfo({
   userRank: number | null | undefined;
 }) {
   const [showMoreVideos, setShowMoreVideos] = useState(false);
-  const fetcher = useFetcher<GetVideosReturnedData[]>();
+  const fetcher = useFetcher<UserVideo[]>();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we don't want to refetch on every refetch, that would be infinite loop
   useEffect(() => {
@@ -141,11 +140,11 @@ export default function ParticipationInfo({
               {fetcher.data?.slice(0, 3).map((video) => (
                 <a
                   className="relative h-[130px] w-[107px] overflow-hidden rounded-lg bg-gray-800"
-                  href={video.media_urls?.video_url}
-                  key={video.video_id}
+                  href={video.videoUrl ?? undefined}
+                  key={video.videoId}
                   rel="noopener noreferrer"
                   style={{
-                    backgroundImage: `url(${video.media_urls?.cover_url})`,
+                    backgroundImage: `url(${video.coverUrl})`,
                   }}
                   target="_blank"
                 >
@@ -155,7 +154,7 @@ export default function ParticipationInfo({
                       <polygon points="0,0 10,5 0,10" />
                     </svg>
                     <span className="text-[10px] text-gray-300">
-                      {video.statistics?.view_count}
+                      {video.viewCount ?? 0}
                     </span>
                   </div>
                 </a>

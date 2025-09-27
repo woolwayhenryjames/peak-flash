@@ -5,12 +5,13 @@ SET GLOBAL event_scheduler = ON;
 DELIMITER $$
 
 CREATE EVENT IF NOT EXISTS UpdateScoresEvent
-ON SCHEDULE EVERY 30 MINUTE
+ON SCHEDULE EVERY 1 HOUR
 STARTS NOW()
 DO
 BEGIN
-    CALL UpdateUsers();
-    CALL UpdateCampaignUsers();
+  CALL UpdateUsers();
+  CALL UpdateCampaignUsers();
+  CALL UpdateUserVideos();
 END$$
 
 DELIMITER ;
