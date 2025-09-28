@@ -1,5 +1,6 @@
 import type { Campaign } from ".prisma/main/client";
 import { Link } from "react-router";
+import { formatNumber } from "~/lib/utils";
 import GlowContainer from "../GlowContainer";
 
 interface CampaignWithParticipation
@@ -14,11 +15,6 @@ interface CampaignListProps {
   campaigns?: CampaignWithParticipation[];
   type?: "default" | "spark-points";
 }
-
-const formatter = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-});
 
 export default function CampaignList({
   campaigns = [],
@@ -63,17 +59,14 @@ export default function CampaignList({
                   </div>
                   {type === "default" ? (
                     <p className="text-[#878788] text-xs">
-                      Pool: ${formatter.format(campaign.poolSize)}
+                      Pool: ${formatNumber(campaign.poolSize)}
                     </p>
                   ) : (
                     <p className="text-[#878788] text-xs">
-                      <span>
-                        {formatter.format(campaign.videoCount || 0)} videos
-                      </span>
+                      <span>{formatNumber(campaign.videoCount)} videos</span>
                       {" • "}
                       <span>
-                        Spark Points:{" "}
-                        {formatter.format(campaign.userScore || 0)}
+                        Spark Points: {formatNumber(campaign.userScore)}
                       </span>
                     </p>
                   )}

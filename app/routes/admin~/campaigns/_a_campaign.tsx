@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Form, redirect, useActionData, useNavigation } from "react-router";
-import { cn } from "~/lib/utils";
+import { cn, formatNumber } from "~/lib/utils";
 import { getSessionUser } from "~/services/auth.server";
 import {
   createCampaign,
@@ -12,11 +12,6 @@ import { logger } from "~/services/logger.server";
 import type { Route } from "./+types/_a_campaign";
 import { CampaignModal } from "./components/CampaignModal";
 import { transformFormData } from "./transformFormData";
-
-const formatter = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-});
 
 export function meta({ data }: Route.MetaArgs) {
   const campaigns = data?.campaigns || [];
@@ -80,18 +75,44 @@ export async function action({ request }: Route.ActionArgs) {
   const { intent, id, data } = await transformFormData(request);
   try {
     if (intent === "create") {
-      await createCampaign(data);
-
+      if (!data.name) {
+        return { success: false, error: "Campaign name is required" };
+      }
+      if (!(data.startDate && data.endDate)) {
+        return {
+          success: false,
+          error: "Start date and end date are required",
+        };
+      }
+      await createCampaign({
+        ...data,
+        name: data.name,
+        startDate: data.startDate,
+        endDate: data.endDate,
+      });
       return { success: true, message: "Campaign created successfully" };
     }
 
-    if (intent === "update") {
-      await updateCampaign(id, data);
-
+    if (intent === "update" && id) {
+      if (!data.name) {
+        return { success: false, error: "Campaign name is required" };
+      }
+      if (!(data.startDate && data.endDate)) {
+        return {
+          success: false,
+          error: "Start date and end date are required",
+        };
+      }
+      await updateCampaign(id, {
+        ...data,
+        name: data.name,
+        startDate: data.startDate,
+        endDate: data.endDate,
+      });
       return { success: true, message: "Campaign updated successfully" };
     }
 
-    if (intent === "delete") {
+    if (intent === "delete" && id) {
       await deleteCampaign(id);
       return { success: true, message: "Campaign deleted successfully" };
     }
@@ -232,7 +253,7 @@ export default function AdminCampaigns({
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
-                      $&nbsp;{formatter.format(campaign.poolSize)}
+                      $&nbsp;{formatNumber(campaign.poolSize)}
                       {campaign.poolUnit && ` in ${campaign.poolUnit}`}
                       {campaign.poolDescription && (
                         <div className="text-gray-400 text-xs">

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useFetcher } from "react-router";
+import { formatNumber } from "~/lib/utils";
 import { getDbUser } from "~/services/auth.server";
 import {
   getCampaignLeaderboard,
@@ -60,11 +61,6 @@ export function meta({ data }: Route.MetaArgs) {
       : []),
   ];
 }
-
-const formatter = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-});
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);
@@ -237,7 +233,7 @@ export default function Leaderboard({
           <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
             <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
               $&nbsp;
-              {formatter.format(loaderData.campaignWithRanks.poolSize || 0)}
+              {formatNumber(loaderData.campaignWithRanks.poolSize)}
               &nbsp;
               {loaderData.campaignWithRanks.poolUnit && (
                 <span className="font-light text-xs">

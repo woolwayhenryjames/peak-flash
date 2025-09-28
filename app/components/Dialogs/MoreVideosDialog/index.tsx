@@ -1,5 +1,6 @@
 import type { UserVideo } from ".prisma/main/client";
 import MobileBottomDialog from "~/components/Dialogs/MobileBottomDialog";
+import { formatNumber } from "~/lib/utils";
 
 export function MoreVideosDialog({
   show,
@@ -40,7 +41,7 @@ export function MoreVideosDialog({
                   <polygon points="0,0 10,5 0,10" />
                 </svg>
                 <span className="text-[10px] text-gray-300">
-                  {video.viewCount ?? 0}
+                  {formatNumber(video.viewCount)}
                 </span>
               </div>
             </div>
@@ -71,7 +72,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.likeCount}
+                    {formatNumber(video.likeCount)}
                   </span>
                 </div>
 
@@ -98,7 +99,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.commentCount}
+                    {formatNumber(video.commentCount)}
                   </span>
                 </div>
 
@@ -125,7 +126,7 @@ export function MoreVideosDialog({
                   </svg>
 
                   <span className="font-medium text-[10px] text-white leading-[1.5em]">
-                    {video.collectCount}
+                    {formatNumber(video.collectCount)}
                   </span>
                 </div>
               </div>

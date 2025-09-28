@@ -11,13 +11,76 @@ export async function loader({ params: { campaignId } }: Route.LoaderArgs) {
         include: { _count: { select: { campaignUsers: true } } },
       })
     : await db.campaign.findFirst({
+        orderBy: { name: "asc" },
         include: { _count: { select: { campaignUsers: true } } },
       });
-  return { campaign };
+
+  if (!campaign) {
+    throw new Response("Campaign not found", { status: 404 });
+  }
+
+  // Get top 3 participants for leaderboard
+  const topSpark = await db.campaignUser.findMany({
+    where: { campaignId: campaign.id },
+    orderBy: { score: "desc" },
+    take: 3,
+    include: {
+      user: {
+        select: {
+          name: true,
+          image: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  const topKindle = await db.user.findMany({
+    where: {
+      campaignUsers: {
+        some: {
+          campaignId: campaign.id,
+        },
+      },
+    },
+    orderBy: { kindleScore: "desc" },
+    take: 3,
+    select: {
+      name: true,
+      image: true,
+      kindleScore: true,
+      rank: true,
+    },
+  });
+
+  const topVideos = await db.userVideo.findMany({
+    where: {
+      campaignUser: {
+        campaignId: campaign.id,
+      },
+    },
+    orderBy: { viewCount: "desc" },
+    take: 3,
+    include: {
+      campaignUser: {
+        include: {
+          user: {
+            select: {
+              name: true,
+              image: true,
+              kindleScore: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return { campaign, topSpark, topKindle, topVideos };
 }
 
 export default function Dashboard({
-  loaderData: { campaign },
+  loaderData: { campaign, topSpark, topKindle, topVideos },
 }: Route.ComponentProps) {
   return (
     <div className="space-y-6 pt-6">
@@ -57,18 +120,15 @@ export default function Dashboard({
           </div>
 
           <div className="space-y-[14px]">
-            <RankingCard
-              points="12,450"
-              pointsLabel="Spark Points"
-              rank="1"
-              username="spark_leader1"
-            />
-            <RankingCard
-              points="12,450"
-              pointsLabel="Spark Points"
-              rank="2"
-              username="spark_leader2"
-            />
+            {topSpark.map((participant, index) => (
+              <RankingCard
+                key={participant.user.email}
+                points={participant.score.toLocaleString()}
+                pointsLabel="Spark Points"
+                rank={(index + 1).toString()}
+                username={participant.user.name || participant.user.email}
+              />
+            ))}
           </div>
         </div>
 
@@ -102,18 +162,15 @@ export default function Dashboard({
           </div>
 
           <div className="space-y-[14px]">
-            <RankingCard
-              points="12,450"
-              pointsLabel="Spark Points"
-              rank="1"
-              username="spark_leader1"
-            />
-            <RankingCard
-              points="12,450"
-              pointsLabel="Spark Points"
-              rank="2"
-              username="spark_leader2"
-            />
+            {topKindle.map((user, index) => (
+              <RankingCard
+                key={user.name}
+                points={user.kindleScore?.toLocaleString() || "0"}
+                pointsLabel="KINDLE Score"
+                rank={(index + 1).toString()}
+                username={user.name}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -142,33 +199,24 @@ export default function Dashboard({
         </div>
 
         <div className="space-y-[15px]">
-          <VideoCard
-            comments="245"
-            creator="@creator_9485"
-            kindleScore="8.9"
-            rank="1"
-            shares="271"
-            title="Infinity Ground — AI Web3 IDE Platform"
-            views="1.1K"
-          />
-          <VideoCard
-            comments="245"
-            creator="@creator_2330"
-            kindleScore="7.2"
-            rank="2"
-            shares="271"
-            title="0G Campaign — Decentralized Storag... ..."
-            views="1.1K"
-          />
-          <VideoCard
-            comments="245"
-            creator="@creator_7711"
-            kindleScore="9.1"
-            rank="3"
-            shares="271"
-            title="Galxe — Web3 Credential Data Network"
-            views="1.1K"
-          />
+          {topVideos.length > 0 ? (
+            topVideos.map((video, index) => (
+              <VideoCard
+                creator={
+                  video.campaignUser.user.name ||
+                  `@user_${video.campaignUser.userId.slice(-4)}`
+                }
+                key={video.id}
+                kindleScore={video.campaignUser.user.kindleScore || 0}
+                rank={(index + 1).toString()}
+                video={video}
+              />
+            ))
+          ) : (
+            <div className="flex items-center justify-center py-8 text-gray-400">
+              <p>No videos found for this campaign</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

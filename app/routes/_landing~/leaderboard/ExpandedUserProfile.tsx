@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useFetcher } from "react-router";
 import GlowContainer from "~/components/GlowContainer";
+import { formatNumber } from "~/lib/utils";
 
 interface TikTokProfile {
   nickname: string;
@@ -23,11 +24,6 @@ interface ApiResponse {
   data?: TikTokProfile;
   error?: string;
 }
-
-const formatter = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-});
 
 export default function ExpandedUserProfile({
   user,
@@ -131,7 +127,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile?.follower_count || 0)}
+                {formatNumber(profile?.follower_count)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Followers</p>
             </div>
@@ -139,7 +135,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile?.following_count || 0)}
+                {formatNumber(profile?.following_count)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Following</p>
             </div>
@@ -151,7 +147,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile?.total_favorited || 0)}
+                {formatNumber(profile?.total_favorited)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Likes</p>
             </div>
@@ -159,7 +155,7 @@ export default function ExpandedUserProfile({
           <div className="flex-1 rounded-lg border border-gray-600/20 p-3">
             <div className="flex flex-col gap-2">
               <p className="bg-gradient-to-r from-[#7465ff] to-[#3bbdff] bg-clip-text font-medium text-transparent text-xl">
-                {formatter.format(profile?.visible_videos_count || 0)}
+                {formatNumber(profile?.visible_videos_count)}
               </p>
               <p className="font-light text-[#a7a7a7] text-xs">Videos</p>
             </div>

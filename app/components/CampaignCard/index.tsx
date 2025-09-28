@@ -1,6 +1,6 @@
 import type { Campaign } from ".prisma/main/client";
 import { Link } from "react-router";
-import { cn, getRemainingDays } from "~/lib/utils";
+import { cn, formatNumber, getRemainingDays } from "~/lib/utils";
 import GlowContainer from "../GlowContainer";
 import sharIcon from "./assets/share.svg";
 
@@ -37,11 +37,6 @@ const gradientByType = {
   detail:
     "bg-linear-[114deg] from-[#694AFF] from-[12.87%] to-[#69D7FF] to-[51.12%]",
 } as const;
-
-const formatter = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-});
 
 export default function CampaignCard({
   campaign: {
@@ -151,7 +146,7 @@ export default function CampaignCard({
                     gradientByType[type]
                   )}
                 >
-                  $&nbsp;{formatter.format(poolSize)}&nbsp;
+                  $&nbsp;{formatNumber(poolSize)}&nbsp;
                   {poolUnit && (
                     <span className="font-light text-xs">in {poolUnit}</span>
                   )}

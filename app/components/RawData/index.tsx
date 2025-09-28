@@ -1,4 +1,5 @@
 import { useSearchParams } from "react-router";
+import { formatNumber } from "~/lib/utils";
 import AnalyticsCard from "./AnalyticsCard";
 import CommentsIcon from "./assets/comments-icon.svg";
 // Import icons from assets
@@ -8,11 +9,6 @@ import ParticipantsIcon from "./assets/participants-icon.svg";
 import SharesIcon from "./assets/shares-icon.svg";
 import VideosIcon from "./assets/videos-icon.svg";
 import ViewsIcon from "./assets/views-icon.svg";
-
-const formatter = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-});
 
 interface RawDataProps {
   totalParticipants: number | null | undefined;
@@ -94,35 +90,35 @@ export default function RawData({
               />
             }
             title="Total Participants"
-            value={formatter.format(totalParticipants ?? 0)}
+            value={formatNumber(totalParticipants)}
           />
           <AnalyticsCard
             icon={<img alt="Videos" className="size-4" src={VideosIcon} />}
             showDivider
             title="Videos Submitted"
-            value={formatter.format(videosSubmitted ?? 0)}
+            value={formatNumber(videosSubmitted)}
           />
           <AnalyticsCard
             icon={<img alt="Likes" className="size-4" src={LikesIcon} />}
             showDivider
             title="Total Likes"
-            value={formatter.format(totalLikes ?? 0)}
+            value={formatNumber(totalLikes)}
           />
           <AnalyticsCard
             icon={<img alt="Comments" className="size-4" src={CommentsIcon} />}
             title="Total Comments"
-            value={formatter.format(totalComments ?? 0)}
+            value={formatNumber(totalComments)}
           />
           <AnalyticsCard
             icon={<img alt="Shares" className="size-4" src={SharesIcon} />}
             showDivider
             title="Total Shares"
-            value={formatter.format(totalShares ?? 0)}
+            value={formatNumber(totalShares)}
           />
           <AnalyticsCard
             icon={<img alt="Views" className="size-4" src={ViewsIcon} />}
             title="Total Views"
-            value={formatter.format(totalViews ?? 0)}
+            value={formatNumber(totalViews)}
           />
         </div>
       </div>

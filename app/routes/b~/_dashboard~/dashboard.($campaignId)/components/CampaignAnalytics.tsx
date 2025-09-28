@@ -1,11 +1,6 @@
 import GlowContainer from "~/components/GlowContainer";
-import { getRemainingDays } from "~/lib/utils";
+import { formatNumber, getRemainingDays } from "~/lib/utils";
 import type { Route } from "../+types/_b_dashboard";
-
-const formatter = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-});
 
 export default function CampaignAnalytics({
   campaign,
@@ -70,7 +65,7 @@ export default function CampaignAnalytics({
           {/* Prize Pool */}
           <div className="flex flex-col gap-2">
             <div className="bg-gradient-to-r from-[#B871FF] to-[#2CFFBC] bg-clip-text font-medium text-transparent text-xl">
-              $&nbsp;{formatter.format(campaign?.poolSize ?? 0)}&nbsp;
+              $&nbsp;{formatNumber(campaign?.poolSize)}&nbsp;
               {campaign?.poolUnit && (
                 <span className="font-light text-xs">
                   in {campaign.poolUnit}
@@ -86,7 +81,7 @@ export default function CampaignAnalytics({
           {/* Participants */}
           <div className="flex flex-col gap-2">
             <div className="bg-gradient-to-r from-[#B871FF] to-[#2CFFBC] bg-clip-text font-medium text-transparent text-xl">
-              {formatter.format(campaign?._count.campaignUsers ?? 0)}
+              {formatNumber(campaign?._count.campaignUsers)}
             </div>
             <div className="font-light text-[#A7A7A7] text-xs">
               Participants
@@ -104,9 +99,13 @@ export default function CampaignAnalytics({
             <div className="font-light text-[#A7A7A7] text-xs">Status</div>
           </div>
         </div>
-        <button className="w-1/2 self-end" type="button">
+        <a
+          className="w-1/2 self-end"
+          href={`/b/campaigns/${campaign?.id}`}
+          type="button"
+        >
           <GlowContainer>Details</GlowContainer>
-        </button>
+        </a>
       </div>
     </div>
   );

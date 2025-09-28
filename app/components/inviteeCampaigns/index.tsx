@@ -1,11 +1,7 @@
 import type { Campaign, CampaignUser } from ".prisma/main/client";
 import { useEffect, useState } from "react";
 import { Link, useFetcher } from "react-router";
-
-const formatter = new Intl.NumberFormat("en", {
-  notation: "compact",
-  compactDisplay: "short",
-});
+import { formatNumber } from "~/lib/utils";
 
 export default function InviteeCampaigns({
   userId,
@@ -65,7 +61,7 @@ export default function InviteeCampaigns({
               {/* Spark Points */}
               <div className="flex flex-col gap-2">
                 <span className="bg-gradient-to-r from-[#E29FF0] via-[#FDCAB4] to-[#FDCAB4] bg-clip-text font-medium text-transparent text-xl leading-tight">
-                  {formatter.format(cu.score)}
+                  {formatNumber(cu.score)}
                 </span>
                 <span className="font-light text-[#A7A7A7] text-xs leading-tight">
                   Spark Point
@@ -78,7 +74,7 @@ export default function InviteeCampaigns({
                   {inviter.campaignUsers.some(
                     (iCu) => iCu.campaignId === cu.campaignId
                   )
-                    ? formatter.format(cu.score / 10)
+                    ? formatNumber(cu.score / 10)
                     : 0}
                 </span>
                 <span className="font-light text-[#A7A7A7] text-xs leading-tight">

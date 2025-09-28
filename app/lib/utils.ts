@@ -5,6 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+const formatter = new Intl.NumberFormat("en", {
+  notation: "compact",
+  compactDisplay: "short",
+});
+
+export function formatNumber(value: number | null | undefined) {
+  return formatter.format(value ?? 0);
+}
+
 export function getRemainingDays(startDate: Date, endDate: Date) {
   // Calculate days left and status based on endDate
   const now = new Date();
