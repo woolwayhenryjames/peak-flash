@@ -117,6 +117,7 @@ export default function RawData({
           />
           <AnalyticsCard
             icon={<img alt="Views" className="size-4" src={ViewsIcon} />}
+            showDivider
             title="Total Views"
             value={formatNumber(totalViews)}
           />

@@ -50,7 +50,7 @@ export default function CampaignVideos({
     setIsLoadingMore(true);
     const nextPage = currentPage.current + 1;
 
-    fetcher.load(`/campaigns/${params.id}/leaderboard?page=${nextPage}`);
+    fetcher.load(`/campaigns/${params.id}/videos?page=${nextPage}`);
   }, [hasNextPage, isLoadingMore, fetcher, params.id]);
 
   // Handle fetcher data
