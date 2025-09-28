@@ -16,6 +16,7 @@ export default function GlowContainer({
       className={cn(
         "relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-2xl px-4 py-3",
         "border border-[#D0D0D0] text-center font-medium text-white transition",
+        "hover:bg-white/5 active:scale-[0.98] active:bg-white/10",
         className
       )}
       {...props}

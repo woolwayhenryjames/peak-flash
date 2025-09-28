@@ -15,13 +15,13 @@ export default function VideoCard({
   video,
 }: VideoCardProps) {
   return (
-    <div className="rounded-md border border-white/20 px-[19px] py-[12px]">
+    <div className="rounded-md border border-white/20 px-4 py-3">
       <div className="flex gap-[6px]">
         {rank && (
           <span className="font-medium text-base text-white">{rank}</span>
         )}
         <a
-          className="mb-3 flex h-33 w-full items-center gap-4.5 border border-white/20 px-4 py-3 last:mb-0"
+          className="flex h-33 w-full items-center gap-4.5"
           href={video.videoUrl ?? undefined}
           key={video.videoId}
           rel="noopener noreferrer"

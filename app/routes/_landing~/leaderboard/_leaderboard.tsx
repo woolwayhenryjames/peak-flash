@@ -1,8 +1,8 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Link, redirect, useFetcher } from "react-router";
+import ExpandedUserProfile from "~/components/ExpandedUserProfile";
 import GlowContainer from "~/components/GlowContainer";
 import { cn } from "~/lib/utils";
-import ExpandedUserProfile from "~/routes/_landing~/leaderboard/ExpandedUserProfile";
 import { getDbUser } from "~/services/auth.server";
 import {
   getGlobalLeaderboard,

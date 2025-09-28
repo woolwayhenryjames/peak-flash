@@ -1,8 +1,9 @@
+import { Link } from "react-router";
+import VideoCard from "~/components/VideoCard";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/_b_dashboard";
 import CampaignAnalytics from "./components/CampaignAnalytics";
 import RankingCard from "./components/RankingCard";
-import VideoCard from "./components/VideoCard";
 
 export async function loader({ params: { campaignId } }: Route.LoaderArgs) {
   const campaign = campaignId
@@ -27,9 +28,10 @@ export async function loader({ params: { campaignId } }: Route.LoaderArgs) {
     include: {
       user: {
         select: {
+          id: true,
+          email: true,
           name: true,
           image: true,
-          email: true,
         },
       },
     },
@@ -46,6 +48,8 @@ export async function loader({ params: { campaignId } }: Route.LoaderArgs) {
     orderBy: { kindleScore: "desc" },
     take: 3,
     select: {
+      id: true,
+      email: true,
       name: true,
       image: true,
       kindleScore: true,
@@ -116,7 +120,13 @@ export default function Dashboard({
                 Spark Rankings
               </h4>
             </div>
-            <span className="text-[#ACACAC] text-sm underline">View All</span>
+            <Link
+              className="text-[#ACACAC] text-sm underline"
+              to={`/campaigns/${campaign.id}/leaderboard`}
+              viewTransition
+            >
+              View All
+            </Link>
           </div>
 
           <div className="space-y-[14px]">
@@ -126,7 +136,7 @@ export default function Dashboard({
                 points={participant.score.toLocaleString()}
                 pointsLabel="Spark Points"
                 rank={(index + 1).toString()}
-                username={participant.user.name || participant.user.email}
+                user={participant.user}
               />
             ))}
           </div>
@@ -158,7 +168,13 @@ export default function Dashboard({
                 KINDLE Score Rankings
               </h4>
             </div>
-            <span className="text-[#ACACAC] text-sm underline">View All</span>
+            <Link
+              className="text-[#ACACAC] text-sm underline"
+              to="/leaderboard"
+              viewTransition
+            >
+              View All
+            </Link>
           </div>
 
           <div className="space-y-[14px]">
@@ -168,7 +184,7 @@ export default function Dashboard({
                 points={user.kindleScore?.toLocaleString() || "0"}
                 pointsLabel="KINDLE Score"
                 rank={(index + 1).toString()}
-                username={user.name}
+                user={user}
               />
             ))}
           </div>
@@ -195,7 +211,13 @@ export default function Dashboard({
 
             <h4 className="font-medium text-base text-white">Related Videos</h4>
           </div>
-          <span className="text-[#ACACAC] text-sm underline">View All</span>
+          <Link
+            className="text-[#ACACAC] text-sm underline"
+            to={`/campaigns/${campaign.id}/videos`}
+            viewTransition
+          >
+            View All
+          </Link>
         </div>
 
         <div className="space-y-[15px]">

@@ -32,32 +32,40 @@ SELECT
   CAST(JSON_UNQUOTE(JSON_EXTRACT(ks.ai_scores_json, CONCAT('$.', v.video_id, '.total_score'))) AS DECIMAL(9,2))         AS totalScore,
   TRUE AS active
 FROM tiktok_creator_score.keyword_scores ks
-JOIN CampaignUser cu 
+-- First link keyword_scores to the correct User via tiktok_creator_score.users
+INNER JOIN tiktok_creator_score.users tcs_users 
+  ON ks.user_id = tcs_users.id
+INNER JOIN User u 
+  ON tcs_users.username = u.email
+-- Then find the CampaignUser record for this user and the matching campaign
+INNER JOIN CampaignUser cu 
+  ON cu.userId = u.id
 INNER JOIN Campaign c 
-    ON cu.campaignId = c.id
-    ON (
-      SELECT
-        JSON_ARRAYAGG(jt1.item ORDER BY jt1.item)
-      FROM
-        JSON_TABLE(
-          JSON_EXTRACT(c.joinRequirement, '$."Required Tags"'),
-          '$[*]' COLUMNS (item VARCHAR(255) PATH '$')
-        ) AS jt1
-    ) = (
-      -- Normalize and sort the keywords from the keyword_scores table
-      SELECT
-        JSON_ARRAYAGG(jt2.item ORDER BY jt2.item)
-      FROM
-        JSON_TABLE(
-          -- Recreate the JSON array from the ' | ' separated string
-          CONCAT(
-            '["',
-            REPLACE(ks.keyword, ' | ', '","'),
-            '"]'
-          ),
-          '$[*]' COLUMNS (item VARCHAR(255) PATH '$')
-        ) AS jt2
-    )
+  ON cu.campaignId = c.id
+  AND (
+    -- Match campaign tags with keyword_scores keywords
+    SELECT
+      JSON_ARRAYAGG(jt1.item ORDER BY jt1.item)
+    FROM
+      JSON_TABLE(
+        JSON_EXTRACT(c.joinRequirement, '$."Required Tags"'),
+        '$[*]' COLUMNS (item VARCHAR(255) PATH '$')
+      ) AS jt1
+  ) = (
+    -- Normalize and sort the keywords from the keyword_scores table
+    SELECT
+      JSON_ARRAYAGG(jt2.item ORDER BY jt2.item)
+    FROM
+      JSON_TABLE(
+        -- Recreate the JSON array from the ' | ' separated string
+        CONCAT(
+          '["',
+          REPLACE(ks.keyword, ' | ', '","'),
+          '"]'
+        ),
+        '$[*]' COLUMNS (item VARCHAR(255) PATH '$')
+      ) AS jt2
+  )
 -- explode the array of video objects
 JOIN JSON_TABLE(
   ks.video_scores_json,
@@ -75,6 +83,7 @@ JOIN JSON_TABLE(
 ON 1=1
 ON DUPLICATE KEY UPDATE
   `createTime`       = VALUES(`createTime`),
+  `campaignUserId`   = VALUES(`campaignUserId`),
   `description`      = VALUES(`description`),
   `viewCount`        = VALUES(`viewCount`),
   `likeCount`        = VALUES(`likeCount`),

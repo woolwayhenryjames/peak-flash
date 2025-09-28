@@ -191,6 +191,58 @@ export async function getCampaignLeaderboard(id: string, page = 1, limit = 10) {
   };
 }
 
+export async function getCampaignVideos(id: string, page = 1, limit = 10) {
+  // Ensure page and limit are positive integers
+  const normalizedPage = Math.max(1, Math.floor(page));
+  const normalizedLimit = Math.max(1, Math.min(10, Math.floor(limit)));
+  const offset = (normalizedPage - 1) * normalizedLimit;
+
+  // Get total count of active campaigns
+  const totalCount = await db.userVideo.count({
+    where: { campaignUser: { campaignId: id }, active: true },
+  });
+
+  // Get paginated campaigns
+  const campaignVideos = await db.userVideo.findMany({
+    where: { campaignUser: { campaignId: id }, active: true },
+    orderBy: { viewCount: "desc" },
+    skip: offset,
+    take: normalizedLimit,
+    include: {
+      campaignUser: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+              kindleScore: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Calculate pagination metadata
+  const totalPages = Math.ceil(totalCount / normalizedLimit);
+  const hasNextPage = normalizedPage < totalPages;
+  const hasPreviousPage = normalizedPage > 1;
+
+  return {
+    campaignVideos,
+    pagination: {
+      page: normalizedPage,
+      limit: normalizedLimit,
+      total: totalCount,
+      totalPages,
+      hasNextPage,
+      hasPreviousPage,
+    },
+  };
+}
+
 // Admin CRUD operations
 export async function getAllCampaigns() {
   return await db.campaign.findMany({
