@@ -1,6 +1,7 @@
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import ExpandedUserProfile from "~/components/ExpandedUserProfile";
+import ExpandedUserVideoData from "~/components/ExpandedUserVideoData";
 import GlowContainer from "~/components/GlowContainer";
 import { cn } from "~/lib/utils";
 
@@ -13,6 +14,7 @@ interface RankingCardProps {
   };
   points: string;
   pointsLabel: string;
+  campaignId: string;
 }
 
 export default function RankingCard({
@@ -20,6 +22,7 @@ export default function RankingCard({
   user,
   points,
   pointsLabel,
+  campaignId,
 }: RankingCardProps) {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -49,7 +52,10 @@ export default function RankingCard({
           </button>
         </div>
       </div>
-      {expanded && <ExpandedUserProfile user={user} />}
+      {expanded && !campaignId && <ExpandedUserProfile user={user} />}
+      {expanded && campaignId && (
+        <ExpandedUserVideoData campaignId={campaignId} user={user} />
+      )}
     </div>
   );
 }

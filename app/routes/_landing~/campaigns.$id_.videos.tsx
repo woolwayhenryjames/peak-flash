@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useFetcher } from "react-router";
 import VideoCard from "~/components/VideoCard";
-import { getCampaignVideos } from "~/services/campaign.server";
+import { getVideosPaginated } from "~/services/campaign.server";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/campaigns.$id_.videos";
 
@@ -18,7 +18,7 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const page = Number.parseInt(url.searchParams.get("page") || "1", 10);
 
-  return getCampaignVideos(params.id, page, 10);
+  return getVideosPaginated(params.id, undefined, page, 10);
 }
 
 export default function CampaignVideos({

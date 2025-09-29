@@ -132,6 +132,7 @@ export default function Dashboard({
           <div className="space-y-[14px]">
             {topSpark.map((participant, index) => (
               <RankingCard
+                campaignId={campaign.id}
                 key={participant.user.email}
                 points={participant.score.toLocaleString()}
                 pointsLabel="Spark Points"

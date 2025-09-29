@@ -191,20 +191,38 @@ export async function getCampaignLeaderboard(id: string, page = 1, limit = 10) {
   };
 }
 
-export async function getCampaignVideos(id: string, page = 1, limit = 10) {
+export async function getVideosPaginated(
+  campaignId?: string,
+  userId?: string,
+  page = 1,
+  limit = 10
+) {
   // Ensure page and limit are positive integers
   const normalizedPage = Math.max(1, Math.floor(page));
   const normalizedLimit = Math.max(1, Math.min(10, Math.floor(limit)));
   const offset = (normalizedPage - 1) * normalizedLimit;
 
+  const filter: Prisma.UserVideoWhereInput = {
+    active: true,
+  };
+
+  // Build campaignUser filter based on provided parameters
+  if (campaignId && userId) {
+    filter.campaignUser = { campaignId, userId };
+  } else if (campaignId) {
+    filter.campaignUser = { campaignId };
+  } else if (userId) {
+    filter.campaignUser = { userId };
+  }
+
   // Get total count of active campaigns
   const totalCount = await db.userVideo.count({
-    where: { campaignUser: { campaignId: id }, active: true },
+    where: filter,
   });
 
   // Get paginated campaigns
   const campaignVideos = await db.userVideo.findMany({
-    where: { campaignUser: { campaignId: id }, active: true },
+    where: filter,
     orderBy: { viewCount: "desc" },
     skip: offset,
     take: normalizedLimit,
