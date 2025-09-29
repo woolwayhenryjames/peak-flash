@@ -36,6 +36,7 @@ export function useLogin() {
       await authClient.signIn.wallet({
         walletAddress: address,
       });
+      window.location.reload();
     } catch (error) {
       console.error("Error during sign in:", error);
       // You could show a user-friendly error message here

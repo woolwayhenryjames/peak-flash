@@ -1,0 +1,264 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@radix-ui/react-accordion";
+import { ChevronDown } from "lucide-react";
+import GlowContainer from "~/components/GlowContainer";
+import { cn } from "~/lib/utils";
+
+export default function Pricing() {
+  return (
+    <div className="bg-black">
+      <div
+        className="flex h-140 items-center justify-start px-3"
+        style={{
+          background:
+            "linear-gradient(to bottom left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #000 50%) bottom right / 50% 50% no-repeat, linear-gradient(to top left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #000 50%) top right / 50% 50% no-repeat",
+        }}
+      >
+        <div className="w-2/3 space-y-9 md:ml-[10%] md:w-1/2">
+          <div className="font-normal text-4xl text-[#f2edea] md:text-7xl">
+            Compensate based on results, not estimation
+          </div>
+          <div className="font-light text-[#cacaca] text-base md:text-2xl">
+            PEAKAI delivers advanced creator analytics and seamless campaign
+            management, empowering your success—your achievements are our top
+            priority.
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing Packages Section */}
+      <div className="container mx-auto grid place-items-center py-24">
+        <div className="grid w-full justify-center gap-y-12 md:grid-cols-2">
+          {pricingPlans.map((plan, index) => (
+            <div
+              className={cn(index % 2 === 0 && "border-white/20 md:border-r")}
+              key={plan.id}
+            >
+              <div className="grid size-full place-items-center">
+                <div className="flex h-full w-full flex-col px-2 md:w-107">
+                  {/* Package Name & Price */}
+                  <div className="mb-10 space-y-4">
+                    <div className="flex justify-between">
+                      <h3 className="font-medium text-2xl text-white">
+                        {plan.name}
+                      </h3>
+                      {plan.isPopular && (
+                        <div className="rounded-full border border-gray-600 bg-green-500/20 px-8 py-1">
+                          <span className="font-normal text-gray-100 text-sm">
+                            POPULAR
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    {plan.id === "custom" ? (
+                      <div className="font-semibold text-4xl text-[#ffaa6a]">
+                        Contact Sales
+                      </div>
+                    ) : (
+                      <p className={cn("font-medium text-[#818181] text-xl")}>
+                        <span
+                          className={cn(
+                            "bg-gradient-to-r from-[#B871FF] to-[#2CFFBC]",
+                            "bg-clip-text font-medium text-4xl text-transparent leading-[1.5em]"
+                          )}
+                        >
+                          {plan.price}
+                        </span>
+                        /month
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Benefits List */}
+                  <ul className="mb-10 flex-1 space-y-6">
+                    {plan.benefits.map((benefit) => (
+                      <li
+                        className="flex items-start gap-3"
+                        key={`${plan.id}-${benefit}`}
+                      >
+                        <span className="mt-1.5 size-2 shrink-0 rounded-full bg-[#6BE6FF]" />
+                        <span className="font-light text-[#ACACAC] text-lg">
+                          {benefit}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <GlowContainer
+                    className={cn(
+                      "w-fit cursor-pointer whitespace-nowrap",
+                      plan.isPopular &&
+                        "bg-gradient-to-r from-[#080C0D] to-[#1E245D]"
+                    )}
+                  >
+                    <span className="font-normal text-2xl text-[#F3EEEA]">
+                      Get Started
+                    </span>
+                  </GlowContainer>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* FAQs Section */}
+      <div className="container mx-auto grid place-items-center py-24">
+        <div className="mb-20 text-center font-normal text-5xl text-white leading-[80px]">
+          FAQs
+        </div>
+        <div className="contents w-full max-w-[1400px] flex-col items-center justify-end rounded-[63px] border border-zinc-800 bg-gradient-to-b from-[#0d0d0d] to-[#0d0d0d]/0 md:flex md:px-12 md:pt-12">
+          <div className="mx-2 rounded-xl border border-zinc-800 bg-gradient-to-b from-[#030303] to-[#090909]/0 px-3 py-8 md:w-full md:rounded-[56px] md:p-15">
+            <Accordion
+              className="w-full space-y-6 md:space-y-[83px]"
+              collapsible
+              type="single"
+            >
+              {faqs.map((faq) => (
+                <AccordionItem
+                  className="w-full overflow-hidden"
+                  key={faq.id}
+                  value={faq.id}
+                >
+                  <div className="w-full rounded-xl border border-[#4D4D4D] bg-[rgba(37,34,51,0.2)]">
+                    <AccordionTrigger className="group w-full px-6 py-6 text-left hover:no-underline md:px-[91px]">
+                      <div className="flex w-full items-start justify-between gap-4 md:items-center">
+                        <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-[10px]">
+                          <span className="shrink-0 font-['Poppins'] font-normal text-[#C6C6C6] text-[28px] leading-[2.5em] md:text-[32px]">
+                            {faq.number}
+                          </span>
+                          <span className="font-['Poppins'] font-normal text-[#C6C6C6] text-[20px] leading-[1.4em] md:text-[28px]">
+                            {faq.question}
+                          </span>
+                        </div>
+                        <ChevronDown className="mt-2 size-6 shrink-0 text-white transition-transform duration-200 group-data-[state=open]:rotate-180 md:mt-0" />
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="w-full overflow-hidden px-6 pb-6 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down md:px-[91px]">
+                      <div className="mt-[25px] border-white/10 border-t pt-[49px]">
+                        <p className="font-['Poppins'] font-normal text-[#A1A1A1] text-[18px] leading-[1.5em] md:text-[24px]">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    </AccordionContent>
+                  </div>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface PricingPlan {
+  id: string;
+  name: string;
+  price: string;
+  isPopular?: boolean;
+  benefits: string[];
+}
+
+interface FAQ {
+  id: string;
+  number: string;
+  question: string;
+  answer: string;
+}
+
+const pricingPlans: PricingPlan[] = [
+  {
+    id: "basic",
+    name: "Basic Package",
+    price: "$1,999",
+    benefits: [
+      "Single campaign",
+      "Unlimited creator participation",
+      "30-day campaign duration",
+      "Basic AI scoring and matching",
+      "Standard analytics reports",
+      "Email customer support",
+    ],
+  },
+  {
+    id: "professional",
+    name: "Professional Package",
+    price: "$4,999",
+    isPopular: true,
+    benefits: [
+      "Up to 3 concurrent campaigns",
+      "Unlimited creator participation",
+      "Flexible campaign duration (7-90 days)",
+      "Advanced AI matching algorithms and real-time optimization",
+      "In-depth analytics and insights reports",
+      "Dedicated account manager",
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise Package",
+    price: "$12,999",
+    benefits: [
+      "Unlimited concurrent campaigns",
+      "Unlimited creator participation",
+      "Custom campaign durations",
+      "Customized AI scoring models",
+      "Open API access",
+      "Real-time dashboards and alerts",
+    ],
+  },
+  {
+    id: "custom",
+    name: "Custom Package",
+    price: "Contact Sales",
+    benefits: [
+      "Tailored solutions",
+      "Multi-brand management",
+      "Global deployment support",
+      "Dedicated customer success team",
+    ],
+  },
+];
+
+const faqs: FAQ[] = [
+  {
+    id: "faq-1",
+    number: "1",
+    question: "Where can PeakAI users view data after launching a campaign?",
+    answer:
+      "After successfully paying for cooperation and publishing a campaign, PeakAI users can log in as an enterprise to access a dedicated dashboard page. PeakAI is also planning to launch additional management features like campaign creation pages, enabling comprehensive project management for all stakeholders.",
+  },
+  {
+    id: "faq-2",
+    number: "2",
+    question: "How often is PeakAI user data updated?",
+    answer:
+      "Due to the complexity of PeakAI's scoring algorithms and data processing systems, PeakAI currently ensures that user data is updated within 24 hours. This timeframe allows PeakAI to maintain data accuracy while processing the intricate calculations required for PeakAI's AI-powered scoring system.",
+  },
+  {
+    id: "faq-3",
+    number: "3",
+    question: "Who determines PeakAI's reward distribution rules?",
+    answer:
+      "PeakAI provides a professional AI scoring system that precisely captures and analyzes creator content, updating corresponding scores and rankings to project teams. The specific reward distribution rules are determined by the project teams themselves, who can reference SPARK Points, KINDLE Scores, and the actual content published by creators to establish their reward criteria. PeakAI will provide a creators list (including wallet addresses) based on project requirements, and rewards are distributed independently by the project teams.",
+  },
+  {
+    id: "faq-4",
+    number: "4",
+    question: "What are PeakAI's specific scoring criteria and dimensions?",
+    answer:
+      "We use two primary metrics: SPARK Points and KINDLE Score. These metrics evaluate creators across multiple dimensions including content quality, engagement rates, audience authenticity, campaign alignment, and performance consistency. Our AI system analyzes these factors to provide comprehensive scoring that reflects true creator value and impact.",
+  },
+  {
+    id: "faq-5",
+    number: "5",
+    question: "Where does PeakAI's data come from?",
+    answer:
+      "PeakAI's data is sourced from TikTok's official API, combined with PeakAI's proprietary AI intelligent analysis systems and technical processes. This multi-layered approach ensures data completeness and real-time accuracy, providing reliable insights for campaign management and creator evaluation.",
+  },
+];
