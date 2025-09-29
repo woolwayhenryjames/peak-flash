@@ -26,19 +26,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
       include: {
         user: {
           include: {
-            accounts: {
-              where: {
-                providerId: "tiktok",
-              },
-            },
             invitees: {
-              include: {
-                campaignUsers: {
-                  where: {
-                    campaignId,
-                  },
-                },
-              },
+              select: { id: true },
             },
           },
         },
@@ -66,7 +55,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
     await Promise.all(
       campaignUsersWithVideos.map(async (cu) => {
-        const tiktokUsername = cu.user.accounts[0]?.accountId;
+        const tiktokUsername = cu.user.email;
         if (tiktokUsername) {
           try {
             const userInfoResult = await getUserInfo(tiktokUsername);
@@ -89,7 +78,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
     // Transform data for Excel export
     const exportData = campaignUsersWithVideos.map((cu) => {
-      const tiktokUsername = cu.user.accounts[0]?.accountId || "";
+      const tiktokUsername = cu.user.email || "";
       const tiktokProfileUrl = tiktokUsername
         ? `https://www.tiktok.com/@${tiktokUsername}`
         : "";
@@ -141,32 +130,28 @@ export async function loader({ params }: LoaderFunctionArgs) {
     const wb = utils.book_new();
     const ws = utils.json_to_sheet(exportData);
 
-    // Auto-size columns
-    const maxWidth = 50;
-    const colWidths = Object.keys(exportData[0] || {}).map((key) => {
-      const maxLength = Math.max(
-        key.length,
-        ...exportData.map((row) => {
-          const value = row[key as keyof typeof row];
-          return String(value).length;
-        })
-      );
-      return { wch: Math.min(maxLength + 2, maxWidth) };
-    });
-    ws["!cols"] = colWidths;
-
     // Add worksheet to workbook
     utils.book_append_sheet(wb, ws, `${campaign.name} Analytics`);
 
     // Generate buffer
     const buffer = write(wb, { type: "buffer", bookType: "xlsx" });
 
+    // Encode filename for Content-Disposition header to handle UTF-8 characters
+    const date = new Date().toISOString().split("T")[0];
+    const baseFilename = `${campaign.name}_analytics_${date}.xlsx`;
+
+    // Create a safe ASCII filename for fallback (replace non-ASCII with underscore)
+    const asciiFilename = baseFilename.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+    // Encode the UTF-8 filename according to RFC 5987
+    const utf8Filename = encodeURIComponent(baseFilename);
+
     // Return file response
     return new Response(buffer, {
       headers: {
         "Content-Type":
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename="${campaign.name}_analytics_${new Date().toISOString().split("T")[0]}.xlsx"`,
+        "Content-Disposition": `attachment; filename="${asciiFilename}"; filename*=UTF-8''${utf8Filename}`,
       },
     });
   } catch (error) {
