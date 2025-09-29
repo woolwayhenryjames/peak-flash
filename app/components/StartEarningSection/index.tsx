@@ -17,7 +17,7 @@ export default function StartEarningSection() {
       {/* CTA Button */}
       <Link
         className="relative flex w-full justify-between gap-3 border border-[#b7b7b7]/50 bg-gradient-to-b from-[#d9d9d9]/20 to-white/0 px-3 py-5"
-        to="/ascent"
+        to="/u/ascent"
         viewTransition
       >
         <div className="-left-0.5 -top-0.5 absolute size-1 bg-[#D9D9D9]" />

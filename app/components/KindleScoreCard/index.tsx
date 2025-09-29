@@ -12,7 +12,7 @@ export default function KindleScoreCard({
   return (
     <Link
       className="block rounded-2xl border border-gray-700/50 bg-gradient-to-b from-[#0f1219] to-141% to-[#212637] p-6 backdrop-blur-sm"
-      to="/leaderboard"
+      to="/u/leaderboard"
       viewTransition
     >
       <div className="flex flex-col gap-6">

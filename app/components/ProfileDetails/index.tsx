@@ -55,7 +55,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
           <Link
             className="flex items-center gap-[10px] px-7 py-4 hover:bg-white/7"
             onClick={() => setPopoverOpen(false)}
-            to="/profile"
+            to="/u/profile"
           >
             <img alt="" aria-hidden="true" className="size-3" src={userIcon} />
             <span className="font-normal text-white text-xs leading-[1.5]">
@@ -67,7 +67,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
           <Link
             className="flex items-center gap-[10px] px-7 py-4 hover:bg-white/7"
             onClick={() => setPopoverOpen(false)}
-            to="/help-center"
+            to="/u/help-center"
           >
             <img
               alt=""

@@ -347,7 +347,7 @@ export default function Leaderboard({
         <div className="mt-12 text-center">
           <Link
             className="text-[#8080DA] text-sm transition-colors hover:text-white"
-            to={`/campaigns/${params.id}`}
+            to={`/u/campaigns/${params.id}`}
             viewTransition
           >
             ← Back to Campaign

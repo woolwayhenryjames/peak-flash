@@ -60,7 +60,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
 
   // Check if there are more than one segments (excluding empty strings)
   const segments = location.pathname.split("/").filter(Boolean);
-  const showBackButton = segments.length > 1;
+  const showBackButton = segments.length > 2;
 
   const handleBackClick = () => {
     navigate(-1);
@@ -120,7 +120,7 @@ const getPageName = (pathname: string) => {
   const segments = pathname.split("/").filter(Boolean);
 
   // If no segments, return 'Home'
-  if (segments.length === 0) {
+  if (segments.length === 1) {
     return "Home";
   }
 

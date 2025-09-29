@@ -14,7 +14,7 @@ interface RankingCardProps {
   };
   points: string;
   pointsLabel: string;
-  campaignId: string;
+  campaignId?: string;
 }
 
 export default function RankingCard({

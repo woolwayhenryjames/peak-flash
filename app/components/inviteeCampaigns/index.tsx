@@ -47,7 +47,7 @@ export default function InviteeCampaigns({
         <Link
           className="flex flex-col gap-5 p-4"
           key={cu.id}
-          to={`/campaigns/${cu.campaignId}`}
+          to={`/u/campaigns/${cu.campaignId}`}
         >
           {/* Campaign Title */}
           <h3 className="font-medium text-[#F8F8F8] text-base leading-tight tracking-wide underline">

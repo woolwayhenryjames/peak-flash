@@ -83,7 +83,7 @@ export default function CampaignCard({
                     {name}
                   </h3>
                   {type === "invite" && (
-                    <Link className="ml-auto" to="/invite" viewTransition>
+                    <Link className="ml-auto" to="/u/invite" viewTransition>
                       <img alt="Share" className="size-6" src={sharIcon} />
                     </Link>
                   )}
@@ -194,7 +194,7 @@ export default function CampaignCard({
               </div>
 
               {/* View Details Button */}
-              <Link to={`/campaigns/${id}`} viewTransition>
+              <Link to={`/u/campaigns/${id}`} viewTransition>
                 <GlowContainer className="text-sm text-white">
                   View Details
                 </GlowContainer>

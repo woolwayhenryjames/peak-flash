@@ -165,7 +165,7 @@ export default function ExpandedUserVideoData({
                   </a>
                   <Link
                     className="flex-1"
-                    to={`/profile/${userData.id}/videos`}
+                    to={`/u/profile/${userData.id}/videos`}
                   >
                     <GlowContainer>See All</GlowContainer>
                   </Link>

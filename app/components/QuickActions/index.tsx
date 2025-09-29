@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { useUser } from "~/routes/_landing~/_layout";
+import { useUser } from "~/routes/u~/_layout";
 import GlowContainer from "../GlowContainer";
 import diamondIcon from "./assets/diamond-icon.svg";
 import usersIcon from "./assets/users-icon.svg";
@@ -70,7 +70,7 @@ export default function QuickActions() {
           <div className="h-px w-full bg-[#2D3338]" />
 
           {/* Share Button */}
-          <Link to="/invite">
+          <Link to="/u/invite">
             <GlowContainer>Share</GlowContainer>
           </Link>
         </div>

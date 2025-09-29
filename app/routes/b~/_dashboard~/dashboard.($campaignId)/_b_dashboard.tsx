@@ -122,7 +122,7 @@ export default function Dashboard({
             </div>
             <Link
               className="text-[#ACACAC] text-sm underline"
-              to={`/campaigns/${campaign.id}/leaderboard`}
+              to={`/u/campaigns/${campaign.id}/leaderboard`}
               viewTransition
             >
               View All
@@ -171,7 +171,7 @@ export default function Dashboard({
             </div>
             <Link
               className="text-[#ACACAC] text-sm underline"
-              to="/leaderboard"
+              to="/u/leaderboard"
               viewTransition
             >
               View All
@@ -214,7 +214,7 @@ export default function Dashboard({
           </div>
           <Link
             className="text-[#ACACAC] text-sm underline"
-            to={`/campaigns/${campaign.id}/videos`}
+            to={`/u/campaigns/${campaign.id}/videos`}
             viewTransition
           >
             View All

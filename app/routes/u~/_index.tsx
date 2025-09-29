@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { Link, redirect } from "react-router";
 import CampaignList from "~/components/CampaignList";
 import FirstGetScoreDialog from "~/components/Dialogs/FirstGetScoreDialog";
 import FirstOpenHomeDialog from "~/components/Dialogs/FirstOpenHomeDialog";
@@ -120,12 +120,12 @@ export default function Home({
 
             <h3 className="font-medium text-white text-xl">Active Campaigns</h3>
           </div>
-          <a
+          <Link
             className="border-[#505050] border-b pb-0.5 text-[#AEAEAE] text-xs hover:text-white"
-            href="/ascent?status=active"
+            to="/u/ascent?status=active"
           >
             View All
-          </a>
+          </Link>
         </div>
         <CampaignList campaigns={campaigns} />
         <QuickActions />

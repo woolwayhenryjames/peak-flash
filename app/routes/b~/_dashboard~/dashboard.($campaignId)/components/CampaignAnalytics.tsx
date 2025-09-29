@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import GlowContainer from "~/components/GlowContainer";
 import { formatNumber, getRemainingDays } from "~/lib/utils";
 import type { Route } from "../+types/_b_dashboard";
@@ -99,13 +100,13 @@ export default function CampaignAnalytics({
             <div className="font-light text-[#A7A7A7] text-xs">Status</div>
           </div>
         </div>
-        <a
+        <Link
           className="w-1/2 self-end"
-          href={`/b/campaigns/${campaign?.id}`}
+          to={`/b/campaigns/${campaign?.id}`}
           type="button"
         >
           <GlowContainer>Details</GlowContainer>
-        </a>
+        </Link>
       </div>
     </div>
   );

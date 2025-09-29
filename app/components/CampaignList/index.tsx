@@ -36,7 +36,7 @@ export default function CampaignList({
             <Link
               className="block h-[72px] rounded-2xl border border-[#2D3338] bg-gradient-to-br from-[#20202D] to-[#101013] px-4 py-2.5"
               key={campaign.id}
-              to={`/campaigns/${campaign.id}`}
+              to={`/u/campaigns/${campaign.id}`}
               viewTransition
             >
               <div className="flex h-full items-center gap-3">

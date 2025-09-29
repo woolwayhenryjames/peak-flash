@@ -325,7 +325,7 @@ export default function CampaignDetails({
               {/* View Full Leaderboard Button */}
               <Link
                 className="mx-auto w-[90%]"
-                to={`/campaigns/${campaign.id}/leaderboard`}
+                to={`/u/campaigns/${campaign.id}/leaderboard`}
                 viewTransition
               >
                 <GlowContainer>View Full Leaderboard</GlowContainer>
