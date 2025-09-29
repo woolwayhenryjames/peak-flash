@@ -43,7 +43,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   if (!inviterId) {
     // If no inviter ID, redirect to invite page
-    return redirect("/invite");
+    return redirect("/u/invite");
   }
 
   // Validate that the inviter exists
@@ -51,9 +51,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   if (isValidInviter.isErr()) {
     // If inviter doesn't exist, redirect to home
-    return redirect("/invite");
+    return redirect("/u/invite");
   }
 
   // Redirect to login with the inviter parameter
-  return redirect(`/login?inviter=${encodeURIComponent(inviterId)}`);
+  return redirect(`/?inviter=${encodeURIComponent(inviterId)}`);
 }

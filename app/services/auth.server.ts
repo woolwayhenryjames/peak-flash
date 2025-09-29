@@ -8,6 +8,7 @@ import {
   updateUserPoints,
 } from "~/services/score-algo-api";
 import { persistUserImage } from "~/services/user.server";
+import { walletPlugin } from "~/services/walletPlugin.auth.server";
 import { db } from "./db.server";
 
 export const auth = betterAuth({
@@ -55,6 +56,7 @@ export const auth = betterAuth({
     "https://www.takeapeak.ai",
     "https://takeapeak.ai",
   ],
+  plugins: [walletPlugin()],
 });
 
 export const getSessionUser = async ({ headers }: Request) => {

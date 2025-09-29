@@ -1,12 +1,21 @@
+import type { User } from ".prisma/main/client";
+import { useState } from "react";
 import { Link, useLocation } from "react-router";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
 import loginIcon from "./assets/login.svg";
 import logo from "./assets/logo.svg";
 import peakText from "./assets/peak-text.svg";
 import tiktokIcon from "./assets/tiktok.svg";
 import twitterIcon from "./assets/twitter.svg";
+import MenuContent from "./MenuContent";
 
-export default function Header() {
+export default function Header({ user }: { user: User | undefined | null }) {
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const location = useLocation();
 
   const navItems = [
@@ -56,6 +65,7 @@ export default function Header() {
           {/* Social Links */}
           <div className="flex items-center gap-6 opacity-50">
             <a
+              aria-label="Follow us on Twitter"
               className="relative h-5 w-5 transition-opacity hover:opacity-100"
               href="https://twitter.com/TakeAPeakAI"
               rel="noopener noreferrer"
@@ -69,6 +79,7 @@ export default function Header() {
               />
             </a>
             <a
+              aria-label="Follow us on TikTok"
               className="transition-opacity hover:opacity-100"
               href="https://www.tiktok.com/@takeapeakai"
               rel="noopener noreferrer"
@@ -81,18 +92,51 @@ export default function Header() {
           {/* Divider */}
           <div className="h-[14px] w-[1px] bg-white opacity-40" />
 
-          {/* Login Button */}
-          <Link
-            className="flex items-center gap-[9px] font-normal text-[#F3EEEA] text-sm transition-opacity hover:opacity-80"
-            to="/login"
-          >
-            <span>Login</span>
-            <div className="flex h-5 w-5 items-center justify-center">
-              <img alt="" className="h-4 w-3" src={loginIcon} />
-            </div>
-          </Link>
+          <Popover onOpenChange={setPopoverOpen} open={popoverOpen}>
+            <PopoverTrigger asChild>
+              <button type="button">
+                <UserButton user={user} />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="end"
+              alignOffset={-12}
+              className="flex w-max flex-col rounded-[10px] border border-[#7C7C7C] bg-black/70 px-0 py-2 backdrop-blur-sm"
+              side="bottom"
+              sideOffset={12}
+            >
+              <MenuContent user={user} />
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
     </header>
   );
 }
+
+const UserButton = ({ user }: { user: User | undefined | null }) => {
+  if (user?.image) {
+    return (
+      <img
+        alt="User Avatar"
+        className="h-6 w-6 rounded-full focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+        src={user.image}
+      />
+    );
+  }
+
+  if (user?.email) {
+    return (
+      <span className="font-normal text-[#f2edea] text-sm">0ceBE****2584</span>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-[9px] font-normal text-[#F3EEEA] text-sm">
+      <span>Login</span>
+      <div className="flex h-5 w-5 items-center justify-center">
+        <img alt="" className="h-4 w-3" src={loginIcon} />
+      </div>
+    </div>
+  );
+};

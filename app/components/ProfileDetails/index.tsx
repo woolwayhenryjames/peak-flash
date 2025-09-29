@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import DialogWithCloseButton from "~/components/Dialogs/DialogWithCloseButton";
 import GlowContainer from "~/components/GlowContainer";
+import signOutIcon from "~/components/Header/MenuContent/assets/sign-out-icon.svg";
 import {
   Popover,
   PopoverContent,
@@ -10,7 +11,6 @@ import {
 } from "~/components/ui/popover";
 import { authClient } from "~/lib/auth-client";
 import helpCenterIcon from "./assets/help-center-icon.svg";
-import signOutIcon from "./assets/sign-out-icon.svg";
 import userIcon from "./assets/user-icon.svg";
 
 interface ProfileDetailsProps {

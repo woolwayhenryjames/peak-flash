@@ -120,13 +120,9 @@ export default function Dashboard({
                 Spark Rankings
               </h4>
             </div>
-            <Link
-              className="text-[#ACACAC] text-sm underline"
-              to={`/u/campaigns/${campaign.id}/leaderboard`}
-              viewTransition
-            >
+            <span className="cursor-not-allowed text-[#ACACAC] text-sm opacity-50">
               View All
-            </Link>
+            </span>
           </div>
 
           <div className="space-y-[14px]">
@@ -134,7 +130,7 @@ export default function Dashboard({
               <RankingCard
                 campaignId={campaign.id}
                 key={participant.user.email}
-                points={participant.score.toLocaleString()}
+                points={participant.score.toFixed(0)}
                 pointsLabel="Spark Points"
                 rank={(index + 1).toString()}
                 user={participant.user}
@@ -178,7 +174,7 @@ export default function Dashboard({
             {topKindle.map((user, index) => (
               <RankingCard
                 key={user.name}
-                points={user.kindleScore?.toLocaleString() || "0"}
+                points={user.kindleScore?.toFixed(0) || "0"}
                 pointsLabel="KINDLE Score"
                 rank={(index + 1).toString()}
                 user={user}
@@ -208,19 +204,20 @@ export default function Dashboard({
 
             <h4 className="font-medium text-base text-white">Related Videos</h4>
           </div>
-          <span className="cursor-not-allowed text-[#ACACAC] text-sm opacity-50">
+          <Link
+            className="text-[#ACACAC] text-sm underline"
+            to={`/u/campaigns/${campaign.id}/videos`}
+            viewTransition
+          >
             View All
-          </span>
+          </Link>
         </div>
 
         <div className="space-y-[15px]">
           {topVideos.length > 0 ? (
             topVideos.map((video, index) => (
               <VideoCard
-                creator={
-                  video.campaignUser.user.name ||
-                  `@user_${video.campaignUser.userId.slice(-4)}`
-                }
+                creator={video.campaignUser.user.name}
                 key={video.id}
                 kindleScore={video.campaignUser.user.kindleScore || 0}
                 rank={(index + 1).toString()}

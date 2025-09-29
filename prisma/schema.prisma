@@ -36,6 +36,7 @@ model User {
 
   walletAddress String? @db.Text
   rank          Int?
+  isBusiness    Boolean @default(false)
 
   @@unique([email])
   @@index([id])

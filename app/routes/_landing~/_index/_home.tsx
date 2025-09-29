@@ -2,6 +2,8 @@ import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import CarouselIndicator from "~/components/CarouselIndicator";
 import GlowContainer from "~/components/GlowContainer";
+import enterpriseIcon from "~/components/Header/MenuContent/assets/enterprise.svg";
+import tiktokIcon from "~/components/Header/MenuContent/assets/tiktok.svg";
 import {
   Carousel,
   type CarouselApi,
@@ -14,6 +16,7 @@ import {
   MarqueeFade,
   MarqueeItem,
 } from "~/components/ui/shadcn-io/marquee";
+import { useLogin } from "~/lib/useLogin";
 import bgBottom from "./assets/bg-bottom.svg";
 import bgTop from "./assets/bg-top.svg";
 import ascentScreenshot from "./assets/carousel/ascent-screenshot.png";
@@ -21,7 +24,6 @@ import detailScreenshot from "./assets/carousel/detail-screenshot.png";
 import homeScreenshot from "./assets/carousel/home-screenshot.png";
 import inviteScreenshot from "./assets/carousel/invite-screenshot.png";
 import profileScreenshot from "./assets/carousel/profile-screenshot.png";
-import enterpriseIcon from "./assets/enterprise.svg";
 import humanSignalIcon from "./assets/highlight/human-signal.svg";
 import insightsIcon from "./assets/highlight/insights.svg";
 import peopleIcon from "./assets/highlight/people.svg";
@@ -42,12 +44,12 @@ import mhVenturesLogo from "./assets/supporter/mh-ventures.png";
 import nvidiaLogo from "./assets/supporter/nvidia.png";
 import uxlinkLogo from "./assets/supporter/uxlink.png";
 import yziLabsLogo from "./assets/supporter/yzi-labs.png";
-import tiktokIcon from "./assets/tiktok.svg";
 
 export default function Index() {
   const plugin = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const { signInEnterprise, signInCreator } = useLogin();
 
   useEffect(() => {
     if (!api) {
@@ -90,20 +92,32 @@ export default function Index() {
             {/* Action Buttons */}
             <div className="flex flex-col gap-4 md:flex-row">
               {/* Start as Enterprises Button */}
-              <GlowContainer className="h-auto w-full gap-4 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] md:w-auto">
-                <img alt="Logo" className="size-6" src={enterpriseIcon} />
-                <span className="font-normal text-2xl text-white">
-                  Start as Enterprises
-                </span>
-              </GlowContainer>
+              <button
+                className="h-auto w-full md:w-auto"
+                onClick={signInEnterprise}
+                type="button"
+              >
+                <GlowContainer className="h-auto w-full gap-4 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] md:w-auto">
+                  <img alt="Logo" className="size-6" src={enterpriseIcon} />
+                  <span className="font-normal text-2xl text-white">
+                    Start as Enterprises
+                  </span>
+                </GlowContainer>
+              </button>
 
               {/* Start as Creators Button */}
-              <GlowContainer className="h-auto w-full gap-4 overflow-hidden md:w-auto">
-                <img alt="Logo" className="size-6" src={tiktokIcon} />
-                <span className="font-normal text-2xl text-white">
-                  Start as Creators
-                </span>
-              </GlowContainer>
+              <button
+                className="h-auto w-full md:w-auto"
+                onClick={signInCreator}
+                type="button"
+              >
+                <GlowContainer className="gap-4">
+                  <img alt="Logo" className="size-6" src={tiktokIcon} />
+                  <span className="font-normal text-2xl text-white">
+                    Start as Creators
+                  </span>
+                </GlowContainer>
+              </button>
             </div>
           </div>
 

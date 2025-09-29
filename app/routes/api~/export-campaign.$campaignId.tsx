@@ -108,7 +108,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
       };
 
       return {
-        "User ID": cu.user.id,
+        "User ID": cu.user.email,
         "TikTok Account Link": tiktokProfileUrl,
         Followers: tiktokStats.followers,
         Likes: tiktokStats.likes,

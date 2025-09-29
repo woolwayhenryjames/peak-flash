@@ -7,7 +7,6 @@ import {
   useNavigate,
   useOutletContext,
 } from "react-router";
-import { AppKitProvider } from "~/components/AppKitProvider";
 import BottomNav from "~/components/BottomNav";
 import GlowContainer from "~/components/GlowContainer";
 import ProfileDetails from "~/components/ProfileDetails";
@@ -106,9 +105,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
           <ProfileDetails user={loaderData} />
         </div>
       </header>
-      <AppKitProvider>
-        <Outlet context={{ user: loaderData } satisfies ContextType} />
-      </AppKitProvider>
+      <Outlet context={{ user: loaderData } satisfies ContextType} />
       <BottomNav />
     </div>
   );

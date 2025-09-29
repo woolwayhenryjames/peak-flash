@@ -11,6 +11,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { useEffect } from "react";
+import { AppKitProvider } from "~/components/AppKitProvider";
 import { pageview } from "~/lib/gtags.client";
 
 export const links: Route.LinksFunction = () => [
@@ -150,7 +151,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <AppKitProvider>
+      <Outlet />
+    </AppKitProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
