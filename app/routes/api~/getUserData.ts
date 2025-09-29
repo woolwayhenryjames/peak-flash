@@ -1,7 +1,7 @@
 import type { CampaignUser, User, UserVideo } from ".prisma/main/client";
 import { db } from "~/services/db.server";
 import { logger } from "~/services/logger.server";
-import type { Route } from "./+types/getUserData.$id.$videoLimit";
+import type { Route } from "./+types/getUserData";
 
 export interface ApiResponse {
   userData: User & {
@@ -20,18 +20,21 @@ export interface ApiResponse {
 
 export async function loader({
   request,
-  params: { id, videoLimit },
 }: Route.LoaderArgs): Promise<ApiResponse> {
-  if (!id) {
+  const url = new URL(request.url);
+  const userId = url.searchParams.get("userId");
+  const videoLimit = Number.parseInt(
+    url.searchParams.get("videoLimit") || "0",
+    10
+  );
+  const campaignId = url.searchParams.get("campaignId");
+  if (!userId) {
     throw Response.json({ error: "User ID is required" }, { status: 400 });
   }
 
   try {
-    const videoLimitNumber = Number.parseInt(videoLimit || "0", 10);
-    console.log("videoLimit", request.url);
-
     const userData = await db.user.findUnique({
-      where: { id },
+      where: { id: userId },
       include: {
         campaignUsers: {
           include: {
@@ -48,10 +51,17 @@ export async function loader({
       throw Response.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Filter campaignUserIds based on campaignId if provided
+    const campaignUserIds = campaignId
+      ? userData.campaignUsers
+          .filter((cu) => cu.campaignId === campaignId)
+          .map((cu) => cu.id)
+      : userData.campaignUsers.map((cu) => cu.id);
+
     const [videoCount, likeCount] = await Promise.all([
       db.userVideo.count({
         where: {
-          campaignUserId: { in: userData.campaignUsers.map((cu) => cu.id) },
+          campaignUserId: { in: campaignUserIds },
         },
       }),
       db.userVideo
@@ -60,22 +70,22 @@ export async function loader({
             likeCount: true,
           },
           where: {
-            campaignUserId: { in: userData.campaignUsers.map((cu) => cu.id) },
+            campaignUserId: { in: campaignUserIds },
           },
         })
         .then((res) => res._sum.likeCount || 0),
     ]);
 
-    if (videoLimitNumber === 0) {
+    if (videoLimit === 0) {
       return { userData, videoCount, likeCount };
     }
 
     const videos = await db.userVideo.findMany({
       where: {
-        campaignUserId: { in: userData.campaignUsers.map((cu) => cu.id) },
+        campaignUserId: { in: campaignUserIds },
       },
       orderBy: { viewCount: "desc" },
-      take: videoLimitNumber,
+      take: videoLimit,
     });
 
     return { userData, videoCount, likeCount, videos };

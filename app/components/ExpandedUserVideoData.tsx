@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Link, useFetcher } from "react-router";
 import GlowContainer from "~/components/GlowContainer";
 import { cn, formatNumber } from "~/lib/utils";
-import type { ApiResponse } from "~/routes/api~/getUserData.$id.$videoLimit";
+import type { ApiResponse } from "~/routes/api~/getUserData";
 import VideoCard from "./VideoCard";
 
 export default function ExpandedUserVideoData({
@@ -18,7 +18,9 @@ export default function ExpandedUserVideoData({
   // biome-ignore lint/correctness/useExhaustiveDependencies: only want to run on userId change
   useEffect(() => {
     if (user.id && fetcher.state === "idle" && !fetcher.data) {
-      fetcher.load(`/api/getUserData/${user.id}/3`);
+      fetcher.load(
+        `/api/getUserData?userId=${user.id}&videoLimit=3&campaignId=${campaignId}`
+      );
     }
   }, [user.id, campaignId]);
 

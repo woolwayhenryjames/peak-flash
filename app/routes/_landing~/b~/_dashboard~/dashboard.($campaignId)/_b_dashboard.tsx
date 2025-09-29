@@ -169,13 +169,9 @@ export default function Dashboard({
                 KINDLE Score Rankings
               </h4>
             </div>
-            <Link
-              className="text-[#ACACAC] text-sm underline"
-              to="/u/leaderboard"
-              viewTransition
-            >
+            <span className="cursor-not-allowed text-[#ACACAC] text-sm opacity-50">
               View All
-            </Link>
+            </span>
           </div>
 
           <div className="space-y-[14px]">
@@ -212,13 +208,9 @@ export default function Dashboard({
 
             <h4 className="font-medium text-base text-white">Related Videos</h4>
           </div>
-          <Link
-            className="text-[#ACACAC] text-sm underline"
-            to={`/u/campaigns/${campaign.id}/videos`}
-            viewTransition
-          >
+          <span className="cursor-not-allowed text-[#ACACAC] text-sm opacity-50">
             View All
-          </Link>
+          </span>
         </div>
 
         <div className="space-y-[15px]">
