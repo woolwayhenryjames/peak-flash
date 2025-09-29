@@ -1,28 +1,36 @@
+/** biome-ignore-all lint/performance/noBarrelFile: page */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useFetcher } from "react-router";
 import VideoCard from "~/components/VideoCard";
 import { getVideosPaginated } from "~/services/campaign.server";
 import { db } from "~/services/db.server";
-import type { Route } from "./+types/campaigns.$id_.videos";
+import type { Route } from "./+types/profile_.$id.videos";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   if (!params.id) {
-    throw new Response("Campaign ID is required", { status: 400 });
+    throw new Response("user ID is required", { status: 400 });
   }
-  const campaign = await db.campaign.findUnique({
+  const user = await db.user.findUnique({
     where: { id: params.id },
   });
-  if (!campaign) {
-    throw new Response("Campaign not found", { status: 404 });
+  if (!user) {
+    throw new Response("User not found", { status: 404 });
   }
   const url = new URL(request.url);
   const page = Number.parseInt(url.searchParams.get("page") || "1", 10);
-  const pagination = await getVideosPaginated(params.id, undefined, page, 10);
+  const limit = Number.parseInt(url.searchParams.get("limit") || "10", 10);
+  const pagination = await getVideosPaginated(
+    undefined,
+    params.id,
+    page,
+    limit
+  );
 
-  return { ...pagination, campaign };
+  return { ...pagination, user };
 }
 
-export default function CampaignVideos({
+export default function ProfileVideos({
   loaderData,
   params,
 }: Route.ComponentProps) {
@@ -51,7 +59,7 @@ export default function CampaignVideos({
     setIsLoadingMore(true);
     const nextPage = currentPage.current + 1;
 
-    fetcher.load(`/campaigns/${params.id}/videos?page=${nextPage}`);
+    fetcher.load(`/profile/${params.id}/videos?page=${nextPage}`);
   }, [hasNextPage, isLoadingMore, fetcher, params.id]);
 
   // Handle fetcher data
@@ -109,7 +117,7 @@ export default function CampaignVideos({
       >
         <div className="">
           <div className="font-medium text-2xl text-white tracking-tight">
-            {loaderData.campaign.name} Videos
+            {loaderData.user.name} Videos
           </div>
         </div>
       </div>

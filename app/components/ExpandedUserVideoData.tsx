@@ -1,6 +1,7 @@
 import type { UserVideo } from ".prisma/main/client";
 import { useEffect } from "react";
-import { useFetcher } from "react-router";
+import { Link, useFetcher } from "react-router";
+import GlowContainer from "~/components/GlowContainer";
 import { cn, formatNumber } from "~/lib/utils";
 import type { ApiResponse } from "~/routes/api~/getUserData.$id.$videoLimit";
 import VideoCard from "./VideoCard";
@@ -151,9 +152,24 @@ export default function ExpandedUserVideoData({
                     </div>
                   )}
                 </div>
-
-                {/* Divider Line */}
-                <div className={cn("h-0 w-full border-[#414149] border-t")} />
+                <div
+                  className={cn(
+                    "flex w-full gap-5 border-[#414149] border-b pb-8"
+                  )}
+                >
+                  <a
+                    className="flex-1"
+                    href={`https://www.tiktok.com/@${userData.email}`}
+                  >
+                    <GlowContainer>Tiktok Profile</GlowContainer>
+                  </a>
+                  <Link
+                    className="flex-1"
+                    to={`/profile/${userData.id}/videos`}
+                  >
+                    <GlowContainer>See All</GlowContainer>
+                  </Link>
+                </div>
               </div>
 
               {/* Cross-Campaign Positions */}
