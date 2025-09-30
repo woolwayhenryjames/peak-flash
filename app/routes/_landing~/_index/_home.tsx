@@ -5,6 +5,7 @@ import CarouselIndicator from "~/components/CarouselIndicator";
 import GlowContainer from "~/components/GlowContainer";
 import enterpriseIcon from "~/components/Header/MenuContent/assets/enterprise.svg";
 import tiktokIcon from "~/components/Header/MenuContent/assets/tiktok.svg";
+import UserProfileTooltip from "~/components/UserProfileTooltip";
 import {
   Carousel,
   type CarouselApi,
@@ -306,26 +307,28 @@ export default function Index({ loaderData }: Route.ComponentProps) {
             </thead>
             <tbody>
               {loaderData.users.map((user) => (
-                <tr
-                  className="cursor-pointer transition-colors duration-200 hover:bg-white/5"
-                  key={user.rank}
-                >
-                  <td className="py-4 font-semibold text-white text-xl md:pr-8">
-                    {user.rank}
-                  </td>
-                  <td className="py-4 font-medium text-lg text-white md:pr-8">
-                    {user.name ?? user.email}
-                  </td>
-                  <td className="py-4 font-medium text-lg text-white md:pr-8">
-                    {user.kindleScore?.toFixed(0) ?? 0}
-                  </td>
-                  <td className="py-4 font-medium text-lg text-white md:pr-8">
-                    {formatNumber(user.followerCount)}
-                  </td>
-                  <td className="py-4 font-medium text-lg text-white">
-                    {formatNumber(user.likeCount)}
-                  </td>
-                </tr>
+                <UserProfileTooltip key={user.id} user={user}>
+                  <tr
+                    className="cursor-pointer transition-colors duration-200 hover:bg-white/5"
+                    key={user.rank}
+                  >
+                    <td className="py-4 font-semibold text-white text-xl md:pr-8">
+                      {user.rank}
+                    </td>
+                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                      {user.name ?? user.email}
+                    </td>
+                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                      {user.kindleScore?.toFixed(0) ?? 0}
+                    </td>
+                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                      {formatNumber(user.followerCount)}
+                    </td>
+                    <td className="py-4 font-medium text-lg text-white">
+                      {formatNumber(user.likeCount)}
+                    </td>
+                  </tr>
+                </UserProfileTooltip>
               ))}
             </tbody>
           </table>
