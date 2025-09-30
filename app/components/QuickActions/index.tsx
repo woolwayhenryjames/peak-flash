@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { useUser } from "~/routes/u~/_layout";
+import { useUser } from "~/lib/useUser";
 import GlowContainer from "../GlowContainer";
 import diamondIcon from "./assets/diamond-icon.svg";
 import usersIcon from "./assets/users-icon.svg";
