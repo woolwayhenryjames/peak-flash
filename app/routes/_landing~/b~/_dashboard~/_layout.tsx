@@ -13,15 +13,6 @@ import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/_layout";
 
-// Admin emails list - same as in admin routes
-const allowedAdminEmails = [
-  "arslanablikim",
-  "jenniffergzz",
-  "jen_sunny0",
-  "qtchcom",
-  "0x13b057da716a5d527dd2a5890eecb3fc72982cbd",
-];
-
 export async function loader({ request }: Route.LoaderArgs) {
   // Check authentication
   const user = await getDbUser(request);
@@ -30,15 +21,14 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   const userData = user.value;
-  const isAdmin = allowedAdminEmails.includes(userData.email);
 
   // Check if user is a business user or admin
-  if (!(userData.isBusiness || isAdmin)) {
+  if (!(userData.isBusiness || userData.isAdmin)) {
     throw redirect("/");
   }
 
   // Get campaigns based on user type
-  const campaigns = isAdmin
+  const campaigns = userData.isAdmin
     ? await db.campaign.findMany({
         select: { id: true, name: true },
         orderBy: { name: "asc" },
@@ -49,7 +39,7 @@ export async function loader({ request }: Route.LoaderArgs) {
         orderBy: { name: "asc" },
       });
 
-  if (!isAdmin && campaigns.length === 0) {
+  if (!userData.isAdmin && campaigns.length === 0) {
     // Business user doesn't own any campaigns, redirect to home
     throw redirect("/");
   }
@@ -61,7 +51,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   // Build where clause for video filtering based on user type
   let videoFilter: Prisma.UserVideoWhereInput;
 
-  if (isAdmin) {
+  if (userData.isAdmin) {
     // Admins can see all videos
     videoFilter = selectedCampaignId
       ? {
@@ -96,14 +86,14 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   if (selectedCampaignId) {
     totalParticipants = await db.campaignUser.count({
-      where: isAdmin
+      where: userData.isAdmin
         ? { campaignId: selectedCampaignId }
         : {
             campaignId: selectedCampaignId,
             campaign: { ownerId: userData.id },
           },
     });
-  } else if (isAdmin) {
+  } else if (userData.isAdmin) {
     const users = await db.campaignUser.findMany({
       select: { userId: true },
       distinct: ["userId"],

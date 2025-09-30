@@ -312,14 +312,14 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
           </div>
         )}
 
-        {/* Back to Home */}
+        {/* Back to Hub */}
         <div className="mt-12 text-center">
           <Link
             className="text-[#8080DA] text-sm transition-colors hover:text-white"
             to="/u"
             viewTransition
           >
-            ← Back to Home
+            ← Back to Hub
           </Link>
         </div>
       </div>

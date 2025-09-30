@@ -6,18 +6,8 @@ import type { Route } from "./+types/_b_dashboard";
 import CampaignAnalytics from "./components/CampaignAnalytics";
 import RankingCard from "./components/RankingCard";
 
-// Admin emails list - same as in admin routes
-const allowedAdminEmails = [
-  "arslanablikim",
-  "jenniffergzz",
-  "jen_sunny0",
-  "qtchcom",
-  "0x13b057da716a5d527dd2a5890eecb3fc72982cbd",
-];
-
 export function meta({ data }: Route.MetaArgs) {
-  const campaignName = data?.campaign?.name || "Campaign";
-  const participantCount = data?.campaign?._count?.campaignUsers || 0;
+  const campaignName = data?.campaign?.name || "";
 
   return [
     {
@@ -25,7 +15,7 @@ export function meta({ data }: Route.MetaArgs) {
     },
     {
       name: "description",
-      content: `View analytics and leaderboard for ${campaignName} campaign with ${participantCount} participants. Track Spark Score and Kindle Score rankings in real-time.`,
+      content: `View analytics and leaderboard for ${campaignName} campaign. Track Spark Score and Kindle Score rankings in real-time.`,
     },
     {
       name: "keywords",
@@ -53,10 +43,9 @@ export async function loader({
   }
 
   const userData = user.value;
-  const isAdmin = allowedAdminEmails.includes(userData.email);
 
   // Check if user is a business user or admin
-  if (!(userData.isBusiness || isAdmin)) {
+  if (!(userData.isBusiness || userData.isAdmin)) {
     throw redirect("/");
   }
 
@@ -65,7 +54,7 @@ export async function loader({
 
   if (campaignId) {
     // Specific campaign requested
-    if (isAdmin) {
+    if (userData.isAdmin) {
       campaign = await db.campaign.findUnique({
         where: { id: campaignId },
         include: { _count: { select: { campaignUsers: true } } },
@@ -79,7 +68,7 @@ export async function loader({
         include: { _count: { select: { campaignUsers: true } } },
       });
     }
-  } else if (isAdmin) {
+  } else if (userData.isAdmin) {
     // No specific campaign, admin gets first available
     campaign = await db.campaign.findFirst({
       orderBy: { name: "asc" },

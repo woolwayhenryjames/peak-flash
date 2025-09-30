@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Form, redirect, useActionData, useNavigation } from "react-router";
 import { cn, formatNumber } from "~/lib/utils";
-import { getSessionUser } from "~/services/auth.server";
+import { getDbUser } from "~/services/auth.server";
 import {
   createCampaign,
   deleteCampaign,
@@ -51,17 +51,9 @@ type ActionData =
   | { success: true; message: string }
   | { success: false; error: string };
 
-const allowedAdminEmails = [
-  "arslanablikim",
-  "jenniffergzz",
-  "jen_sunny0",
-  "qtchcom",
-  "0x13b057da716a5d527dd2a5890eecb3fc72982cbd",
-];
-
 export async function loader({ request }: Route.LoaderArgs) {
-  const user = await getSessionUser(request);
-  if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
+  const user = await getDbUser(request);
+  if (user.isErr() || !user.value.isAdmin) {
     throw redirect("/");
   }
 
@@ -75,8 +67,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export async function action({ request }: Route.ActionArgs) {
-  const user = await getSessionUser(request);
-  if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
+  const user = await getDbUser(request);
+  if (user.isErr() || !user.value.isAdmin) {
     throw redirect("/");
   }
   const { intent, id, data } = await transformFormData(request);

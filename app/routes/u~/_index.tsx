@@ -72,7 +72,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   };
 }
 
-export default function Home({
+export default function Hub({
   loaderData: { user, campaigns },
 }: Route.ComponentProps) {
   const userScore =

@@ -4,15 +4,6 @@ import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/_layout";
 
-// Admin emails list - same as in admin routes
-const allowedAdminEmails = [
-  "arslanablikim",
-  "jenniffergzz",
-  "jen_sunny0",
-  "qtchcom",
-  "0x13b057da716a5d527dd2a5890eecb3fc72982cbd",
-];
-
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
@@ -20,11 +11,10 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   const userData = user.value;
-  const isAdmin = allowedAdminEmails.includes(userData.email);
 
   // Check if business user owns any campaigns or if user is admin
   let hasCampaigns = false;
-  if (isAdmin) {
+  if (userData.isAdmin) {
     // Admins always have access to dashboard
     hasCampaigns = true;
   } else if (userData.isBusiness) {
@@ -37,7 +27,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   return {
     ...userData,
     hasCampaigns,
-    isAdmin,
   };
 }
 

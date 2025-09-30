@@ -16,7 +16,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: "/u", icon: homeIcon, activeIcon: homeIconActive, label: "Home" },
+  { href: "/u", icon: homeIcon, activeIcon: homeIconActive, label: "Hub" },
   {
     href: "/u/ascent",
     icon: rocketIcon,

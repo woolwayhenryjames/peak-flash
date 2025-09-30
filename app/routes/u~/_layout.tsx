@@ -10,17 +10,15 @@ import {
 import BottomNav from "~/components/BottomNav";
 import GlowContainer from "~/components/GlowContainer";
 import ProfileDetails from "~/components/ProfileDetails";
-import { auth } from "~/services/auth.server";
+import { getDbUser } from "~/services/auth.server";
 import type { Route } from "./+types/_layout";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
-  if (!session) {
+  const user = await getDbUser(request);
+  if (!user.isOk()) {
     throw redirect("/");
   }
-  return session.user;
+  return user.value;
 }
 
 type ContextType = { user: User | null };
@@ -59,7 +57,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
 
   // Check if there are more than one segments (excluding empty strings)
   const segments = location.pathname.split("/").filter(Boolean);
-  const showBackButton = segments.length > 2;
+  const showBackButton = segments.length > (loaderData.isBusiness ? 1 : 2);
 
   const handleBackClick = () => {
     navigate(-1);
@@ -106,7 +104,7 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
         </div>
       </header>
       <Outlet context={{ user: loaderData } satisfies ContextType} />
-      <BottomNav />
+      {!loaderData.isBusiness && <BottomNav />}
     </div>
   );
 }
@@ -118,7 +116,7 @@ const getPageName = (pathname: string) => {
 
   // If no segments, return 'Home'
   if (segments.length === 1) {
-    return "Home";
+    return "Hub";
   }
 
   // Get the last segment and format it
