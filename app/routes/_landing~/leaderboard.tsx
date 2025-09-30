@@ -133,7 +133,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
             "radial-gradient(99.68% 99.68% at 49.71% -5.81%, #707070 0%, #564731 25%, #241D13 40%, #120D0C 63.23%, #000 100%)",
         }}
       >
-        <div className="container mx-auto flex flex-col gap-14 p-4">
+        <div className="container mx-auto flex flex-col gap-14 p-4 lg:px-[8%]">
           <div className="text-4xl text-[#f2edea] md:text-7xl">Peekaboos</div>
           <div className="font-light text-[#cacaca] text-base md:text-2xl">
             Intelligent scoring system that discovers rising micro influencers
@@ -141,7 +141,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </div>
-      <div className="container mx-auto min-h-screen">
+      <div className="container mx-auto min-h-screen lg:px-[8%]">
         {/* Loading state for filter changes */}
         {isLoadingMore && users.length === 0 && (
           <div className="flex justify-center py-8">
@@ -176,7 +176,11 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
             </thead>
             <tbody>
               {users.map((user) => (
-                <UserProfileTooltip key={user.id} user={user}>
+                <UserProfileTooltip
+                  backgroundColor="#1D1B19"
+                  key={user.id}
+                  user={user}
+                >
                   <tr
                     className="cursor-pointer transition-colors duration-200 hover:bg-white/5"
                     key={user.rank}

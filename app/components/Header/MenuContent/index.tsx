@@ -135,7 +135,7 @@ export default function MenuContent({
 
   return (
     <>
-      <span className="mx-4 border-[#3E3E3E] border-b py-2 text-center font-normal text-white text-xs">
+      <span className="mx-4 border-[#3E3E3E] border-b py-2 font-normal text-white text-xs">
         @{user.email}
       </span>
       <div className="px-4 hover:bg-[#d9d9d9]/10">

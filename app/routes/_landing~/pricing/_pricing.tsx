@@ -53,7 +53,7 @@ export default function Pricing() {
             Compensate based on results, not estimation
           </div>
           <div className="font-light text-[#cacaca] text-base md:text-2xl">
-            PEAKAI delivers advanced creator analytics and seamless campaign
+            PeakAI delivers advanced creator analytics and seamless campaign
             management, empowering your success—your achievements are our top
             priority.
           </div>
@@ -95,10 +95,7 @@ export default function Pricing() {
                     <AccordionTrigger className="group w-full px-6 py-6 text-left hover:no-underline md:px-[91px]">
                       <div className="flex w-full items-start justify-between gap-4 md:items-center">
                         <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-[10px]">
-                          <span className="shrink-0 font-['Poppins'] font-normal text-[#C6C6C6] text-[28px] leading-[2.5em] md:text-[32px]">
-                            {faq.number}
-                          </span>
-                          <span className="font-['Poppins'] font-normal text-[#C6C6C6] text-[20px] leading-[1.4em] md:text-[28px]">
+                          <span className="font-normal text-[#C6C6C6] text-[20px] leading-[1.4em] md:text-[28px]">
                             {faq.question}
                           </span>
                         </div>
@@ -106,11 +103,9 @@ export default function Pricing() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="w-full overflow-hidden px-6 pb-6 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down md:px-[91px]">
-                      <div className="mt-[25px] border-white/10 border-t pt-[49px]">
-                        <p className="font-['Poppins'] font-normal text-[#A1A1A1] text-[18px] leading-[1.5em] md:text-[24px]">
-                          {faq.answer}
-                        </p>
-                      </div>
+                      <p className="whitespace-pre-wrap pt-12 font-normal text-[#A1A1A1] text-[18px] leading-[1.5em] md:text-[24px]">
+                        {faq.answer}
+                      </p>
                     </AccordionContent>
                   </div>
                 </AccordionItem>
@@ -125,7 +120,6 @@ export default function Pricing() {
 
 interface FAQ {
   id: string;
-  number: string;
   question: string;
   answer: string;
 }
@@ -187,35 +181,30 @@ const pricingPlans: PricingPlan[] = [
 const faqs: FAQ[] = [
   {
     id: "faq-1",
-    number: "1",
     question: "Where can PeakAI users view data after launching a campaign?",
     answer:
       "After successfully paying for cooperation and publishing a campaign, PeakAI users can log in as an enterprise to access a dedicated dashboard page. PeakAI is also planning to launch additional management features like campaign creation pages, enabling comprehensive project management for all stakeholders.",
   },
   {
     id: "faq-2",
-    number: "2",
     question: "How often is PeakAI user data updated?",
     answer:
       "Due to the complexity of PeakAI's scoring algorithms and data processing systems, PeakAI currently ensures that user data is updated within 24 hours. This timeframe allows PeakAI to maintain data accuracy while processing the intricate calculations required for PeakAI's AI-powered scoring system.",
   },
   {
     id: "faq-3",
-    number: "3",
     question: "Who determines PeakAI's reward distribution rules?",
     answer:
-      "PeakAI provides a professional AI scoring system that precisely captures and analyzes creator content, updating corresponding scores and rankings to project teams. The specific reward distribution rules are determined by the project teams themselves, who can reference SPARK Points, KINDLE Scores, and the actual content published by creators to establish their reward criteria. PeakAI will provide a creators list (including wallet addresses) based on project requirements, and rewards are distributed independently by the project teams.",
+      "PeakAI provides a professional AI scoring system that precisely captures and analyzes creator content, updating corresponding scores and rankings to project teams. The specific reward distribution rules are determined by the project teams themselves, who can reference SPARK Points, KINDLE Scores, and the actual content published by creators to establish their reward criteria.\n\n PeakAI will provide a creators list (including wallet addresses) based on project requirements, and rewards are distributed independently by the project teams.",
   },
   {
     id: "faq-4",
-    number: "4",
     question: "What are PeakAI's specific scoring criteria and dimensions?",
     answer:
-      "We use two primary metrics: SPARK Points and KINDLE Score. These metrics evaluate creators across multiple dimensions including content quality, engagement rates, audience authenticity, campaign alignment, and performance consistency. Our AI system analyzes these factors to provide comprehensive scoring that reflects true creator value and impact.",
+      "We use two primary metrics: SPARK Points and KINDLE Score. These metrics evaluate creators across multiple dimensions including content quality, engagement rates, audience authenticity, campaign alignment, and performance consistency.\n\n Our AI system analyzes these factors to provide comprehensive scoring that reflects true creator value and impact.",
   },
   {
     id: "faq-5",
-    number: "5",
     question: "Where does PeakAI's data come from?",
     answer:
       "PeakAI's data is sourced from TikTok's official API, combined with PeakAI's proprietary AI intelligent analysis systems and technical processes. This multi-layered approach ensures data completeness and real-time accuracy, providing reliable insights for campaign management and creator evaluation.",

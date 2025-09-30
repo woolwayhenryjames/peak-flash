@@ -187,39 +187,41 @@ export default function Leaderboard({
         }}
       >
         <div className="mx-auto mb-6 h-px w-[80%] bg-[#6c6c6c]/50" />
-        <div className="mx-6 flex items-center justify-between rounded-xl border border-[#2d3338] p-4">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-600">
-              <img
-                alt={
-                  loaderData.user?.name
-                    ? loaderData.user.name.substring(0, 4).toUpperCase()
-                    : "U"
-                }
-                className="h-full w-full object-cover"
-                src={loaderData.user?.image || ""}
-              />
+        {!loaderData.user.isBusiness && (
+          <div className="mx-6 flex items-center justify-between rounded-xl border border-[#2d3338] p-4">
+            <div className="flex items-center gap-4">
+              <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-600">
+                <img
+                  alt={
+                    loaderData.user?.name
+                      ? loaderData.user.name.substring(0, 4).toUpperCase()
+                      : "U"
+                  }
+                  className="h-full w-full object-cover"
+                  src={loaderData.user?.image || ""}
+                />
+              </div>
+
+              <div className="flex flex-col items-start gap-2">
+                <h3 className="font-medium text-white">
+                  @{loaderData.user?.email || "User"}
+                </h3>
+                {loaderData.campaignWithRanks.userRank && (
+                  <div className="rounded bg-linear-57 from-[#fdffa7] to-[#57ffd5] px-3 py-0.5 font-medium text-black text-xs">
+                    #{loaderData.campaignWithRanks.userRank}
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-col items-start gap-2">
-              <h3 className="font-medium text-white">
-                @{loaderData.user?.email || "User"}
-              </h3>
-              {loaderData.campaignWithRanks.userRank && (
-                <div className="rounded bg-linear-57 from-[#fdffa7] to-[#57ffd5] px-3 py-0.5 font-medium text-black text-xs">
-                  #{loaderData.campaignWithRanks.userRank}
-                </div>
-              )}
+            <div className="text-right">
+              <p className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-semibold text-2xl text-transparent">
+                {Math.round(loaderData.campaignWithRanks.userScore || 0)}
+              </p>
+              <p className="text-gray-400 text-xs">Spark Points</p>
             </div>
           </div>
-
-          <div className="text-right">
-            <p className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-semibold text-2xl text-transparent">
-              {Math.round(loaderData.campaignWithRanks.userScore || 0)}
-            </p>
-            <p className="text-gray-400 text-xs">Spark Points</p>
-          </div>
-        </div>
+        )}
         <div className="mx-6 my-8 flex gap-3">
           <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
             <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">

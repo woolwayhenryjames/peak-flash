@@ -1,0 +1,40 @@
+<svg width="390" height="658" viewBox="0 0 390 658" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip0_898_198)">
+    <rect width="390" height="658" fill="white" />
+    <rect y="-0.000244141" width="390" height="658" fill="url(#paint0_radial_898_198)" />
+    <ellipse cx="108.236" cy="565.011" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="174.34" cy="609.414" rx="0.455886" ry="0.400039" fill="#AAAAFF" />
+    <ellipse cx="298.796" cy="509.005" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="290.134" cy="599.814" rx="0.455886" ry="0.400039" fill="#AAAAFF" />
+    <ellipse cx="83.6183" cy="636.218" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="74.5006" cy="600.214" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="106.412" cy="623.415" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="194.854" cy="574.611" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="48.0592" cy="569.81" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="223.119" cy="617.816" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="272.355" cy="601.015" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="256.855" cy="566.611" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="39.8532" cy="618.616" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="132.854" cy="608.216" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="204.884" cy="608.216" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="116.442" cy="567.411" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <ellipse cx="148.354" cy="477.802" rx="0.911771" ry="0.800078" fill="#AAAAFF" />
+    <path d="M270 635V658H390V543H379.831V586.621H323.695V635H270Z" fill="black" />
+    <rect x="88" y="647" width="78" height="11" fill="black" />
+    <rect x="192" y="647" width="78" height="11" fill="black" />
+    <rect x="166" y="621" width="26" height="26" fill="black" />
+    <path d="M17.3762 570H0V658H135V636.617H41.6027V590.232H17.3762V570Z" fill="black" />
+  </g>
+  <defs>
+    <radialGradient id="paint0_radial_898_198" cx="0" cy="0" r="1"
+      gradientTransform="matrix(0.112765 420.198 -249.053 0.0729097 195 545.722)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3E4E9F" />
+      <stop offset="0.721484" stop-color="#170D35" />
+      <stop offset="0.807692" stop-color="#140F24" />
+      <stop offset="1" />
+    </radialGradient>
+    <clipPath id="clip0_898_198">
+      <rect width="390" height="658" fill="white" />
+    </clipPath>
+  </defs>
+</svg>

@@ -93,16 +93,18 @@ export function PricingCard({
           </ul>
 
           {/* CTA Button */}
-          <GlowContainer
-            className={cn(
-              "w-fit cursor-pointer whitespace-nowrap px-8 py-4 transition-transform duration-300",
-              "group-hover:bg-gradient-to-r group-hover:from-[#080C0D] group-hover:to-[#1E245D]"
-            )}
-          >
-            <span className="font-normal text-[#F3EEEA] text-base md:text-2xl">
-              Get Started
-            </span>
-          </GlowContainer>
+          <a href="https://t.me/Jenn_0066" rel="noreferrer" target="_blank">
+            <GlowContainer
+              className={cn(
+                "w-fit cursor-pointer whitespace-nowrap px-8 py-4 transition-transform duration-300",
+                "group-hover:bg-gradient-to-r group-hover:from-[#080C0D] group-hover:to-[#1E245D]"
+              )}
+            >
+              <span className="font-normal text-[#F3EEEA] text-base md:text-2xl">
+                Get Started
+              </span>
+            </GlowContainer>
+          </a>
         </div>
       </div>
     </div>

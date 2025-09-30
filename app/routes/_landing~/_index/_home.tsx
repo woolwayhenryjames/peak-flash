@@ -1,4 +1,5 @@
 import Autoplay from "embla-carousel-autoplay";
+import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import CarouselIndicator from "~/components/CarouselIndicator";
@@ -20,10 +21,16 @@ import {
 } from "~/components/ui/shadcn-io/marquee";
 import { useLogin } from "~/lib/useLogin";
 import { formatNumber } from "~/lib/utils";
+import { getDbUser } from "~/services/auth.server";
+import { db } from "~/services/db.server";
 import { getGlobalLeaderboard } from "~/services/user-ranking.server";
 import type { Route } from "./+types/_home";
 import bgBottom from "./assets/bg-bottom.svg";
+import bgBottomM from "./assets/bg-bottom-m.svg";
+import bgHighlight from "./assets/bg-highlight.svg";
+import bgHighlightM from "./assets/bg-highlight-m.svg";
 import bgTop from "./assets/bg-top.svg";
+import bgTopM from "./assets/bg-top-m.svg";
 import ascentScreenshot from "./assets/carousel/ascent-screenshot.png";
 import detailScreenshot from "./assets/carousel/detail-screenshot.png";
 import homeScreenshot from "./assets/carousel/home-screenshot.png";
@@ -31,7 +38,7 @@ import inviteScreenshot from "./assets/carousel/invite-screenshot.png";
 import profileScreenshot from "./assets/carousel/profile-screenshot.png";
 import humanSignalIcon from "./assets/highlight/human-signal.svg";
 import insightsIcon from "./assets/highlight/insights.svg";
-import peopleIcon from "./assets/highlight/robot-brain.svg";
+import peopleIcon from "./assets/highlight/people.svg";
 import robotBrainIcon from "./assets/highlight/robot-brain.svg";
 import productHighlightImage from "./assets/product-highlight-title.svg";
 import animocaBrandsLogo from "./assets/supporter/animoca-brands.png";
@@ -51,16 +58,14 @@ import nvidiaLogo from "./assets/supporter/nvidia.png";
 import uxlinkLogo from "./assets/supporter/uxlink.png";
 import yziLabsLogo from "./assets/supporter/yzi-labs.png";
 
-export function meta({ data }: Route.MetaArgs) {
-  const totalUsers = data?.pagination?.total || 0;
-
+export function meta() {
   return [
     {
       title: "Peak AI - AI & Crypto Campaign Management Platform",
     },
     {
       name: "description",
-      content: `Join Peak AI's revolutionary platform with ${totalUsers.toLocaleString()} creators. Earn Kindle Score points, participate in crypto and AI campaigns, and climb the global leaderboard.`,
+      content: `Join Peak AI's revolutionary platform. Earn Kindle Score points, participate in crypto and AI campaigns, and climb the global leaderboard.`,
     },
     {
       name: "keywords",
@@ -83,8 +88,35 @@ export function meta({ data }: Route.MetaArgs) {
   ];
 }
 
-export async function loader() {
-  return await getGlobalLeaderboard(1, 10);
+export async function loader({ request }: Route.LoaderArgs) {
+  const user = await getDbUser(request);
+  if (user.isErr()) {
+    return {
+      userData: null,
+      hasCampaigns: false,
+      globalLeaderboard: await getGlobalLeaderboard(1, 10),
+    };
+  }
+
+  const userData = user.value;
+
+  // Check if business user owns any campaigns or if user is admin
+  let hasCampaigns = false;
+  if (userData.isAdmin) {
+    // Admins always have access to dashboard
+    hasCampaigns = true;
+  } else if (userData.isBusiness) {
+    const campaignCount = await db.campaign.count({
+      where: { ownerId: userData.id },
+    });
+    hasCampaigns = campaignCount > 0;
+  }
+
+  return {
+    userData,
+    hasCampaigns,
+    globalLeaderboard: await getGlobalLeaderboard(1, 10),
+  };
 }
 
 export default function Index({ loaderData }: Route.ComponentProps) {
@@ -112,10 +144,15 @@ export default function Index({ loaderData }: Route.ComponentProps) {
   return (
     <div className="flex flex-col items-center justify-center bg-black">
       <div
-        className="flex w-full items-center bg-cover md:aspect-[1728/923]"
-        style={{ backgroundImage: `url("${bgTop}")` }}
+        className="flex w-full items-center bg-[image:var(--bg-top-mobile)] bg-cover md:aspect-[1728/923] md:bg-[image:var(--bg-top)]"
+        style={
+          {
+            "--bg-top": `url("${bgTop}")`,
+            "--bg-top-mobile": `url("${bgTopM}")`,
+          } as CSSProperties
+        }
       >
-        <div className="container mx-auto flex flex-col gap-20 lg:flex-row lg:items-center lg:gap-31 lg:p-[8%]">
+        <div className="container mx-auto flex flex-col-reverse gap-20 lg:flex-row lg:items-center lg:gap-31 lg:p-[8%]">
           {/* Hero Content */}
           <div className="flex flex-col gap-20 lg:flex-1">
             <div className="flex flex-col gap-12">
@@ -132,35 +169,62 @@ export default function Index({ loaderData }: Route.ComponentProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-4 md:flex-row">
-              {/* Start as Enterprises Button */}
-              <button
-                className="h-auto w-full md:w-auto"
-                onClick={signInEnterprise}
-                type="button"
-              >
-                <GlowContainer className="h-auto w-full gap-4 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] px-7 py-5 md:w-auto">
-                  <img alt="Logo" className="size-6" src={enterpriseIcon} />
-                  <span className="font-normal text-2xl text-white">
-                    Start as Enterprises
-                  </span>
-                </GlowContainer>
-              </button>
+            {!loaderData.userData && (
+              <div className="flex flex-col gap-4 md:flex-row">
+                {/* Start as Enterprises Button */}
+                <button
+                  className="h-auto w-full md:w-auto"
+                  onClick={signInEnterprise}
+                  type="button"
+                >
+                  <GlowContainer className="h-auto w-full gap-4 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] px-7 py-5 md:w-auto">
+                    <img alt="Logo" className="size-6" src={enterpriseIcon} />
+                    <span className="font-normal text-2xl text-white">
+                      Start as Enterprises
+                    </span>
+                  </GlowContainer>
+                </button>
 
-              {/* Start as Creators Button */}
-              <button
-                className="h-auto w-full md:w-auto"
-                onClick={signInCreator}
-                type="button"
-              >
-                <GlowContainer className="gap-4 px-10 py-5">
-                  <img alt="Logo" className="size-6" src={tiktokIcon} />
-                  <span className="font-normal text-2xl text-white">
-                    Start as Creators
-                  </span>
-                </GlowContainer>
-              </button>
-            </div>
+                {/* Start as Creators Button */}
+                <button
+                  className="h-auto w-full md:w-auto"
+                  onClick={signInCreator}
+                  type="button"
+                >
+                  <GlowContainer className="gap-4 px-10 py-5">
+                    <img alt="Logo" className="size-6" src={tiktokIcon} />
+                    <span className="font-normal text-2xl text-white">
+                      Start as Creators
+                    </span>
+                  </GlowContainer>
+                </button>
+              </div>
+            )}
+            {loaderData.userData?.isBusiness ? (
+              <div className="flex flex-col gap-4 md:flex-row">
+                {loaderData.hasCampaigns ? (
+                  <Link className="h-auto w-1/2 md:w-auto" to="/b/dashboard">
+                    <GlowContainer className="gap-4 px-10 py-5 font-normal text-2xl text-white">
+                      My Space
+                    </GlowContainer>
+                  </Link>
+                ) : (
+                  <Link className="h-auto w-1/2 md:w-auto" to="/pricing">
+                    <GlowContainer className="gap-4 px-10 py-5 font-normal text-2xl text-white">
+                      Create Campaign
+                    </GlowContainer>
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4 md:flex-row">
+                <Link className="h-auto w-1/2 md:w-auto" to="/u">
+                  <GlowContainer className="gap-4 px-10 py-5 font-normal text-2xl text-white">
+                    Start Creating
+                  </GlowContainer>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Screenshot carousel */}
@@ -200,10 +264,23 @@ export default function Index({ loaderData }: Route.ComponentProps) {
 
       {/* Product Highlight Section */}
       <div
-        className="flex w-full items-center bg-cover max-md:mt-12 md:aspect-[1728/1006]"
-        style={{ backgroundImage: `url("${bgBottom}")` }}
+        className="flex w-full items-center bg-[image:var(--bg-bottom-mobile)] bg-cover max-md:mt-12 md:aspect-[1728/1006] md:bg-[image:var(--bg-bottom)]"
+        style={
+          {
+            "--bg-bottom": `url("${bgBottom}")`,
+            "--bg-bottom-mobile": `url("${bgBottomM}")`,
+          } as CSSProperties
+        }
       >
-        <div className="container mx-auto flex flex-col items-center gap-16 bg-black pt-11 max-md:px-4">
+        <div
+          className="container mx-auto flex flex-col items-center gap-16 bg-[image:var(--bg-highlight-mobile)] bg-cover bg-no-repeat pt-11 max-md:px-4 md:bg-[image:var(--bg-highlight)]"
+          style={
+            {
+              "--bg-highlight": `url("${bgHighlight}")`,
+              "--bg-highlight-mobile": `url("${bgHighlightM}")`,
+            } as CSSProperties
+          }
+        >
           <img
             alt="Product Highlight"
             height="46"
@@ -275,7 +352,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
             "conic-gradient(from 185deg at -14% -17.95%, #000 0deg, #2C4271 162.69230604171753deg, #060112 290.7692241668701deg, #000 360deg)",
         }}
       >
-        <div className="container mx-auto px-4 py-28">
+        <div className="container mx-auto px-4 py-28 lg:px-[8%]">
           <div className="flex flex-col gap-9">
             <div className="text-3xl text-white leading-[80px] md:text-5xl">
               Peekaboos
@@ -306,8 +383,12 @@ export default function Index({ loaderData }: Route.ComponentProps) {
               </tr>
             </thead>
             <tbody>
-              {loaderData.users.map((user) => (
-                <UserProfileTooltip key={user.id} user={user}>
+              {loaderData.globalLeaderboard.users.map((user) => (
+                <UserProfileTooltip
+                  backgroundColor="#2C2A39"
+                  key={user.id}
+                  user={user}
+                >
                   <tr
                     className="cursor-pointer transition-colors duration-200 hover:bg-white/5"
                     key={user.rank}

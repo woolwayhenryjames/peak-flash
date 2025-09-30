@@ -1,4 +1,5 @@
 import type { User } from "better-auth";
+import { HomeIcon, UserStar } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import DialogWithCloseButton from "~/components/Dialogs/DialogWithCloseButton";
@@ -30,11 +31,15 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
     <>
       <Popover onOpenChange={setPopoverOpen} open={popoverOpen}>
         <PopoverTrigger asChild>
-          <img
-            alt={user.name || "User avatar"}
-            className="size-8 rounded-full object-cover"
-            src={user.image || ""}
-          />
+          {user.image ? (
+            <img
+              alt={user.name || "User avatar"}
+              className="size-8 rounded-full object-cover"
+              src={user.image || ""}
+            />
+          ) : (
+            <UserStar className="size-8 rounded-full" />
+          )}
         </PopoverTrigger>
         <PopoverContent
           align="end"
@@ -77,6 +82,17 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
             />
             <span className="font-normal text-white text-xs leading-[1.5]">
               Help Center
+            </span>
+          </Link>
+
+          <Link
+            className="flex items-center gap-[10px] px-7 py-4 hover:bg-white/7"
+            onClick={() => setPopoverOpen(false)}
+            to="/"
+          >
+            <HomeIcon className="size-3 text-white" />
+            <span className="font-normal text-white text-xs leading-[1.5]">
+              Homepage
             </span>
           </Link>
 

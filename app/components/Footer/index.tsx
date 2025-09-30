@@ -43,17 +43,12 @@ export default function Footer() {
             <div className="flex items-center gap-6 opacity-50">
               <a
                 aria-label="Follow us on Twitter"
-                className="relative h-5 w-5 transition-opacity hover:opacity-100"
+                className="transition-opacity hover:opacity-100"
                 href="https://twitter.com/TakeAPeakAI"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <div className="absolute inset-0 rounded-[3px] bg-white" />
-                <img
-                  alt="Twitter"
-                  className="relative h-5 w-5"
-                  src={twitterIcon}
-                />
+                <img alt="Twitter" className="h-5 w-5" src={twitterIcon} />
               </a>
               <a
                 aria-label="Follow us on TikTok"

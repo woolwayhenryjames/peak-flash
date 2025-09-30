@@ -27,6 +27,7 @@ interface UserProfileTooltipProps {
   children: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  backgroundColor: string;
 }
 
 export default function UserProfileTooltip({
@@ -34,6 +35,7 @@ export default function UserProfileTooltip({
   children,
   open,
   onOpenChange,
+  backgroundColor,
 }: UserProfileTooltipProps) {
   const { user: currentUser } = useUser();
   const { ref, x, y } = useMouse();
@@ -53,12 +55,13 @@ export default function UserProfileTooltip({
           alignOffset={x}
           avoidCollisions={true}
           className={cn(
-            "w-[20rem] border border-[#6C655E] bg-[#1D1B19] p-0 text-white",
+            "w-[20rem] border border-[#6C655E] p-0 text-white",
             "rounded-[14px]"
           )}
           collisionPadding={20}
           showArrow={false}
           sideOffset={-y}
+          style={{ backgroundColor }}
         >
           <div className="flex flex-col">
             {/* User Profile Section */}
