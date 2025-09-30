@@ -14,14 +14,20 @@ import tiktokIcon from "./assets/tiktok.svg";
 import twitterIcon from "./assets/twitter.svg";
 import MenuContent from "./MenuContent";
 
-export default function Header({ user }: { user: User | undefined | null }) {
+// Extend User type to include hasCampaigns and isAdmin properties
+type UserWithCampaigns =
+  | (User & { hasCampaigns?: boolean; isAdmin?: boolean })
+  | undefined
+  | null;
+
+export default function Header({ user }: { user: UserWithCampaigns }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "Peekaboos", href: "/peekaboos" },
+    { name: "Peekaboos", href: "/leaderboard" },
     { name: "Pricing", href: "/pricing" },
   ];
 

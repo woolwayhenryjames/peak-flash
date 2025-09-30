@@ -7,10 +7,13 @@ import signOutIcon from "./assets/sign-out-icon.svg";
 import startCreatingIcon from "./assets/start-creating.svg";
 import tiktokIcon from "./assets/tiktok.svg";
 
+// Extend User type to include hasCampaigns and isAdmin properties
+type UserWithCampaigns = User & { hasCampaigns?: boolean; isAdmin?: boolean };
+
 export default function MenuContent({
   user,
 }: {
-  user: User | undefined | null;
+  user: UserWithCampaigns | undefined | null;
 }) {
   const { signInEnterprise, signInCreator, signOut } = useLogin();
   if (!user) {
@@ -41,9 +44,24 @@ export default function MenuContent({
       </>
     );
   }
-  if (user.isBusiness) {
+
+  // Check if user is admin (admins always have dashboard access)
+  if (user.isAdmin) {
     return (
       <>
+        <span className="mx-4 border-[#3E3E3E] border-b py-2 text-center font-normal text-purple-400 text-xs">
+          Admin: @{user.email}
+        </span>
+        <div className="px-4 hover:bg-[#d9d9d9]/10">
+          <Link
+            className="flex gap-3 border-[#3E3E3E] border-b py-2"
+            to="/admin/campaigns"
+            type="button"
+          >
+            <img alt="Logo" className="size-4" src={enterpriseIcon} />
+            <span className="font-normal text-white text-xs">Admin Panel</span>
+          </Link>
+        </div>
         <div className="px-4 hover:bg-[#d9d9d9]/10">
           <Link
             className="flex gap-3 border-[#3E3E3E] border-b py-2"
@@ -51,8 +69,57 @@ export default function MenuContent({
             type="button"
           >
             <img alt="Logo" className="size-4" src={mySpaceIcon} />
-            <span className="font-normal text-white text-xs">My Space</span>
+            <span className="font-normal text-white text-xs">Dashboard</span>
           </Link>
+        </div>
+
+        {/* Sign Out Button */}
+        <div className="px-4 py-2 hover:bg-[#d9d9d9]/10">
+          <button className="flex gap-3" onClick={signOut} type="button">
+            <img alt="Logo" className="size-4" src={signOutIcon} />
+            <span className="font-normal text-[#E06868] text-xs">Sign Out</span>
+          </button>
+        </div>
+      </>
+    );
+  }
+
+  if (user.isBusiness) {
+    // Only show dashboard link if the business user owns campaigns
+    if (user.hasCampaigns) {
+      return (
+        <>
+          <div className="px-4 hover:bg-[#d9d9d9]/10">
+            <Link
+              className="flex gap-3 border-[#3E3E3E] border-b py-2"
+              to="/b/dashboard"
+              type="button"
+            >
+              <img alt="Logo" className="size-4" src={mySpaceIcon} />
+              <span className="font-normal text-white text-xs">My Space</span>
+            </Link>
+          </div>
+
+          {/* Sign Out Button */}
+          <div className="px-4 py-2 hover:bg-[#d9d9d9]/10">
+            <button className="flex gap-3" onClick={signOut} type="button">
+              <img alt="Logo" className="size-4" src={signOutIcon} />
+              <span className="font-normal text-[#E06868] text-xs">
+                Sign Out
+              </span>
+            </button>
+          </div>
+        </>
+      );
+    }
+
+    // Business user without campaigns - show message or alternative options
+    return (
+      <>
+        <div className="px-4 py-2">
+          <span className="block border-[#3E3E3E] border-b pb-2 text-center font-normal text-[#B5B5B5] text-xs">
+            No campaigns created yet
+          </span>
         </div>
 
         {/* Sign Out Button */}

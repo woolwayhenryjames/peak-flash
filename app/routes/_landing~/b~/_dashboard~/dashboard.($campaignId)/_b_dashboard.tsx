@@ -1,9 +1,19 @@
-import { Link } from "react-router";
+import { Link, redirect } from "react-router";
 import VideoCard from "~/components/VideoCard";
+import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/_b_dashboard";
 import CampaignAnalytics from "./components/CampaignAnalytics";
 import RankingCard from "./components/RankingCard";
+
+// Admin emails list - same as in admin routes
+const allowedAdminEmails = [
+  "arslanablikim",
+  "jenniffergzz",
+  "jen_sunny0",
+  "qtchcom",
+  "0x13b057da716a5d527dd2a5890eecb3fc72982cbd",
+];
 
 export function meta({ data }: Route.MetaArgs) {
   const campaignName = data?.campaign?.name || "Campaign";
@@ -32,19 +42,61 @@ export function meta({ data }: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ params: { campaignId } }: Route.LoaderArgs) {
-  const campaign = campaignId
-    ? await db.campaign.findUnique({
+export async function loader({
+  request,
+  params: { campaignId },
+}: Route.LoaderArgs) {
+  // Check authentication
+  const user = await getDbUser(request);
+  if (user.isErr()) {
+    throw redirect("/");
+  }
+
+  const userData = user.value;
+  const isAdmin = allowedAdminEmails.includes(userData.email);
+
+  // Check if user is a business user or admin
+  if (!(userData.isBusiness || isAdmin)) {
+    throw redirect("/");
+  }
+
+  // Fetch campaign based on user type and campaignId
+  let campaign: Awaited<ReturnType<typeof db.campaign.findUnique>> = null;
+
+  if (campaignId) {
+    // Specific campaign requested
+    if (isAdmin) {
+      campaign = await db.campaign.findUnique({
         where: { id: campaignId },
         include: { _count: { select: { campaignUsers: true } } },
-      })
-    : await db.campaign.findFirst({
-        orderBy: { name: "asc" },
+      });
+    } else {
+      campaign = await db.campaign.findUnique({
+        where: {
+          id: campaignId,
+          ownerId: userData.id,
+        },
         include: { _count: { select: { campaignUsers: true } } },
       });
+    }
+  } else if (isAdmin) {
+    // No specific campaign, admin gets first available
+    campaign = await db.campaign.findFirst({
+      orderBy: { name: "asc" },
+      include: { _count: { select: { campaignUsers: true } } },
+    });
+  } else {
+    // No specific campaign, business user gets first owned
+    campaign = await db.campaign.findFirst({
+      where: { ownerId: userData.id },
+      orderBy: { name: "asc" },
+      include: { _count: { select: { campaignUsers: true } } },
+    });
+  }
 
   if (!campaign) {
-    throw new Response("Campaign not found", { status: 404 });
+    // Campaign not found or not accessible
+    throw redirect("/b/dashboard");
   }
 
   // Get top 3 participants for leaderboard

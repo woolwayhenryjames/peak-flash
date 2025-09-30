@@ -1,6 +1,6 @@
 import type { Prisma } from ".prisma/main/client";
 import { ChevronDownIcon } from "lucide-react";
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, redirect } from "react-router";
 import GlowContainer from "~/components/GlowContainer";
 import RawData from "~/components/RawData";
 import {
@@ -9,42 +9,116 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/_layout";
 
+// Admin emails list - same as in admin routes
+const allowedAdminEmails = [
+  "arslanablikim",
+  "jenniffergzz",
+  "jen_sunny0",
+  "qtchcom",
+  "0x13b057da716a5d527dd2a5890eecb3fc72982cbd",
+];
+
 export async function loader({ request }: Route.LoaderArgs) {
-  // Get all campaigns for the dropdown
-  const campaigns = await db.campaign.findMany({
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
+  // Check authentication
+  const user = await getDbUser(request);
+  if (user.isErr()) {
+    throw redirect("/");
+  }
+
+  const userData = user.value;
+  const isAdmin = allowedAdminEmails.includes(userData.email);
+
+  // Check if user is a business user or admin
+  if (!(userData.isBusiness || isAdmin)) {
+    throw redirect("/");
+  }
+
+  // Get campaigns based on user type
+  const campaigns = isAdmin
+    ? await db.campaign.findMany({
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+      })
+    : await db.campaign.findMany({
+        where: { ownerId: userData.id },
+        select: { id: true, name: true },
+        orderBy: { name: "asc" },
+      });
+
+  if (!isAdmin && campaigns.length === 0) {
+    // Business user doesn't own any campaigns, redirect to home
+    throw redirect("/");
+  }
 
   // Check if a specific campaign is selected
   const url = new URL(request.url);
   const selectedCampaignId = url.searchParams.get("d");
 
-  // Build where clause for video filtering
-  const videoFilter: Prisma.UserVideoWhereInput = selectedCampaignId
-    ? {
-        active: true,
-        campaignUser: { campaignId: selectedCampaignId },
-      }
-    : { active: true };
+  // Build where clause for video filtering based on user type
+  let videoFilter: Prisma.UserVideoWhereInput;
+
+  if (isAdmin) {
+    // Admins can see all videos
+    videoFilter = selectedCampaignId
+      ? {
+          active: true,
+          campaignUser: {
+            campaignId: selectedCampaignId,
+          },
+        }
+      : {
+          active: true,
+        };
+  } else {
+    // Business users can only see videos from their owned campaigns
+    videoFilter = selectedCampaignId
+      ? {
+          active: true,
+          campaignUser: {
+            campaignId: selectedCampaignId,
+            campaign: { ownerId: userData.id },
+          },
+        }
+      : {
+          active: true,
+          campaignUser: {
+            campaign: { ownerId: userData.id },
+          },
+        };
+  }
 
   // Get analytics data
-  const [totalParticipants, videosSubmitted, videoStats] = await Promise.all([
-    // Count unique users who have joined campaigns (filtered if needed)
-    selectedCampaignId
-      ? db.campaignUser.count({
-          where: { campaignId: selectedCampaignId },
-        })
-      : db.campaignUser
-          .findMany({
-            select: { userId: true },
-            distinct: ["userId"],
-          })
-          .then((users) => users.length),
+  let totalParticipants: number;
 
+  if (selectedCampaignId) {
+    totalParticipants = await db.campaignUser.count({
+      where: isAdmin
+        ? { campaignId: selectedCampaignId }
+        : {
+            campaignId: selectedCampaignId,
+            campaign: { ownerId: userData.id },
+          },
+    });
+  } else if (isAdmin) {
+    const users = await db.campaignUser.findMany({
+      select: { userId: true },
+      distinct: ["userId"],
+    });
+    totalParticipants = users.length;
+  } else {
+    const users = await db.campaignUser.findMany({
+      where: { campaign: { ownerId: userData.id } },
+      select: { userId: true },
+      distinct: ["userId"],
+    });
+    totalParticipants = users.length;
+  }
+
+  const [videosSubmitted, videoStats] = await Promise.all([
     // Count total videos submitted (filtered if needed)
     db.userVideo.count({
       where: videoFilter,
@@ -167,7 +241,7 @@ export default function Dashboard({
                   <ChevronDownIcon className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="border-[#707070] bg-[#1a1a1a]">
+              <DropdownMenuContent className="border-[#707070] bg-[#1a1a2a]">
                 {campaigns.map((campaign) => (
                   <DropdownMenuItem
                     className="text-[#C2C2C2] focus:bg-[#2a2a2a] focus:text-white"
