@@ -18,7 +18,7 @@ export interface TikTokUserInfo {
 }
 
 interface TikHubApiResponse<T> {
-  data: T;
+  data: T & { status_code: number; status_msg: string };
   code: number;
   message: string;
 }
@@ -54,6 +54,10 @@ export async function getUserInfo(
     if (result.code !== 200) {
       logger.error("TikTok API error:", result.message);
       return err(result.message);
+    }
+    if (result.data.status_code !== 0) {
+      logger.error("TikTok API error:", result.data.status_msg);
+      return err(result.data.status_msg);
     }
 
     return ok(result.data.user);

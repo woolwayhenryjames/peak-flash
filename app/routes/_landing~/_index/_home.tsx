@@ -17,6 +17,9 @@ import {
   MarqueeItem,
 } from "~/components/ui/shadcn-io/marquee";
 import { useLogin } from "~/lib/useLogin";
+import { formatNumber } from "~/lib/utils";
+import { getGlobalLeaderboard } from "~/services/user-ranking.server";
+import type { Route } from "./+types/_home";
 import bgBottom from "./assets/bg-bottom.svg";
 import bgTop from "./assets/bg-top.svg";
 import ascentScreenshot from "./assets/carousel/ascent-screenshot.png";
@@ -45,7 +48,11 @@ import nvidiaLogo from "./assets/supporter/nvidia.png";
 import uxlinkLogo from "./assets/supporter/uxlink.png";
 import yziLabsLogo from "./assets/supporter/yzi-labs.png";
 
-export default function Index() {
+export async function loader() {
+  return await getGlobalLeaderboard(1, 10);
+}
+
+export default function Index({ loaderData }: Route.ComponentProps) {
   const plugin = useRef(Autoplay({ delay: 3000, stopOnInteraction: false }));
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
@@ -68,7 +75,7 @@ export default function Index() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-black p-4">
+    <div className="flex flex-col items-center justify-center bg-black">
       <div
         className="flex aspect-[1728/923] w-full items-center bg-cover"
         style={{ backgroundImage: `url("${bgTop}")` }}
@@ -222,6 +229,59 @@ export default function Index() {
             ))}
           </MarqueeContent>
         </Marquee>
+      </div>
+      <div
+        className="w-full"
+        style={{
+          background:
+            "conic-gradient(from 185deg at -14% -17.95%, #000 0deg, #2C4271 162.69230604171753deg, #060112 290.7692241668701deg, #000 360deg)",
+        }}
+      >
+        <div className="container mx-auto py-10">
+          <div className="flex flex-col gap-9">
+            <div className="text-5xl text-white leading-[80px]">Peekaboos</div>
+            <div className="font-light text-[#cacaca] text-xl">
+              Intelligent scoring system that discovers rising micro influencers
+              and viral content—AI reveals hidden impact and breakout potential.
+            </div>
+          </div>
+          <table className="mt-10 w-full table-auto">
+            <thead>
+              <tr className="border-white/20 border-b">
+                <th className="py-4 text-left text-2xl text-white">Rank</th>
+                <th className="py-4 text-left text-2xl text-white">
+                  Sparklers
+                </th>
+                <th className="py-4 text-left text-2xl text-white">
+                  KINDLE Score
+                </th>
+                <th className="py-4 text-left text-2xl text-white">
+                  Followers
+                </th>
+                <th className="py-4 text-left text-2xl text-white">Likes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loaderData.users.map((user) => (
+                <tr className="hover:bg-white/5" key={user.rank}>
+                  <td className="py-4 text-2xl text-white">{user.rank}</td>
+                  <td className="py-4 text-2xl text-white">
+                    {user.name ?? user.email}
+                  </td>
+                  <td className="py-4 text-2xl text-white">
+                    {user.kindleScore?.toFixed(0) ?? 0}
+                  </td>
+                  <td className="py-4 text-2xl text-white">
+                    {formatNumber(user.followerCount)}
+                  </td>
+                  <td className="py-4 text-2xl text-white">
+                    {formatNumber(user.likeCount)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

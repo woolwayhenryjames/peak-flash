@@ -38,6 +38,14 @@ model User {
   rank          Int?
   isBusiness    Boolean @default(false)
 
+  // TikTok profile data
+  bio                String? @db.Text
+  followerCount      Int?
+  followingCount     Int?
+  isStar             Boolean @default(false)
+  visibleVideosCount Int?
+  likeCount          Int?
+
   @@unique([email])
   @@index([id])
   @@index([kindleScore])

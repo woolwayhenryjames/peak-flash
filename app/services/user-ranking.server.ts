@@ -6,17 +6,8 @@ export interface UserWithKindleRank extends User {
   kindleRank: number;
 }
 
-export interface GlobalLeaderboardUser {
-  id: string;
-  name: string | null;
-  email: string;
-  image: string | null;
-  kindleScore: number | null;
-  rank: number | null;
-}
-
 export interface PaginatedLeaderboardResult {
-  users: GlobalLeaderboardUser[];
+  users: User[];
   pagination: {
     page: number;
     limit: number;
@@ -83,14 +74,6 @@ export async function getGlobalLeaderboard(
       orderBy: { rank: "asc" },
       skip: offset,
       take: actualLimit,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        kindleScore: true,
-        rank: true,
-      },
     });
 
     // Calculate pagination metadata (considering top 100 limit)

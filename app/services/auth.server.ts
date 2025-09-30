@@ -7,6 +7,7 @@ import {
   checkUserCampaignAlgo,
   updateUserPoints,
 } from "~/services/score-algo-api";
+import { updateUserInfo } from "~/services/updateUserInfo";
 import { persistUserImage } from "~/services/user.server";
 import { walletPlugin } from "~/services/walletPlugin.auth.server";
 import { db } from "./db.server";
@@ -43,6 +44,7 @@ export const auth = betterAuth({
       if (newSession) {
         persistUserImage(newSession.user);
         checkUserCampaignAlgo();
+        updateUserInfo({ user: newSession.user });
         setTimeout(() => updateUserPoints(), 10_000);
       }
       return Promise.resolve();
