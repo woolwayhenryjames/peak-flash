@@ -42,17 +42,17 @@ export default function Pricing() {
   return (
     <div className="bg-black">
       <div
-        className="flex h-140 items-center justify-start px-3"
+        className="flex h-70 items-center justify-start px-3 md:h-140"
         style={{
           background:
             "linear-gradient(to bottom left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #000 50%) bottom right / 50% 50% no-repeat, linear-gradient(to top left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #000 50%) top right / 50% 50% no-repeat",
         }}
       >
-        <div className="w-2/3 space-y-9 md:ml-[10%] md:w-1/2 lg:p-[8%]">
-          <div className="font-normal text-4xl text-[#f2edea] md:text-7xl">
+        <div className="m-5 w-[75%] space-y-6 md:m-[10%] md:w-1/2 md:space-y-9 lg:p-[8%]">
+          <div className="font-normal text-[#f2edea] text-xl md:text-7xl">
             Compensate based on results, not estimation
           </div>
-          <div className="font-light text-[#cacaca] text-base md:text-2xl">
+          <div className="font-light text-[#cacaca] text-xs md:text-2xl">
             PeakAI delivers advanced creator analytics and seamless campaign
             management, empowering your success—your achievements are our top
             priority.
@@ -61,7 +61,7 @@ export default function Pricing() {
       </div>
 
       {/* Pricing Packages Section */}
-      <div className="container mx-auto grid place-items-center py-56">
+      <div className="container mx-auto grid place-items-center md:py-56">
         <div className="grid w-full justify-center gap-y-12 md:grid-cols-2 md:gap-y-24">
           {pricingPlans.map((plan, index) => (
             <PricingCard index={index} key={plan.id} plan={plan} />
@@ -70,18 +70,18 @@ export default function Pricing() {
       </div>
       {/* FAQs Section */}
       <div
-        className="container mx-auto grid place-items-center bg-contain py-24 md:bg-cover"
+        className="container mx-auto grid place-items-center bg-contain bg-no-repeat py-12 md:bg-cover md:py-24"
         style={{
           backgroundImage: `url("${faqbg}")`,
         }}
       >
-        <div className="mb-20 text-center font-normal text-5xl text-white leading-[80px]">
+        <div className="mb-12 text-center font-normal text-white text-xl leading-[80px] md:mb-20 md:text-5xl">
           FAQs
         </div>
         <div className="contents w-full max-w-[1400px] flex-col items-center justify-end rounded-[63px] border border-zinc-800 bg-gradient-to-b from-[#0d0d0d] to-[#0d0d0d]/0 md:flex md:px-12 md:pt-12">
-          <div className="mx-2 rounded-xl border border-zinc-800 bg-gradient-to-b from-[#030303] to-[#090909]/0 px-3 py-8 md:w-full md:rounded-[56px] md:p-15">
+          <div className="mx-2 contents w-full rounded-[56px] border border-zinc-800 bg-gradient-to-b from-[#030303] to-[#090909]/0 p-15 md:block">
             <Accordion
-              className="w-full space-y-4 md:space-y-8"
+              className="space-y-4 max-md:mx-5 md:w-full md:space-y-8"
               collapsible
               type="single"
             >
@@ -95,7 +95,7 @@ export default function Pricing() {
                     <AccordionTrigger className="group w-full px-6 py-6 text-left hover:no-underline md:px-[91px]">
                       <div className="flex w-full items-start justify-between gap-4 md:items-center">
                         <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:gap-[10px]">
-                          <span className="font-normal text-[#C6C6C6] text-[20px] leading-[1.4em] md:text-[28px]">
+                          <span className="font-normal text-[#C6C6C6] text-sm leading-[1.4em] md:text-3xl">
                             {faq.question}
                           </span>
                         </div>
@@ -103,7 +103,7 @@ export default function Pricing() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="w-full overflow-hidden px-6 pb-6 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down md:px-[91px]">
-                      <p className="whitespace-pre-wrap pt-12 font-normal text-[#A1A1A1] text-[18px] leading-[1.5em] md:text-[24px]">
+                      <p className="whitespace-pre-wrap pt-12 font-normal text-[#A1A1A1] text-xs leading-[1.5em] md:text-2xl">
                         {faq.answer}
                       </p>
                     </AccordionContent>

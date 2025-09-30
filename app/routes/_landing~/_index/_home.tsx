@@ -144,23 +144,22 @@ export default function Index({ loaderData }: Route.ComponentProps) {
   return (
     <div className="flex flex-col items-center justify-center bg-black">
       <div
-        className="flex w-full items-center bg-[image:var(--bg-top-mobile)] bg-cover md:aspect-[1728/923] md:bg-[image:var(--bg-top)]"
+        className="contents w-full items-center bg-[image:var(--bg-top)] bg-cover md:flex md:aspect-[1728/923]"
         style={
           {
             "--bg-top": `url("${bgTop}")`,
-            "--bg-top-mobile": `url("${bgTopM}")`,
           } as CSSProperties
         }
       >
         <div className="container mx-auto flex flex-col-reverse gap-20 lg:flex-row lg:items-center lg:gap-31 lg:p-[8%]">
           {/* Hero Content */}
-          <div className="flex flex-col gap-20 lg:flex-1">
+          <div className="flex flex-col gap-5 p-5 md:gap-20 lg:flex-1">
             <div className="flex flex-col gap-12">
               <div className="space-y-6">
-                <h1 className="font-normal text-5xl text-white leading-[1.5] md:text-6xl">
+                <h1 className="font-normal text-white text-xl leading-[1.5] md:text-6xl">
                   Ascend Influence. Attain the Peak. Amplify Results.
                 </h1>
-                <p className="font-light text-[#CBCBCB] text-xl leading-[1.5] md:max-w-[37.5rem]">
+                <p className="font-light text-[#CBCBCB] text-xs leading-[1.5] md:max-w-[37.5rem] md:text-xl">
                   Experience the AI-powered Distribution OS that transforms
                   content into measurable results—for brands seeking reach, and
                   creators chasing recognition.
@@ -203,14 +202,14 @@ export default function Index({ loaderData }: Route.ComponentProps) {
             {loaderData.userData?.isBusiness ? (
               <div className="flex flex-col gap-4 md:flex-row">
                 {loaderData.hasCampaigns ? (
-                  <Link className="h-auto w-1/2 md:w-auto" to="/b/dashboard">
-                    <GlowContainer className="gap-4 px-10 py-5 font-normal text-2xl text-white">
+                  <Link className="h-auto w-2/3 md:w-auto" to="/b/dashboard">
+                    <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
                       My Space
                     </GlowContainer>
                   </Link>
                 ) : (
-                  <Link className="h-auto w-1/2 md:w-auto" to="/pricing">
-                    <GlowContainer className="gap-4 px-10 py-5 font-normal text-2xl text-white">
+                  <Link className="h-auto w-2/3 md:w-auto" to="/pricing">
+                    <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
                       Create Campaign
                     </GlowContainer>
                   </Link>
@@ -218,8 +217,8 @@ export default function Index({ loaderData }: Route.ComponentProps) {
               </div>
             ) : (
               <div className="flex flex-col gap-4 md:flex-row">
-                <Link className="h-auto w-1/2 md:w-auto" to="/u">
-                  <GlowContainer className="gap-4 px-10 py-5 font-normal text-2xl text-white">
+                <Link className="h-auto w-2/3 md:w-auto" to="/u">
+                  <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
                     Start Creating
                   </GlowContainer>
                 </Link>
@@ -228,43 +227,52 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           </div>
 
           {/* Screenshot carousel */}
-          <div className="flex w-[371px] flex-col items-center gap-8">
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              plugins={[plugin.current]}
-              setApi={setApi}
-            >
-              <CarouselContent>
-                {carouselImages.map((image) => (
-                  <CarouselItem key={image.id}>
-                    <img
-                      alt={image.alt}
-                      className="mx-auto mb-4"
-                      height="411"
-                      src={image.src}
-                      width="371"
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+          <div
+            className="flex aspect-[390/400] items-end justify-center gap-8 bg-[image:var(--bg-top-mobile)] md:contents"
+            style={
+              {
+                "--bg-top-mobile": `url("${bgTopM}")`,
+              } as CSSProperties
+            }
+          >
+            <div className="flex w-[244px] flex-col items-center gap-8 md:w-[371px]">
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                plugins={[plugin.current]}
+                setApi={setApi}
+              >
+                <CarouselContent>
+                  {carouselImages.map((image) => (
+                    <CarouselItem key={image.id}>
+                      <img
+                        alt={image.alt}
+                        className="mx-auto mb-4"
+                        height="411"
+                        src={image.src}
+                        width="371"
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
 
-            {/* Carousel Indicators */}
-            <CarouselIndicator
-              current={current}
-              onSelect={scrollTo}
-              total={carouselImages.length}
-            />
+              {/* Carousel Indicators */}
+              <CarouselIndicator
+                current={current}
+                onSelect={scrollTo}
+                total={carouselImages.length}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Product Highlight Section */}
       <div
-        className="flex w-full items-center bg-[image:var(--bg-bottom-mobile)] bg-cover max-md:mt-12 md:aspect-[1728/1006] md:bg-[image:var(--bg-bottom)]"
+        className="flex aspect-[390/658] w-full flex-col items-center bg-[image:var(--bg-bottom-mobile)] bg-cover px-5 max-md:mt-12 md:aspect-[1728/1006] md:bg-[image:var(--bg-bottom)]"
         style={
           {
             "--bg-bottom": `url("${bgBottom}")`,
@@ -272,8 +280,15 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           } as CSSProperties
         }
       >
+        <img
+          alt="Product Highlight"
+          className="md:hidden"
+          height="18"
+          src={productHighlightImage}
+          width="148"
+        />
         <div
-          className="container mx-auto flex flex-col items-center gap-16 bg-[image:var(--bg-highlight-mobile)] bg-cover bg-no-repeat pt-11 max-md:px-4 md:bg-[image:var(--bg-highlight)]"
+          className="container flex flex-col items-center gap-8 bg-[image:var(--bg-highlight-mobile)] bg-cover bg-no-repeat max-md:mt-7 max-md:border max-md:border-white/15 max-md:p-7 md:mx-auto md:gap-16 md:bg-[image:var(--bg-highlight)] md:pt-11"
           style={
             {
               "--bg-highlight": `url("${bgHighlight}")`,
@@ -283,6 +298,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
         >
           <img
             alt="Product Highlight"
+            className="hidden md:block"
             height="46"
             src={productHighlightImage}
             width="382"
@@ -291,7 +307,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-20 md:p-20">
             {productHighlights.map((highlight) => (
               <div
-                className="flex max-w-[15.5rem] flex-col items-center gap-8"
+                className="flex max-w-[15.5rem] flex-col items-center gap-4 md:gap-8"
                 key={highlight.id}
               >
                 {/* Icon Container */}
@@ -306,11 +322,11 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                 </GlowContainer>
 
                 {/* Text Content */}
-                <div className="flex flex-col gap-4 text-center">
-                  <h3 className="font-medium text-base text-white md:text-2xl md:leading-[1.5]">
+                <div className="flex flex-col gap-2 text-center md:gap-4">
+                  <h3 className="font-medium text-sm text-white md:text-2xl md:leading-[1.5]">
                     {highlight.title}
                   </h3>
-                  <p className="font-normal text-[#979797] text-sm md:text-base md:leading-[1.5]">
+                  <p className="font-normal text-[#979797] text-[10px] md:text-base md:leading-[1.5]">
                     {highlight.description}
                   </p>
                 </div>
@@ -346,11 +362,15 @@ export default function Index({ loaderData }: Route.ComponentProps) {
         </Marquee>
       </div>
       <div
-        className="w-full"
-        style={{
-          background:
-            "conic-gradient(from 185deg at -14% -17.95%, #000 0deg, #2C4271 162.69230604171753deg, #060112 290.7692241668701deg, #000 360deg)",
-        }}
+        className="w-full bg-[image:var(--bg-peekaboos-mobile)] md:bg-[image:var(--bg-peekaboos)]"
+        style={
+          {
+            "--bg-peekaboos-mobile":
+              "conic-gradient(from 185deg at -14% 0%, #000 0deg, #2C4271 162.69230604171753deg, #060112 290.7692241668701deg, #000 360deg)",
+            "--bg-peekaboos":
+              "conic-gradient(from 185deg at -14% -17.95%, #000 0deg, #2C4271 162.69230604171753deg, #060112 290.7692241668701deg, #000 360deg)",
+          } as CSSProperties
+        }
       >
         <div className="container mx-auto px-4 py-28 lg:px-[8%]">
           <div className="flex flex-col gap-9">
@@ -413,7 +433,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
               ))}
             </tbody>
           </table>
-          <div className="ml-auto w-1/5">
+          <div className="ml-auto md:w-1/5">
             <Link to="/leaderboard">
               <GlowContainer>View All</GlowContainer>
             </Link>
