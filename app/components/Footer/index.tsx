@@ -22,24 +22,19 @@ export default function Footer() {
         <div className="mt-10 flex flex-col gap-5 sm:mt-0">
           <nav className="flex-1">
             <ul className="flex flex-col gap-6">
-              {navItems.map((item) => {
-                const isActive = location.pathname === item.href;
-                return (
-                  <li key={item.name}>
-                    <Link
-                      className={cn(
-                        "block font-normal text-lg transition-colors",
-                        isActive
-                          ? "text-[#F3EEEA]"
-                          : "text-[#B5B5B5] hover:text-[#F3EEEA]"
-                      )}
-                      to={item.href}
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                );
-              })}
+              {navItems.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    className={cn(
+                      "block font-normal text-lg transition-colors",
+                      "text-[#B5B5B5] hover:text-[#F3EEEA]"
+                    )}
+                    to={item.href}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>
