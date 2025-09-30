@@ -23,7 +23,7 @@ export function PricingCard({
     <div
       className={cn(
         "group relative overflow-hidden rounded-2xl transition-all duration-300",
-        "max-md:mx-7 max-md:border max-md:border-white/20 max-md:p-7",
+        "p-7 max-md:mx-7 max-md:border max-md:border-white/20",
         index % 2 === 0 && "border-white/20 md:border-r",
         "hover:border-transparent"
       )}

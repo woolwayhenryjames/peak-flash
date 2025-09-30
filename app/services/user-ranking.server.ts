@@ -8,7 +8,10 @@ export interface UserWithKindleRank extends User {
 
 export interface PaginatedLeaderboardResult {
   users: (User & {
-    campaignUsers: { rank: number | null; campaign: { name: string } }[];
+    campaignUsers: {
+      rank: number | null;
+      campaign: { id: string; name: string };
+    }[];
   })[];
   pagination: {
     page: number;
@@ -77,9 +80,13 @@ export async function getGlobalLeaderboard(
       take: actualLimit,
       include: {
         campaignUsers: {
+          where: {
+            rank: { not: null },
+            campaign: { endDate: { gte: new Date() } },
+          },
           select: {
             rank: true,
-            campaign: { select: { name: true } },
+            campaign: { select: { id: true, name: true } },
           },
         },
       },

@@ -1,15 +1,9 @@
-import type { User } from "better-auth";
 import { useEffect } from "react";
-import {
-  Outlet,
-  redirect,
-  useLocation,
-  useNavigate,
-  useOutletContext,
-} from "react-router";
+import { Outlet, redirect, useLocation, useNavigate } from "react-router";
 import BottomNav from "~/components/BottomNav";
 import GlowContainer from "~/components/GlowContainer";
 import ProfileDetails from "~/components/ProfileDetails";
+import type { ContextType } from "~/lib/useUser";
 import { getDbUser } from "~/services/auth.server";
 import type { Route } from "./+types/_layout";
 
@@ -19,12 +13,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     throw redirect("/");
   }
   return user.value;
-}
-
-type ContextType = { user: User | null };
-
-export function useUser() {
-  return useOutletContext<ContextType>();
 }
 
 export default function Layout({ loaderData }: Route.ComponentProps) {

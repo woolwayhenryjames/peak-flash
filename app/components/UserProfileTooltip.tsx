@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import GlowContainer from "~/components/GlowContainer";
 import {
   Tooltip,
@@ -6,6 +7,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { useMouse } from "~/lib/useMouse";
+import { useUser } from "~/lib/useUser";
 import { cn } from "~/lib/utils";
 
 interface UserProfileTooltipProps {
@@ -17,7 +19,10 @@ interface UserProfileTooltipProps {
     rank: number | null;
     followerCount: number | null;
     likeCount: number | null;
-    campaignUsers: { rank: number | null; campaign: { name: string } }[];
+    campaignUsers: {
+      rank: number | null;
+      campaign: { id: string; name: string };
+    }[];
   };
   children: React.ReactNode;
   open?: boolean;
@@ -30,6 +35,7 @@ export default function UserProfileTooltip({
   open,
   onOpenChange,
 }: UserProfileTooltipProps) {
+  const { user: currentUser } = useUser();
   const { ref, x, y } = useMouse();
   return (
     <TooltipProvider delayDuration={300} skipDelayDuration={100}>
@@ -119,10 +125,17 @@ export default function UserProfileTooltip({
               {/* Campaigns List */}
               <div className="flex flex-col items-end gap-3">
                 {user.campaignUsers.length > 0 ? (
-                  user.campaignUsers.slice(0, 3).map((campaignUser, index) => (
-                    <div
+                  user.campaignUsers.map((campaignUser, index) => (
+                    <Link
                       className="flex w-full flex-col gap-[0.625rem]"
-                      key={campaignUser.campaign.name}
+                      key={campaignUser.campaign.id}
+                      onClick={(e) => {
+                        // Prevent navigation if the user is viewing their own profile
+                        if (!currentUser) {
+                          e.preventDefault();
+                        }
+                      }}
+                      to={`/campaigns/${campaignUser.campaign.id}`}
                     >
                       <div className="flex items-center justify-between">
                         {/* Campaign Name with Bullet */}
@@ -146,7 +159,7 @@ export default function UserProfileTooltip({
                           style={{ borderWidth: "0 0 1px 0" }}
                         />
                       )}
-                    </div>
+                    </Link>
                   ))
                 ) : (
                   <div className="w-full py-2 text-center text-[#979797] text-[0.875rem]">

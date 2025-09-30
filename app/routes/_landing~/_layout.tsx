@@ -1,6 +1,7 @@
 import { Outlet } from "react-router";
 import Footer from "~/components/Footer";
 import Header from "~/components/Header";
+import type { ContextType } from "~/lib/useUser";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/_layout";
@@ -35,7 +36,7 @@ export default function LandingLayout({ loaderData }: Route.ComponentProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <Header user={loaderData} />
-      <Outlet />
+      <Outlet context={{ user: loaderData } satisfies ContextType} />
       <Footer />
     </div>
   );
