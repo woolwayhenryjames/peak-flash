@@ -80,6 +80,7 @@ export async function transformFormData(request: Request) {
       ? JSON.parse(inputData.joinRequirement)
       : undefined,
     shareUrls: processedShareUrls,
+    ownerId: inputData.ownerId || undefined,
   };
   return { intent: inputData.intent, id: inputData.id, data: newData };
 }

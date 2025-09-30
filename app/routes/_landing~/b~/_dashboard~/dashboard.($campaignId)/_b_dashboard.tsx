@@ -5,6 +5,33 @@ import type { Route } from "./+types/_b_dashboard";
 import CampaignAnalytics from "./components/CampaignAnalytics";
 import RankingCard from "./components/RankingCard";
 
+export function meta({ data }: Route.MetaArgs) {
+  const campaignName = data?.campaign?.name || "Campaign";
+  const participantCount = data?.campaign?._count?.campaignUsers || 0;
+
+  return [
+    {
+      title: `${campaignName} Dashboard - Peak AI`,
+    },
+    {
+      name: "description",
+      content: `View analytics and leaderboard for ${campaignName} campaign with ${participantCount} participants. Track Spark Score and Kindle Score rankings in real-time.`,
+    },
+    {
+      name: "keywords",
+      content: `${campaignName}, Peak AI dashboard, campaign analytics, Spark Score, Kindle Score, leaderboard, campaign participants`,
+    },
+    {
+      property: "og:title",
+      content: `${campaignName} Campaign Dashboard - Peak AI`,
+    },
+    {
+      property: "og:description",
+      content: `Real-time analytics and rankings for ${campaignName} campaign. See top performers and track campaign progress.`,
+    },
+  ];
+}
+
 export async function loader({ params: { campaignId } }: Route.LoaderArgs) {
   const campaign = campaignId
     ? await db.campaign.findUnique({

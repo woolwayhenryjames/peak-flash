@@ -184,3 +184,22 @@ export const persistUserImage = async (user: {
   }
   return ok(false);
 };
+
+// Get all users for admin selection (e.g., campaign owner assignment)
+export async function getAllUsers() {
+  try {
+    const users = await db.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+      },
+      orderBy: [{ name: "asc" }, { email: "asc" }],
+    });
+    return ok(users);
+  } catch (error) {
+    logger.error("Failed to fetch all users:", error);
+    return err("Failed to fetch users");
+  }
+}

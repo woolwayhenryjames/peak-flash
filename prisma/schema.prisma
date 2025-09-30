@@ -39,12 +39,13 @@ model User {
   isBusiness    Boolean @default(false)
 
   // TikTok profile data
-  bio                String? @db.Text
+  bio                String?    @db.Text
   followerCount      Int?
   followingCount     Int?
-  isStar             Boolean @default(false)
+  isStar             Boolean    @default(false)
   visibleVideosCount Int?
   likeCount          Int?
+  Campaign           Campaign[] @relation("CampaignOwner")
 
   @@unique([email])
   @@index([id])
@@ -68,10 +69,13 @@ model Campaign {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @default(now()) @updatedAt
   order           Int      @default(0)
+  ownerId         String?
+  owner           User?    @relation("CampaignOwner", fields: [ownerId], references: [id], onDelete: SetNull)
 
   campaignUsers CampaignUser[]
 
   @@index([id])
+  @@index([ownerId])
 }
 
 model CampaignUser {

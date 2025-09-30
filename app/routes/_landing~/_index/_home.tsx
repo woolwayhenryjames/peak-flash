@@ -30,7 +30,7 @@ import inviteScreenshot from "./assets/carousel/invite-screenshot.png";
 import profileScreenshot from "./assets/carousel/profile-screenshot.png";
 import humanSignalIcon from "./assets/highlight/human-signal.svg";
 import insightsIcon from "./assets/highlight/insights.svg";
-import peopleIcon from "./assets/highlight/people.svg";
+import peopleIcon from "./assets/highlight/robot-brain.svg";
 import robotBrainIcon from "./assets/highlight/robot-brain.svg";
 import animocaBrandsLogo from "./assets/supporter/animoca-brands.png";
 import aptosLogo from "./assets/supporter/aptos.png";
@@ -48,6 +48,38 @@ import mhVenturesLogo from "./assets/supporter/mh-ventures.png";
 import nvidiaLogo from "./assets/supporter/nvidia.png";
 import uxlinkLogo from "./assets/supporter/uxlink.png";
 import yziLabsLogo from "./assets/supporter/yzi-labs.png";
+
+export function meta({ data }: Route.MetaArgs) {
+  const totalUsers = data?.pagination?.total || 0;
+
+  return [
+    {
+      title: "Peak AI - AI & Crypto Campaign Management Platform",
+    },
+    {
+      name: "description",
+      content: `Join Peak AI's revolutionary platform with ${totalUsers.toLocaleString()} creators. Earn Kindle Score points, participate in crypto and AI campaigns, and climb the global leaderboard.`,
+    },
+    {
+      name: "keywords",
+      content:
+        "Peak AI, crypto campaigns, AI campaigns, Kindle Score, TikTok campaigns, creator rewards, blockchain campaigns, social campaigns",
+    },
+    {
+      property: "og:title",
+      content: "Peak AI - Where Creators Meet Crypto & AI Campaigns",
+    },
+    {
+      property: "og:description",
+      content:
+        "Participate in cutting-edge crypto and AI campaigns. Earn rewards, build your Kindle Score, and join a global community of creators.",
+    },
+    {
+      property: "og:type",
+      content: "website",
+    },
+  ];
+}
 
 export async function loader() {
   return await getGlobalLeaderboard(1, 10);

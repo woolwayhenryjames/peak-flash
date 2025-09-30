@@ -372,7 +372,7 @@ The AI should ignore the following auto-fixable linter issues that can be handle
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw redirect('/login');
+    throw redirect('/');
   }
   
   const campaigns = await getCampaignsForUser(user.value);

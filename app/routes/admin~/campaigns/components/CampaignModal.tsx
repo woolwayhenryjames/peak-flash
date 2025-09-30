@@ -1,4 +1,4 @@
-import type { Campaign } from ".prisma/main/client";
+import type { Campaign, User } from ".prisma/main/client";
 import { Form, useActionData } from "react-router";
 import DialogWithCloseButton from "~/components/Dialogs/DialogWithCloseButton";
 import { DynamicJSONInput } from "./DynamicJSONInput";
@@ -8,13 +8,24 @@ type ActionData =
   | { success: true; message: string }
   | { success: false; error: string };
 
+type CampaignWithOwner = Campaign & {
+  owner?: {
+    id: string;
+    name: string;
+    email: string;
+    image: string | null;
+  } | null;
+};
+
 export function CampaignModal({
   campaign,
+  users,
   isOpen,
   onClose,
   isSubmitting,
 }: {
-  campaign: Campaign | null;
+  campaign: CampaignWithOwner | null;
+  users: Pick<User, "id" | "name" | "email" | "image">[];
   isOpen: boolean;
   onClose: () => void;
   isSubmitting: boolean;
@@ -97,6 +108,30 @@ export function CampaignModal({
               required
               type="text"
             />
+          </div>
+
+          <div className="form-control md:col-span-2">
+            <label className="label" htmlFor="ownerId">
+              <span className="label-text font-semibold">Campaign Owner</span>
+            </label>
+            <select
+              className="select select-bordered focus:select-primary w-full"
+              defaultValue={isEdit ? campaign.ownerId || "" : ""}
+              id="ownerId"
+              name="ownerId"
+            >
+              <option value="">No owner assigned</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name || user.email} ({user.email})
+                </option>
+              ))}
+            </select>
+            <div className="label">
+              <span className="label-text-alt">
+                Assign a user as the owner of this campaign
+              </span>
+            </div>
           </div>
         </div>
 

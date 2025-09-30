@@ -73,7 +73,7 @@ export function meta({ data }: Route.MetaArgs) {
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw redirect("/login");
+    throw redirect("/");
   }
 
   const campaign = await db.campaign.findUnique({

@@ -18,7 +18,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     headers: request.headers,
   });
   if (!session) {
-    throw redirect("/login");
+    throw redirect("/");
   }
   return session.user;
 }

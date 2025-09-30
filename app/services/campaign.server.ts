@@ -269,6 +269,14 @@ export async function getAllCampaigns() {
       _count: {
         select: { campaignUsers: true },
       },
+      owner: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+        },
+      },
     },
   });
 }

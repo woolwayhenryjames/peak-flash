@@ -9,6 +9,7 @@ import {
   updateCampaign,
 } from "~/services/campaign.server";
 import { logger } from "~/services/logger.server";
+import { getAllUsers } from "~/services/user.server";
 import type { Route } from "./+types/_a_campaign";
 import { CampaignModal } from "./components/CampaignModal";
 import { transformFormData } from "./transformFormData";
@@ -55,22 +56,28 @@ const allowedAdminEmails = [
   "jenniffergzz",
   "jen_sunny0",
   "qtchcom",
+  "0x13b057da716a5d527dd2a5890eecb3fc72982cbd",
 ];
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getSessionUser(request);
   if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
-    throw redirect("/login");
+    throw redirect("/");
   }
 
   const campaigns = await getAllCampaigns();
-  return { campaigns };
+  const usersResult = await getAllUsers();
+
+  return {
+    campaigns,
+    users: usersResult.isOk() ? usersResult.value : [],
+  };
 }
 
 export async function action({ request }: Route.ActionArgs) {
   const user = await getSessionUser(request);
   if (user.isErr() || !allowedAdminEmails.includes(user.value.email)) {
-    throw redirect("/login");
+    throw redirect("/");
   }
   const { intent, id, data } = await transformFormData(request);
   try {
@@ -128,7 +135,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function AdminCampaigns({
-  loaderData: { campaigns },
+  loaderData: { campaigns, users },
 }: Route.ComponentProps) {
   const actionData = useActionData<ActionData>();
   const navigation = useNavigation();
@@ -195,6 +202,9 @@ export default function AdminCampaigns({
                   Name
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
+                  Owner
+                </th>
+                <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
                   Pool Size
                 </th>
                 <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
@@ -251,6 +261,34 @@ export default function AdminCampaigns({
                           )}
                         </div>
                       </div>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4">
+                      {campaign.owner ? (
+                        <div className="flex items-center">
+                          {campaign.owner.image && (
+                            <img
+                              alt=""
+                              className="h-8 w-8 rounded-full object-cover"
+                              src={campaign.owner.image}
+                            />
+                          )}
+                          <div
+                            className={cn(
+                              "ml-2",
+                              !campaign.owner.image && "ml-0"
+                            )}
+                          >
+                            <div className="text-sm text-white">
+                              {campaign.owner.name || campaign.owner.email}
+                            </div>
+                            <div className="text-gray-400 text-xs">
+                              {campaign.owner.email}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-gray-500 text-sm">No owner</span>
+                      )}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-white">
                       $&nbsp;{formatNumber(campaign.poolSize)}
@@ -346,6 +384,7 @@ export default function AdminCampaigns({
             setIsCreateModalOpen(false);
             setEditingCampaign(null);
           }}
+          users={users}
         />
       )}
     </>

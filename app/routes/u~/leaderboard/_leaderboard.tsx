@@ -57,7 +57,7 @@ export function meta({ data }: Route.MetaArgs) {
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await getDbUser(request);
   if (user.isErr()) {
-    throw redirect("/login");
+    throw redirect("/");
   }
 
   const url = new URL(request.url);

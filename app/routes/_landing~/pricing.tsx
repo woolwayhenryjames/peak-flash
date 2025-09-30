@@ -8,6 +8,33 @@ import { ChevronDown } from "lucide-react";
 import GlowContainer from "~/components/GlowContainer";
 import { cn } from "~/lib/utils";
 
+export function meta() {
+  return [
+    {
+      title: "Pricing - Peak AI Campaign Management Platform",
+    },
+    {
+      name: "description",
+      content:
+        "Explore Peak AI's flexible pricing plans for crypto and AI campaign management. Compensate creators based on results with advanced analytics and seamless campaign management.",
+    },
+    {
+      name: "keywords",
+      content:
+        "Peak AI pricing, campaign management pricing, creator analytics, crypto campaigns, AI campaigns, performance-based compensation",
+    },
+    {
+      property: "og:title",
+      content: "Peak AI Pricing - Results-Based Creator Compensation",
+    },
+    {
+      property: "og:description",
+      content:
+        "PEAKAI delivers advanced creator analytics and seamless campaign management. Compensate based on results, not estimation.",
+    },
+  ];
+}
+
 export default function Pricing() {
   return (
     <div className="bg-black">
