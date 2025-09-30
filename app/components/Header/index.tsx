@@ -20,17 +20,16 @@ type UserWithCampaigns =
   | undefined
   | null;
 
+export const navItems = [
+  { name: "Home", href: "/" },
+  { name: "Peekaboos", href: "/leaderboard" },
+  { name: "Pricing", href: "/pricing" },
+];
+
 export default function Header({ user }: { user: UserWithCampaigns }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-
-  const navItems = [
-    { name: "Home", href: "/" },
-    { name: "Peekaboos", href: "/leaderboard" },
-    { name: "Pricing", href: "/pricing" },
-  ];
-
   return (
     <header className="relative w-full bg-black">
       <div className="flex h-[90px] items-center px-4 sm:px-8 lg:px-[71px]">

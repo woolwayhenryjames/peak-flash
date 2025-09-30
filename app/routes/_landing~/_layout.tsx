@@ -1,4 +1,5 @@
 import { Outlet } from "react-router";
+import Footer from "~/components/Footer";
 import Header from "~/components/Header";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
@@ -35,6 +36,7 @@ export default function LandingLayout({ loaderData }: Route.ComponentProps) {
     <div className="flex min-h-screen flex-col">
       <Header user={loaderData} />
       <Outlet />
+      <Footer />
     </div>
   );
 }
