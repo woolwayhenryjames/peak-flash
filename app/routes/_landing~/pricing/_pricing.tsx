@@ -7,6 +7,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import GlowContainer from "~/components/GlowContainer";
 import { cn } from "~/lib/utils";
+import faqbg from "./assets/faq-bg.svg";
 
 export function meta() {
   return [
@@ -45,7 +46,7 @@ export default function Pricing() {
             "linear-gradient(to bottom left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #000 50%) bottom right / 50% 50% no-repeat, linear-gradient(to top left, #FDFFF7 0%, #B491BB 27%, #1B2C45 40%, #000 50%) top right / 50% 50% no-repeat",
         }}
       >
-        <div className="w-2/3 space-y-9 md:ml-[10%] md:w-1/2">
+        <div className="w-2/3 space-y-9 md:ml-[10%] md:w-1/2 lg:p-[8%]">
           <div className="font-normal text-4xl text-[#f2edea] md:text-7xl">
             Compensate based on results, not estimation
           </div>
@@ -58,8 +59,8 @@ export default function Pricing() {
       </div>
 
       {/* Pricing Packages Section */}
-      <div className="container mx-auto grid place-items-center py-24">
-        <div className="grid w-full justify-center gap-y-12 md:grid-cols-2">
+      <div className="container mx-auto grid place-items-center py-56">
+        <div className="grid w-full justify-center gap-y-12 md:grid-cols-2 md:gap-y-24">
           {pricingPlans.map((plan, index) => (
             <div
               className={cn(
@@ -138,14 +139,19 @@ export default function Pricing() {
         </div>
       </div>
       {/* FAQs Section */}
-      <div className="container mx-auto grid place-items-center py-24">
+      <div
+        className="container mx-auto grid place-items-center bg-contain py-24 md:bg-cover"
+        style={{
+          backgroundImage: `url("${faqbg}")`,
+        }}
+      >
         <div className="mb-20 text-center font-normal text-5xl text-white leading-[80px]">
           FAQs
         </div>
         <div className="contents w-full max-w-[1400px] flex-col items-center justify-end rounded-[63px] border border-zinc-800 bg-gradient-to-b from-[#0d0d0d] to-[#0d0d0d]/0 md:flex md:px-12 md:pt-12">
           <div className="mx-2 rounded-xl border border-zinc-800 bg-gradient-to-b from-[#030303] to-[#090909]/0 px-3 py-8 md:w-full md:rounded-[56px] md:p-15">
             <Accordion
-              className="w-full space-y-6 md:space-y-[83px]"
+              className="w-full space-y-4 md:space-y-8"
               collapsible
               type="single"
             >

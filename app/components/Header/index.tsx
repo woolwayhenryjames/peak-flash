@@ -33,16 +33,16 @@ export default function Header({ user }: { user: UserWithCampaigns }) {
 
   return (
     <header className="relative w-full bg-black">
-      <div className="flex h-[90px] items-center justify-between px-4 sm:px-8 lg:px-[71px]">
+      <div className="flex h-[90px] items-center px-4 sm:px-8 lg:px-[71px]">
         {/* Logo */}
         <Link className="flex items-center gap-2.5" to="/">
           <img alt="Peak AI" className="h-[22px] w-[26px]" src={logo} />
           <img alt="Peak AI" className="h-[17px] w-20" src={peakText} />
         </Link>
 
-        {/* Desktop Navigation Tabs */}
-        <nav className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 hidden lg:block">
-          <ul className="flex items-center gap-10 rounded-md px-[30px] py-3">
+        {/* Desktop Navigation Tabs - Now properly aligned */}
+        <nav className="ml-12 hidden lg:block">
+          <ul className="flex items-center gap-10">
             {navItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
@@ -66,6 +66,9 @@ export default function Header({ user }: { user: UserWithCampaigns }) {
             })}
           </ul>
         </nav>
+
+        {/* Spacer to push right section to the end */}
+        <div className="flex-1" />
 
         {/* Right Section - Desktop */}
         <div className="hidden items-center gap-10 rounded-md px-[30px] py-3 lg:flex">

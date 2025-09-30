@@ -161,7 +161,7 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
                   Rank
                 </th>
                 <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
-                  Sparklers
+                  Sparkers
                 </th>
                 <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
                   <span className="max-md:hidden">KINDLE</span> Score

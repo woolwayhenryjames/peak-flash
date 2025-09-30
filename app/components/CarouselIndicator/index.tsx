@@ -24,17 +24,12 @@ export default function CarouselIndicator({
           onClick={() => onSelect?.(index)}
           type="button"
         >
-          {/* Glow effect for active indicator */}
-          {index === current && (
-            <>
-              <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_0.91px_0_rgba(255,255,255,1)]" />
-              <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_1.82px_0_rgba(255,255,255,1)]" />
-              <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_6.38px_0_rgba(255,255,255,1)]" />
-              <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_12.75px_0_rgba(255,255,255,1)]" />
-              <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_21.86px_0_rgba(255,255,255,1)]" />
-              <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_38.25px_0_rgba(255,255,255,1)]" />
-            </>
-          )}
+          <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_0.91px_0_rgba(255,255,255,1)]" />
+          <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_1.82px_0_rgba(255,255,255,1)]" />
+          <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_6.38px_0_rgba(255,255,255,1)]" />
+          <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_12.75px_0_rgba(255,255,255,1)]" />
+          <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_21.86px_0_rgba(255,255,255,1)]" />
+          <div className="absolute inset-0 rounded-[1.5px] bg-white shadow-[0_0_38.25px_0_rgba(255,255,255,1)]" />
         </button>
       ))}
     </div>

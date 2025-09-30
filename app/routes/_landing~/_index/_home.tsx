@@ -32,6 +32,7 @@ import humanSignalIcon from "./assets/highlight/human-signal.svg";
 import insightsIcon from "./assets/highlight/insights.svg";
 import peopleIcon from "./assets/highlight/robot-brain.svg";
 import robotBrainIcon from "./assets/highlight/robot-brain.svg";
+import productHighlightImage from "./assets/product-highlight-title.svg";
 import animocaBrandsLogo from "./assets/supporter/animoca-brands.png";
 import aptosLogo from "./assets/supporter/aptos.png";
 import bnbChainLogo from "./assets/supporter/bnb-chain.png";
@@ -113,7 +114,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
         className="flex w-full items-center bg-cover md:aspect-[1728/923]"
         style={{ backgroundImage: `url("${bgTop}")` }}
       >
-        <div className="container mx-auto flex flex-col gap-20 lg:flex-row lg:items-center lg:gap-12">
+        <div className="container mx-auto flex flex-col gap-20 lg:flex-row lg:items-center lg:gap-31 lg:p-[8%]">
           {/* Hero Content */}
           <div className="flex flex-col gap-20 lg:flex-1">
             <div className="flex flex-col gap-12">
@@ -137,7 +138,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                 onClick={signInEnterprise}
                 type="button"
               >
-                <GlowContainer className="h-auto w-full gap-4 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] md:w-auto">
+                <GlowContainer className="h-auto w-full gap-4 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] px-7 py-5 md:w-auto">
                   <img alt="Logo" className="size-6" src={enterpriseIcon} />
                   <span className="font-normal text-2xl text-white">
                     Start as Enterprises
@@ -151,7 +152,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                 onClick={signInCreator}
                 type="button"
               >
-                <GlowContainer className="gap-4">
+                <GlowContainer className="gap-4 px-10 py-5">
                   <img alt="Logo" className="size-6" src={tiktokIcon} />
                   <span className="font-normal text-2xl text-white">
                     Start as Creators
@@ -162,7 +163,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           </div>
 
           {/* Screenshot carousel */}
-          <div className="flex w-full flex-col items-center gap-8 lg:w-auto lg:flex-1">
+          <div className="flex w-[371px] flex-col items-center gap-8">
             <Carousel
               opts={{
                 align: "start",
@@ -201,12 +202,15 @@ export default function Index({ loaderData }: Route.ComponentProps) {
         className="flex w-full items-center bg-cover max-md:mt-12 md:aspect-[1728/1006]"
         style={{ backgroundImage: `url("${bgBottom}")` }}
       >
-        <div className="container mx-auto flex flex-col items-center gap-16">
-          <h2 className="text-center font-normal text-3xl text-white leading-[1.6] md:text-5xl">
-            Product Highlight
-          </h2>
+        <div className="container mx-auto flex flex-col items-center gap-16 bg-black pt-11 max-md:px-4">
+          <img
+            alt="Product Highlight"
+            height="46"
+            src={productHighlightImage}
+            width="382"
+          />
 
-          <div className="grid grid-cols-2 gap-4 bg-black p-[5vw] md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-20 md:p-20">
             {productHighlights.map((highlight) => (
               <div
                 className="flex max-w-[15.5rem] flex-col items-center gap-8"
@@ -237,7 +241,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </div>
-      <div className="max-w-screen py-30">
+      <div className="max-w-screen py-30 md:pt-40 md:pb-60">
         <div className="mb-12 text-center font-normal text-3xl text-white md:text-5xl">
           Supported By
         </div>
@@ -270,7 +274,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
             "conic-gradient(from 185deg at -14% -17.95%, #000 0deg, #2C4271 162.69230604171753deg, #060112 290.7692241668701deg, #000 360deg)",
         }}
       >
-        <div className="container mx-auto px-4 py-10">
+        <div className="container mx-auto px-4 py-28">
           <div className="flex flex-col gap-9">
             <div className="text-3xl text-white leading-[80px] md:text-5xl">
               Peekaboos
@@ -280,14 +284,14 @@ export default function Index({ loaderData }: Route.ComponentProps) {
               and viral content—AI reveals hidden impact and breakout potential.
             </div>
           </div>
-          <table className="my-10 w-full table-auto md:my-25">
+          <table className="my-10 w-full table-auto md:my-30">
             <thead>
               <tr className="border-[#3C3C3D] border-b">
                 <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
                   Rank
                 </th>
                 <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
-                  Sparklers
+                  Sparkers
                 </th>
                 <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
                   <span className="max-md:hidden">KINDLE</span> Score
@@ -325,7 +329,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
               ))}
             </tbody>
           </table>
-          <div className="ml-auto w-1/3">
+          <div className="ml-auto w-1/5">
             <Link to="/leaderboard">
               <GlowContainer>View All</GlowContainer>
             </Link>
