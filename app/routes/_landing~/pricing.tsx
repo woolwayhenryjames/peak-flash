@@ -35,19 +35,22 @@ export default function Pricing() {
         <div className="grid w-full justify-center gap-y-12 md:grid-cols-2">
           {pricingPlans.map((plan, index) => (
             <div
-              className={cn(index % 2 === 0 && "border-white/20 md:border-r")}
+              className={cn(
+                "rounded-2xl max-md:mx-7 max-md:border max-md:border-white/20 max-md:p-7",
+                index % 2 === 0 && "border-white/20 md:border-r"
+              )}
               key={plan.id}
             >
               <div className="grid size-full place-items-center">
                 <div className="flex h-full w-full flex-col px-2 md:w-107">
                   {/* Package Name & Price */}
                   <div className="mb-10 space-y-4">
-                    <div className="flex justify-between">
-                      <h3 className="font-medium text-2xl text-white">
+                    <div className="flex items-start justify-between max-md:flex-col">
+                      <h3 className="font-medium text-base text-white md:text-2xl">
                         {plan.name}
                       </h3>
                       {plan.isPopular && (
-                        <div className="rounded-full border border-gray-600 bg-green-500/20 px-8 py-1">
+                        <div className="rounded-full border border-gray-600 bg-green-500/20 px-2 md:px-8 md:py-1">
                           <span className="font-normal text-gray-100 text-sm">
                             POPULAR
                           </span>
@@ -55,15 +58,19 @@ export default function Pricing() {
                       )}
                     </div>
                     {plan.id === "custom" ? (
-                      <div className="font-semibold text-4xl text-[#ffaa6a]">
+                      <div className="font-semibold text-[#ffaa6a] text-xl md:text-4xl">
                         Contact Sales
                       </div>
                     ) : (
-                      <p className={cn("font-medium text-[#818181] text-xl")}>
+                      <p
+                        className={cn(
+                          "font-medium text-[#818181] text-sm md:text-xl"
+                        )}
+                      >
                         <span
                           className={cn(
                             "bg-gradient-to-r from-[#B871FF] to-[#2CFFBC]",
-                            "bg-clip-text font-medium text-4xl text-transparent leading-[1.5em]"
+                            "bg-clip-text font-medium text-transparent text-xl leading-[1.5em] md:text-4xl"
                           )}
                         >
                           {plan.price}
@@ -74,16 +81,13 @@ export default function Pricing() {
                   </div>
 
                   {/* Benefits List */}
-                  <ul className="mb-10 flex-1 space-y-6">
+                  <ul className="mb-10 flex-1 list-disc marker:text-[#6BE6FF] md:space-y-6">
                     {plan.benefits.map((benefit) => (
                       <li
-                        className="flex items-start gap-3"
+                        className="font-light text-[#ACACAC] text-sm md:text-lg"
                         key={`${plan.id}-${benefit}`}
                       >
-                        <span className="mt-1.5 size-2 shrink-0 rounded-full bg-[#6BE6FF]" />
-                        <span className="font-light text-[#ACACAC] text-lg">
-                          {benefit}
-                        </span>
+                        {benefit}
                       </li>
                     ))}
                   </ul>
@@ -96,7 +100,7 @@ export default function Pricing() {
                         "bg-gradient-to-r from-[#080C0D] to-[#1E245D]"
                     )}
                   >
-                    <span className="font-normal text-2xl text-[#F3EEEA]">
+                    <span className="font-normal text-[#F3EEEA] text-base md:text-2xl">
                       Get Started
                     </span>
                   </GlowContainer>

@@ -41,3 +41,19 @@ export function getRemainingDays(startDate: Date, endDate: Date) {
   }
   return { status, daysLeftText };
 }
+
+export function hideMiddleOfString(
+  str: string,
+  charsToShowStart = 6,
+  charsToShowEnd = 4,
+  placeholder = "..."
+) {
+  if (str.length <= charsToShowStart + charsToShowEnd) {
+    return str; // No hiding needed if the string is too short
+  }
+
+  const startPart = str.slice(0, charsToShowStart);
+  const endPart = str.slice(-charsToShowEnd);
+
+  return `${startPart}${placeholder}${endPart}`;
+}

@@ -7,7 +7,9 @@ export interface UserWithKindleRank extends User {
 }
 
 export interface PaginatedLeaderboardResult {
-  users: User[];
+  users: (User & {
+    campaignUsers: { rank: number | null; campaign: { name: string } }[];
+  })[];
   pagination: {
     page: number;
     limit: number;
@@ -68,12 +70,19 @@ export async function getGlobalLeaderboard(
     // Calculate how many users to actually fetch (don't exceed top 100)
     const actualLimit = Math.min(normalizedLimit, 100 - offset);
 
-    // Get paginated users with ranks using raw query for better performance
     const result = await db.user.findMany({
-      where: { rank: { not: null } },
+      where: { rank: { not: null }, isBusiness: false },
       orderBy: { rank: "asc" },
       skip: offset,
       take: actualLimit,
+      include: {
+        campaignUsers: {
+          select: {
+            rank: true,
+            campaign: { select: { name: true } },
+          },
+        },
+      },
     });
 
     // Calculate pagination metadata (considering top 100 limit)

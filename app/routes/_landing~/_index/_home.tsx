@@ -1,5 +1,6 @@
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 import CarouselIndicator from "~/components/CarouselIndicator";
 import GlowContainer from "~/components/GlowContainer";
 import enterpriseIcon from "~/components/Header/MenuContent/assets/enterprise.svg";
@@ -77,7 +78,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
   return (
     <div className="flex flex-col items-center justify-center bg-black">
       <div
-        className="flex aspect-[1728/923] w-full items-center bg-cover"
+        className="flex w-full items-center bg-cover md:aspect-[1728/923]"
         style={{ backgroundImage: `url("${bgTop}")` }}
       >
         <div className="container mx-auto flex flex-col gap-20 lg:flex-row lg:items-center lg:gap-12">
@@ -165,7 +166,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
 
       {/* Product Highlight Section */}
       <div
-        className="flex aspect-[1728/1006] w-full items-center bg-cover"
+        className="flex w-full items-center bg-cover max-md:mt-12 md:aspect-[1728/1006]"
         style={{ backgroundImage: `url("${bgBottom}")` }}
       >
         <div className="container mx-auto flex flex-col items-center gap-16">
@@ -173,17 +174,17 @@ export default function Index({ loaderData }: Route.ComponentProps) {
             Product Highlight
           </h2>
 
-          <div className="flex flex-wrap justify-evenly bg-black p-[5vw]">
+          <div className="grid grid-cols-2 gap-4 bg-black p-[5vw] md:grid-cols-4">
             {productHighlights.map((highlight) => (
               <div
                 className="flex max-w-[15.5rem] flex-col items-center gap-8"
                 key={highlight.id}
               >
                 {/* Icon Container */}
-                <GlowContainer className="relative size-28 items-center justify-center rounded-lg border border-white/50 bg-transparent p-0">
+                <GlowContainer className="relative size-16 items-center justify-center rounded-lg border border-white/50 bg-transparent p-0 md:size-28">
                   <img
                     alt={highlight.title}
-                    className="size-16"
+                    className="size-8 md:size-16"
                     src={highlight.icon}
                   />
                   {/* Gradient overlay effect */}
@@ -192,10 +193,10 @@ export default function Index({ loaderData }: Route.ComponentProps) {
 
                 {/* Text Content */}
                 <div className="flex flex-col gap-4 text-center">
-                  <h3 className="font-medium text-[1.375rem] text-white leading-[1.5]">
+                  <h3 className="font-medium text-base text-white md:text-2xl md:leading-[1.5]">
                     {highlight.title}
                   </h3>
-                  <p className="font-normal text-[#979797] text-base leading-[1.5]">
+                  <p className="font-normal text-[#979797] text-sm md:text-base md:leading-[1.5]">
                     {highlight.description}
                   </p>
                 </div>
@@ -205,7 +206,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
         </div>
       </div>
       <div className="max-w-screen py-30">
-        <div className="mb-12 text-center font-normal text-5xl text-white">
+        <div className="mb-12 text-center font-normal text-3xl text-white md:text-5xl">
           Supported By
         </div>
         {/* Logos wall */}
@@ -218,10 +219,10 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                 <div className="flex items-center">
                   <img
                     alt={logo.alt}
-                    className="h-12 w-auto object-contain"
+                    className="h-6 w-auto object-contain md:h-12"
                     src={logo.src}
                   />
-                  <div className="mx-10 flex items-center">
+                  <div className="mx-5 flex items-center md:mx-10">
                     <div className="size-1.5 rounded-full bg-white/50" />
                   </div>
                 </div>
@@ -237,50 +238,66 @@ export default function Index({ loaderData }: Route.ComponentProps) {
             "conic-gradient(from 185deg at -14% -17.95%, #000 0deg, #2C4271 162.69230604171753deg, #060112 290.7692241668701deg, #000 360deg)",
         }}
       >
-        <div className="container mx-auto py-10">
+        <div className="container mx-auto px-4 py-10">
           <div className="flex flex-col gap-9">
-            <div className="text-5xl text-white leading-[80px]">Peekaboos</div>
+            <div className="text-3xl text-white leading-[80px] md:text-5xl">
+              Peekaboos
+            </div>
             <div className="font-light text-[#cacaca] text-xl">
               Intelligent scoring system that discovers rising micro influencers
               and viral content—AI reveals hidden impact and breakout potential.
             </div>
           </div>
-          <table className="mt-10 w-full table-auto">
+          <table className="my-10 w-full table-auto md:my-25">
             <thead>
-              <tr className="border-white/20 border-b">
-                <th className="py-4 text-left text-2xl text-white">Rank</th>
-                <th className="py-4 text-left text-2xl text-white">
+              <tr className="border-[#3C3C3D] border-b">
+                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
+                  Rank
+                </th>
+                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
                   Sparklers
                 </th>
-                <th className="py-4 text-left text-2xl text-white">
-                  KINDLE Score
+                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
+                  <span className="max-md:hidden">KINDLE</span> Score
                 </th>
-                <th className="py-4 text-left text-2xl text-white">
+                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
                   Followers
                 </th>
-                <th className="py-4 text-left text-2xl text-white">Likes</th>
+                <th className="py-4 text-left font-light text-[#ADADAD] text-lg">
+                  Likes
+                </th>
               </tr>
             </thead>
             <tbody>
               {loaderData.users.map((user) => (
-                <tr className="hover:bg-white/5" key={user.rank}>
-                  <td className="py-4 text-2xl text-white">{user.rank}</td>
-                  <td className="py-4 text-2xl text-white">
+                <tr
+                  className="cursor-pointer transition-colors duration-200 hover:bg-white/5"
+                  key={user.rank}
+                >
+                  <td className="py-4 font-semibold text-white text-xl md:pr-8">
+                    {user.rank}
+                  </td>
+                  <td className="py-4 font-medium text-lg text-white md:pr-8">
                     {user.name ?? user.email}
                   </td>
-                  <td className="py-4 text-2xl text-white">
+                  <td className="py-4 font-medium text-lg text-white md:pr-8">
                     {user.kindleScore?.toFixed(0) ?? 0}
                   </td>
-                  <td className="py-4 text-2xl text-white">
+                  <td className="py-4 font-medium text-lg text-white md:pr-8">
                     {formatNumber(user.followerCount)}
                   </td>
-                  <td className="py-4 text-2xl text-white">
+                  <td className="py-4 font-medium text-lg text-white">
                     {formatNumber(user.likeCount)}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <div className="ml-auto w-1/3">
+            <Link to="/leaderboard">
+              <GlowContainer>View All</GlowContainer>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
