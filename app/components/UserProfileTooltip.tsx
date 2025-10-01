@@ -138,7 +138,7 @@ export default function UserProfileTooltip({
                           e.preventDefault();
                         }
                       }}
-                      to={`/campaigns/${campaignUser.campaign.id}`}
+                      to={`/u/campaigns/${campaignUser.campaign.id}`}
                     >
                       <div className="flex items-center justify-between">
                         {/* Campaign Name with Bullet */}

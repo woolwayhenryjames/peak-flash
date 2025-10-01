@@ -10,6 +10,7 @@ import { cn, hideMiddleOfString } from "~/lib/utils";
 import loginIcon from "./assets/login.svg";
 import logo from "./assets/logo.svg";
 import peakText from "./assets/peak-text.svg";
+import telegramIcon from "./assets/tg.png";
 import tiktokIcon from "./assets/tiktok.svg";
 import twitterIcon from "./assets/twitter.svg";
 import MenuContent from "./MenuContent";
@@ -90,6 +91,15 @@ export default function Header({ user }: { user: UserWithCampaigns }) {
               target="_blank"
             >
               <img alt="TikTok" className="h-5 w-[18px]" src={tiktokIcon} />
+            </a>
+            <a
+              aria-label="Follow us on Telegram"
+              className="transition-opacity hover:opacity-100"
+              href="https://t.me/TakeAPeak_AI/1"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img alt="Telegram" className="h-5 w-[18px]" src={telegramIcon} />
             </a>
           </div>
 

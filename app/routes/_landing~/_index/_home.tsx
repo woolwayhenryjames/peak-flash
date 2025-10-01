@@ -199,31 +199,32 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                 </button>
               </div>
             )}
-            {loaderData.userData?.isBusiness ? (
-              <div className="flex flex-col gap-4 md:flex-row">
-                {loaderData.hasCampaigns ? (
-                  <Link className="h-auto w-2/3 md:w-auto" to="/b/dashboard">
+            {loaderData.userData &&
+              (loaderData.userData.isBusiness ? (
+                <div className="flex flex-col gap-4 md:flex-row">
+                  {loaderData.hasCampaigns ? (
+                    <Link className="h-auto w-2/3 md:w-auto" to="/b/dashboard">
+                      <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
+                        My Space
+                      </GlowContainer>
+                    </Link>
+                  ) : (
+                    <Link className="h-auto w-2/3 md:w-auto" to="/pricing">
+                      <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
+                        Create Campaign
+                      </GlowContainer>
+                    </Link>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col gap-4 md:flex-row">
+                  <Link className="h-auto w-2/3 md:w-auto" to="/u">
                     <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
-                      My Space
+                      Start Creating
                     </GlowContainer>
                   </Link>
-                ) : (
-                  <Link className="h-auto w-2/3 md:w-auto" to="/pricing">
-                    <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
-                      Create Campaign
-                    </GlowContainer>
-                  </Link>
-                )}
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4 md:flex-row">
-                <Link className="h-auto w-2/3 md:w-auto" to="/u">
-                  <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
-                    Start Creating
-                  </GlowContainer>
-                </Link>
-              </div>
-            )}
+                </div>
+              ))}
           </div>
 
           {/* Screenshot carousel */}

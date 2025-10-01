@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { authClient } from "~/lib/auth-client";
+import { hideMiddleOfString } from "~/lib/utils";
 import helpCenterIcon from "./assets/help-center-icon.svg";
 import userIcon from "./assets/user-icon.svg";
 
@@ -50,7 +51,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
         >
           {/* Username Section */}
           <div className="flex items-center gap-[10px] px-7 py-4 text-center font-normal text-white text-xs leading-[1.5]">
-            @{user.email || "user"}
+            @{hideMiddleOfString(user.email || "user")}
           </div>
 
           {/* Divider */}

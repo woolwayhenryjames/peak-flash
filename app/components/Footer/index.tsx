@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { navItems } from "~/components/Header";
+import telegramIcon from "~/components/Header/assets/tg.png";
 import tiktokIcon from "~/components/Header/assets/tiktok.svg";
 import twitterIcon from "~/components/Header/assets/twitter.svg";
 import { cn } from "~/lib/utils";
@@ -58,6 +59,19 @@ export default function Footer() {
                 target="_blank"
               >
                 <img alt="TikTok" className="h-5 w-[18px]" src={tiktokIcon} />
+              </a>
+              <a
+                aria-label="Follow us on Telegram"
+                className="transition-opacity hover:opacity-100"
+                href="https://t.me/TakeAPeak_AI/1"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <img
+                  alt="Telegram"
+                  className="h-5 w-[18px]"
+                  src={telegramIcon}
+                />
               </a>
             </div>
           </div>

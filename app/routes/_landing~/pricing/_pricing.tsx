@@ -103,7 +103,7 @@ export default function Pricing() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="w-full overflow-hidden px-6 pb-6 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down md:px-[91px]">
-                      <p className="whitespace-pre-wrap pt-12 font-normal text-[#A1A1A1] text-xs leading-[1.5em] md:text-2xl">
+                      <p className="whitespace-pre-wrap pt-6 font-normal text-[#A1A1A1] text-xs leading-[1.5em] md:text-2xl">
                         {faq.answer}
                       </p>
                     </AccordionContent>
