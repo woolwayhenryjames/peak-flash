@@ -133,15 +133,15 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
             "radial-gradient(99.68% 99.68% at 49.71% -5.81%, #707070 0%, #564731 25%, #241D13 40%, #120D0C 63.23%, #000 100%)",
         }}
       >
-        <div className="container mx-auto flex flex-col gap-14 p-4 lg:px-[8%]">
-          <div className="text-4xl text-[#f2edea] md:text-7xl">Peekaboos</div>
-          <div className="font-light text-[#cacaca] text-base md:text-2xl">
+        <div className="container mx-auto flex flex-col gap-6 p-4 md:gap-14 lg:px-[8%]">
+          <div className="text-[#f2edea] text-xl md:text-7xl">Peekaboos</div>
+          <div className="font-light text-[#cacaca] text-xs md:text-2xl">
             Intelligent scoring system that discovers rising micro influencers
             and viral content—AI reveals hidden impact and breakout potential.
           </div>
         </div>
       </div>
-      <div className="container mx-auto min-h-screen lg:px-[8%]">
+      <div className="container mx-auto min-h-screen px-4 lg:px-[8%]">
         {/* Loading state for filter changes */}
         {isLoadingMore && users.length === 0 && (
           <div className="flex justify-center py-8">
@@ -156,22 +156,14 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
         {users.length > 0 && (
           <table className="my-10 w-full table-auto md:my-25">
             <thead>
-              <tr className="border-[#3C3C3D] border-b">
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
-                  Rank
-                </th>
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
-                  Sparkers
-                </th>
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
+              <tr className="border-[#3C3C3D] border-b text-[#ADADAD] text-base md:text-lg">
+                <th className="py-4 text-left font-light md:pr-8">Rank</th>
+                <th className="py-4 text-left font-light md:pr-8">Sparkers</th>
+                <th className="py-4 text-left font-light md:pr-8">
                   <span className="max-md:hidden">KINDLE</span> Score
                 </th>
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
-                  Followers
-                </th>
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg">
-                  Likes
-                </th>
+                <th className="py-4 text-left font-light md:pr-8">Followers</th>
+                <th className="py-4 text-left font-light">Likes</th>
               </tr>
             </thead>
             <tbody>
@@ -182,22 +174,22 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
                   user={user}
                 >
                   <tr
-                    className="cursor-pointer transition-colors duration-200 hover:bg-white/5"
+                    className="cursor-pointer text-base text-white transition-colors duration-200 hover:bg-white/5 md:text-lg"
                     key={user.rank}
                   >
-                    <td className="py-4 font-semibold text-white text-xl md:pr-8">
+                    <td className="py-4 font-semibold text-lg md:pr-8 md:text-xl">
                       {user.rank}
                     </td>
-                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                    <td className="py-4 font-medium md:pr-8">
                       {user.name ?? user.email}
                     </td>
-                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                    <td className="py-4 font-medium md:pr-8">
                       {user.kindleScore?.toFixed(0) ?? 0}
                     </td>
-                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                    <td className="py-4 font-medium md:pr-8">
                       {formatNumber(user.followerCount)}
                     </td>
-                    <td className="py-4 font-medium text-lg text-white">
+                    <td className="py-4 font-medium">
                       {formatNumber(user.likeCount)}
                     </td>
                   </tr>

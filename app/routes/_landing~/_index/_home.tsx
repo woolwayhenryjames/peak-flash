@@ -169,16 +169,20 @@ export default function Index({ loaderData }: Route.ComponentProps) {
 
             {/* Action Buttons */}
             {!loaderData.userData && (
-              <div className="flex flex-col gap-4 md:flex-row">
+              <div className="flex gap-2 whitespace-nowrap md:gap-4">
                 {/* Start as Enterprises Button */}
                 <button
                   className="h-auto w-full md:w-auto"
                   onClick={signInEnterprise}
                   type="button"
                 >
-                  <GlowContainer className="h-auto w-full gap-4 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] px-7 py-5 md:w-auto">
-                    <img alt="Logo" className="size-6" src={enterpriseIcon} />
-                    <span className="font-normal text-2xl text-white">
+                  <GlowContainer className="h-auto w-full gap-2 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] px-2 py-2 md:w-auto md:gap-4 md:px-7 md:py-5">
+                    <img
+                      alt="Logo"
+                      className="size-4 md:size-6"
+                      src={enterpriseIcon}
+                    />
+                    <span className="font-normal text-sm text-white md:text-2xl">
                       Start as Enterprises
                     </span>
                   </GlowContainer>
@@ -190,9 +194,13 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                   onClick={signInCreator}
                   type="button"
                 >
-                  <GlowContainer className="gap-4 px-10 py-5">
-                    <img alt="Logo" className="size-6" src={tiktokIcon} />
-                    <span className="font-normal text-2xl text-white">
+                  <GlowContainer className="gap-2 px-4 py-2 md:gap-4 md:px-10 md:py-5">
+                    <img
+                      alt="Logo"
+                      className="size-4 md:size-6"
+                      src={tiktokIcon}
+                    />
+                    <span className="font-normal text-sm text-white md:text-2xl">
                       Start as Creators
                     </span>
                   </GlowContainer>
@@ -201,25 +209,25 @@ export default function Index({ loaderData }: Route.ComponentProps) {
             )}
             {loaderData.userData &&
               (loaderData.userData.isBusiness ? (
-                <div className="flex flex-col gap-4 md:flex-row">
+                <div className="flex">
                   {loaderData.hasCampaigns ? (
-                    <Link className="h-auto w-2/3 md:w-auto" to="/b/dashboard">
-                      <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
+                    <Link className="min-w-2/3" to="/b/dashboard">
+                      <GlowContainer className="px-10 py-2 font-normal text-sm text-white md:py-5 md:text-2xl">
                         My Space
                       </GlowContainer>
                     </Link>
                   ) : (
-                    <Link className="h-auto w-2/3 md:w-auto" to="/pricing">
-                      <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
-                        Create Campaign
+                    <Link className="min-w-2/3" to="/pricing">
+                      <GlowContainer className="px-10 py-2 font-normal text-sm text-white md:py-5 md:text-2xl">
+                        Create Campaigns
                       </GlowContainer>
                     </Link>
                   )}
                 </div>
               ) : (
-                <div className="flex flex-col gap-4 md:flex-row">
-                  <Link className="h-auto w-2/3 md:w-auto" to="/u">
-                    <GlowContainer className="gap-4 px-10 py-2 font-normal text-2xl text-white md:py-5">
+                <div className="flex">
+                  <Link className="min-w-2/3" to="/u">
+                    <GlowContainer className="px-10 py-2 font-normal text-sm text-white md:py-5 md:text-2xl">
                       Start Creating
                     </GlowContainer>
                   </Link>
@@ -337,7 +345,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
         </div>
       </div>
       <div className="max-w-screen py-30 md:pt-40 md:pb-60">
-        <div className="mb-12 text-center font-normal text-3xl text-white md:text-5xl">
+        <div className="mb-12 text-center font-normal text-lg text-white md:text-5xl">
           Supported By
         </div>
         {/* Logos wall */}
@@ -374,33 +382,23 @@ export default function Index({ loaderData }: Route.ComponentProps) {
         }
       >
         <div className="container mx-auto px-4 py-28 lg:px-[8%]">
-          <div className="flex flex-col gap-9">
-            <div className="text-3xl text-white leading-[80px] md:text-5xl">
-              Peekaboos
-            </div>
-            <div className="font-light text-[#cacaca] text-xl">
+          <div className="flex flex-col gap-2 md:gap-9">
+            <div className="text-lg text-white md:text-5xl">Peekaboos</div>
+            <div className="font-light text-[#cacaca] text-sm md:text-xl">
               Intelligent scoring system that discovers rising micro influencers
               and viral content—AI reveals hidden impact and breakout potential.
             </div>
           </div>
           <table className="my-10 w-full table-auto md:my-30">
             <thead>
-              <tr className="border-[#3C3C3D] border-b">
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
-                  Rank
-                </th>
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
-                  Sparkers
-                </th>
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
+              <tr className="border-[#3C3C3D] border-b text-[#ADADAD] text-base md:text-lg">
+                <th className="py-4 text-left font-light md:pr-8">Rank</th>
+                <th className="py-4 text-left font-light md:pr-8">Sparkers</th>
+                <th className="py-4 text-left font-light md:pr-8">
                   <span className="max-md:hidden">KINDLE</span> Score
                 </th>
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg md:pr-8">
-                  Followers
-                </th>
-                <th className="py-4 text-left font-light text-[#ADADAD] text-lg">
-                  Likes
-                </th>
+                <th className="py-4 text-left font-light md:pr-8">Followers</th>
+                <th className="py-4 text-left font-light">Likes</th>
               </tr>
             </thead>
             <tbody>
@@ -411,22 +409,22 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                   user={user}
                 >
                   <tr
-                    className="cursor-pointer transition-colors duration-200 hover:bg-white/5"
+                    className="cursor-pointer text-base text-white transition-colors duration-200 hover:bg-white/5 md:text-lg"
                     key={user.rank}
                   >
-                    <td className="py-4 font-semibold text-white text-xl md:pr-8">
+                    <td className="py-4 font-semibold text-lg md:pr-8 md:text-xl">
                       {user.rank}
                     </td>
-                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                    <td className="py-4 font-medium md:pr-8">
                       {user.name ?? user.email}
                     </td>
-                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                    <td className="py-4 font-medium md:pr-8">
                       {user.kindleScore?.toFixed(0) ?? 0}
                     </td>
-                    <td className="py-4 font-medium text-lg text-white md:pr-8">
+                    <td className="py-4 font-medium md:pr-8">
                       {formatNumber(user.followerCount)}
                     </td>
-                    <td className="py-4 font-medium text-lg text-white">
+                    <td className="py-4 font-medium">
                       {formatNumber(user.likeCount)}
                     </td>
                   </tr>
