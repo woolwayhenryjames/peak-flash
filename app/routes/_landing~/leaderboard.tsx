@@ -154,16 +154,16 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
 
         {/* User Cards */}
         {users.length > 0 && (
-          <table className="my-10 w-full table-auto md:my-25">
+          <table className="my-10 w-full table-auto md:my-25 [&_td]:py-2 [&_td]:md:py-4 [&_th]:py-2 [&_th]:md:py-4">
             <thead>
-              <tr className="border-[#3C3C3D] border-b text-[#ADADAD] text-base md:text-lg">
-                <th className="py-4 text-left font-light md:pr-8">Rank</th>
-                <th className="py-4 text-left font-light md:pr-8">Sparkers</th>
-                <th className="py-4 text-left font-light md:pr-8">
+              <tr className="border-[#3C3C3D] border-b text-[#ADADAD] text-xs md:text-lg">
+                <th className="text-left font-light md:pr-8">Rank</th>
+                <th className="text-left font-light md:pr-8">Sparkers</th>
+                <th className="text-left font-light md:pr-8">
                   <span className="max-md:hidden">KINDLE</span> Score
                 </th>
-                <th className="py-4 text-left font-light md:pr-8">Followers</th>
-                <th className="py-4 text-left font-light">Likes</th>
+                <th className="text-left font-light md:pr-8">Followers</th>
+                <th className="text-left font-light">Likes</th>
               </tr>
             </thead>
             <tbody>
@@ -174,22 +174,22 @@ export default function Leaderboard({ loaderData }: Route.ComponentProps) {
                   user={user}
                 >
                   <tr
-                    className="cursor-pointer text-base text-white transition-colors duration-200 hover:bg-white/5 md:text-lg"
+                    className="cursor-pointer text-white text-xs transition-colors duration-200 hover:bg-white/5 md:text-lg"
                     key={user.rank}
                   >
-                    <td className="py-4 font-semibold text-lg md:pr-8 md:text-xl">
+                    <td className="font-semibold text-lg md:pr-8 md:text-xl">
                       {user.rank}
                     </td>
-                    <td className="py-4 font-medium md:pr-8">
+                    <td className="font-medium md:pr-8">
                       {user.name ?? user.email}
                     </td>
-                    <td className="py-4 font-medium md:pr-8">
+                    <td className="font-medium md:pr-8">
                       {user.kindleScore?.toFixed(0) ?? 0}
                     </td>
-                    <td className="py-4 font-medium md:pr-8">
+                    <td className="font-medium md:pr-8">
                       {formatNumber(user.followerCount)}
                     </td>
-                    <td className="py-4 font-medium">
+                    <td className="font-medium">
                       {formatNumber(user.likeCount)}
                     </td>
                   </tr>
