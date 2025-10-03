@@ -85,13 +85,20 @@ export default function FirstGetScoreDialog({
             </div>
           </div>
         </div>
-        <button
-          className="w-1/2 self-end"
-          onClick={() => handleDismiss(false)}
-          type="button"
-        >
-          <GlowContainer className="text-white">Ok</GlowContainer>
-        </button>
+        <div className="justify-bewtween flex w-full gap-4">
+          <a className="flex-1" href="https://example.com/">
+            <GlowContainer className="whitespace-nowrap bg-gradient-to-b from-[#182d2e] to-[#4d8f94] text-sm text-white">
+              Check Rewards
+            </GlowContainer>
+          </a>
+          <button
+            className="flex-1"
+            onClick={() => handleDismiss(false)}
+            type="button"
+          >
+            <GlowContainer className="text-sm text-white">Ok</GlowContainer>
+          </button>
+        </div>
       </div>
     </DialogWithCloseButton>
   );

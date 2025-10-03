@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { cn, hideMiddleOfString } from "~/lib/utils";
+import giftIcon from "./assets/gift.svg";
 import loginIcon from "./assets/login.svg";
 import logo from "./assets/logo.svg";
 import peakText from "./assets/peak-text.svg";
@@ -105,6 +106,12 @@ export default function Header({ user }: { user: UserWithCampaigns }) {
 
           {/* Divider */}
           <div className="h-[14px] w-[1px] bg-white opacity-40" />
+
+          {user && !user.isBusiness && (
+            <a href="https://example.com">
+              <img alt="Gift" className="h-5 w-5" src={giftIcon} />
+            </a>
+          )}
 
           <Popover onOpenChange={setPopoverOpen} open={popoverOpen}>
             <PopoverTrigger asChild>
@@ -212,6 +219,11 @@ export default function Header({ user }: { user: UserWithCampaigns }) {
                   <span className="font-normal text-[#f2edea] text-sm">
                     {user.email ? hideMiddleOfString(user.email) : "User"}
                   </span>
+                  {!user.isBusiness && (
+                    <a href="https://example.com">
+                      <img alt="Gift" className="h-5 w-5" src={giftIcon} />
+                    </a>
+                  )}
                 </div>
               ) : (
                 <div className="font-normal text-[#F3EEEA] text-base">
@@ -229,12 +241,10 @@ export default function Header({ user }: { user: UserWithCampaigns }) {
             <div className="mt-8 flex items-center gap-6">
               <a
                 aria-label="Follow us on Twitter"
-                className="relative h-6 w-6"
                 href="https://twitter.com/TakeAPeakAI"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                <div className="absolute inset-0 rounded-[3px] bg-white" />
                 <img
                   alt="Twitter"
                   className="relative h-6 w-6"

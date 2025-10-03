@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { cn } from "~/lib/utils";
 import GlowContainer from "../GlowContainer";
+import gift from "./assets/gift.svg";
 
 export default function KindleScoreCard({
   score,
@@ -28,7 +29,7 @@ export default function KindleScoreCard({
               </p>
             </div>
           </div>
-          <div className="text-center">
+          <div className="flex items-center gap-3 text-center">
             <div
               className={cn(
                 "mb-1 font-semibold text-[#8080DA]",
@@ -37,6 +38,9 @@ export default function KindleScoreCard({
             >
               {score != null ? score : "Grading"}
             </div>
+            <a className="flex-shrink-0" href="https://example.com">
+              <img alt="gift" className="size-6" src={gift} />
+            </a>
           </div>
         </div>
 
