@@ -8,15 +8,15 @@ import { getDbUser } from "~/services/auth.server";
 import { logger } from "~/services/logger.server";
 import { getUserInviteRecords } from "~/services/user.server";
 import { getUserKindleRank } from "~/services/user-ranking.server";
-import type { Route } from "./+types/lucky";
-import fb from "./invite/assets/fb.svg";
-import ins from "./invite/assets/ins.png";
-import starsIcon from "./invite/assets/stars.svg";
-import tg from "./invite/assets/tg.svg";
-import tiktok from "./invite/assets/tiktok.svg";
-import whatsapp from "./invite/assets/whatsapp.png";
-import x from "./invite/assets/x.svg";
-import leaderboardBg from "./leaderboard/assets/bg.avif";
+import fb from "../invite/assets/fb.svg";
+import ins from "../invite/assets/ins.png";
+import starsIcon from "../invite/assets/stars.svg";
+import tg from "../invite/assets/tg.svg";
+import tiktok from "../invite/assets/tiktok.svg";
+import whatsapp from "../invite/assets/whatsapp.png";
+import x from "../invite/assets/x.svg";
+import leaderboardBg from "../leaderboard/assets/bg.avif";
+import type { Route } from "./+types/_lucky";
 
 // API 接口类型定义
 interface LuckyApiResponse {
@@ -31,10 +31,17 @@ async function fetchUserLuckyData(
   userId: string
 ): Promise<LuckyApiResponse | null> {
   try {
+    console.log("[Lucky API] ===== 开始API调用 =====");
     const apiUrl = `https://api.distant.fun/api/user/${userId}`;
+    console.log(`[Lucky API] API URL: ${apiUrl}`);
+    console.log("[Lucky API] 用户ID类型:", typeof userId, "值:", userId);
+    console.log("[Lucky API] 用户ID长度:", userId.length);
     logger.info(
       `[Lucky API] Fetching user data for ID: ${userId} from: ${apiUrl}`
     );
+
+    console.log("[Lucky API] 发送请求中...");
+    const startTime = Date.now();
 
     const response = await fetch(apiUrl, {
       method: "GET",
@@ -44,34 +51,62 @@ async function fetchUserLuckyData(
       },
     });
 
+    const endTime = Date.now();
+    console.log(`[Lucky API] 请求完成，耗时: ${endTime - startTime}ms`);
+    console.log(
+      `[Lucky API] 响应状态: ${response.status} ${response.statusText}`
+    );
+    logger.info(`[Lucky API] Response status: ${response.status}`);
+
     if (!response.ok) {
+      console.log(
+        `[Lucky API] ❌ 请求失败: ${response.status} ${response.statusText}`
+      );
       logger.warn(
         `[Lucky API] Request failed: ${response.status} ${response.statusText}`
       );
       return null;
     }
 
+    console.log("[Lucky API] 解析响应数据...");
     const data = (await response.json()) as LuckyApiResponse;
+    console.log("[Lucky API] 原始响应数据:", data);
     logger.info(`[Lucky API] Raw response for user ${userId}:`, data);
 
     // 检查响应格式
+    console.log("[Lucky API] 验证响应格式...");
     if (data && typeof data === "object" && "success" in data) {
+      console.log("[Lucky API] 响应格式正确");
       if (data.success) {
+        console.log("[Lucky API] ✅ API调用成功！");
+        console.log(
+          `[Lucky API] 用户 ${userId} 数据: USDT=${data.usdt}, Reward=${data.reward}`
+        );
         logger.info(
           `[Lucky API] User ${userId} has USDT: ${data.usdt}, Reward: ${data.reward}`
         );
         return data;
       }
+      console.log("[Lucky API] ❌ API返回 success: false");
       logger.warn(`[Lucky API] User ${userId} - API returned success: false`);
       return null;
     }
+    console.log("[Lucky API] ❌ 响应格式无效:", data);
     logger.warn(`[Lucky API] User ${userId} - Invalid response format:`, data);
     return null;
   } catch (error) {
+    console.log("[Lucky API] ❌ 请求异常:", error);
+    console.log("[Lucky API] 错误类型:", typeof error);
+    console.log(
+      "[Lucky API] 错误信息:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
     logger.error(`[Lucky API] Failed to fetch data for user ${userId}:`, {
       error: error instanceof Error ? error.message : "Unknown error",
     });
     return null;
+  } finally {
+    console.log("[Lucky API] ===== API调用结束 =====");
   }
 }
 
@@ -101,16 +136,16 @@ function calculateWelcomeGift(score: number | null | undefined) {
     return null;
   }
 
-  if (score >= 55) {
+  if (score >= 20) {
     return 8;
   }
-  if (score >= 50) {
+  if (score >= 12) {
     return 6;
   }
-  if (score >= 45) {
+  if (score >= 8) {
     return 4;
   }
-  if (score >= 35) {
+  if (score >= 5) {
     return 2;
   }
 
@@ -118,18 +153,41 @@ function calculateWelcomeGift(score: number | null | undefined) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
+  console.log("[Lucky Page] ===== 开始加载页面 =====");
+  logger.info(
+    "[Lucky Page] Starting loader - fetching user data and API rewards"
+  );
+
+  console.log("[Lucky Page] 步骤1: 检查用户认证状态");
   const userResult = await getDbUser(request);
 
   if (userResult.isErr()) {
     throw redirect("/");
   }
-
   const user = userResult.value;
+  console.log("[Lucky Page] ✅ 用户认证成功");
+  console.log(`[Lucky Page] 用户ID: ${user.id}`);
+  console.log("[Lucky Page] 用户详细信息:", {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    kindleScore: user.kindleScore,
+  });
+  logger.info(
+    `[Lucky Page] User authenticated: ${user.id}, calling API for rewards data`
+  );
 
+  // 无论是否认证成功，都要调用API获取USDT和reward数据
+  console.log("[Lucky Page] 步骤2: 开始调用API获取USDT和reward数据...");
+  console.log(
+    `[Lucky Page] 即将调用的API: https://api.distant.fun/api/user/${user.id}`
+  );
+
+  // 并行调用API和获取其他数据
   const [inviteRecords, userRank, luckyApiData] = await Promise.all([
     getUserInviteRecords(user.id),
     getUserKindleRank(user.id),
-    fetchUserLuckyData(user.id), // 每次都会调用API
+    fetchUserLuckyData(user.id), // 始终调用API获取真实数据
   ]);
 
   console.log("[Lucky Page] 步骤3: 所有API调用完成");
@@ -137,7 +195,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   console.log("[Lucky Page] 用户排名:", userRank);
   console.log("[Lucky Page] API数据结果:", luckyApiData);
 
-  // 临时测试：强制使用API数据，不使用测试数据
+  // 使用API返回的真实数据
   const finalApiData = luckyApiData;
 
   // 记录API调用结果
@@ -154,6 +212,10 @@ export async function loader({ request }: Route.LoaderArgs) {
       `[Lucky Page] API data received for user ${user.id}: USDT=${luckyApiData.usdt}, Reward=${luckyApiData.reward}`
     );
   } else {
+    console.log("[Lucky Page] ❌ API调用失败或返回null");
+    console.log(
+      "[Lucky Page] 可能的原因: 网络错误、API服务不可用、用户ID不存在等"
+    );
     logger.warn(
       `[Lucky Page] No API data received for user ${user.id}, API call may have failed`
     );
@@ -166,6 +228,15 @@ export async function loader({ request }: Route.LoaderArgs) {
     apiData: finalApiData,
   };
 
+  console.log("[Lucky Page] 步骤5: 最终返回数据");
+  console.log("[Lucky Page] 最终数据:", {
+    userId: finalData.user.id,
+    hasApiData: !!finalData.apiData,
+    apiUsdt: finalData.apiData?.usdt,
+    apiReward: finalData.apiData?.reward,
+    kindleScore: finalData.user.kindleScore,
+  });
+
   logger.info("[Lucky Page] Final data being returned:", {
     userId: finalData.user.id,
     hasApiData: !!finalData.apiData,
@@ -173,6 +244,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     apiReward: finalData.apiData?.reward,
     kindleScore: finalData.user.kindleScore,
   });
+
+  console.log("[Lucky Page] ===== 页面加载完成 =====");
   return {
     user: { ...user, rank: userRank },
     inviteRecords,
@@ -188,13 +261,22 @@ export default function Lucky({
   const [copiedInstagram, setCopiedInstagram] = useState(false);
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
 
+  // 调试信息
+  console.log("[Lucky Component] ===== 组件渲染开始 =====");
+  console.log("[Lucky Component] 接收到的API数据:", apiData);
+  console.log("[Lucky Component] 接收到的用户数据:", user);
+  console.log("[Lucky Component] API数据是否存在:", !!apiData);
+  console.log("[Lucky Component] API Success状态:", apiData?.success);
+  console.log("[Lucky Component] API USDT值:", apiData?.usdt);
+  console.log("[Lucky Component] API Reward值:", apiData?.reward);
+  console.log("[Lucky Component] 用户Kindle Score:", user?.kindleScore);
+
   const inviteLink = `${import.meta.env.VITE_ORIGIN || "http://localhost:5173"}invite/${user?.id}`;
 
   // 根据API数据或Kindle Score计算奖励金额
   let giftAmount = 0;
   let isEligibleForGift = false;
 
-  // 临时测试：强制使用API数据（如果存在）
   console.log("[Lucky Component] 开始计算奖励金额...");
   if (apiData?.success) {
     // 使用API数据
@@ -214,8 +296,8 @@ export default function Lucky({
       isEligibleForGift
     );
   } else {
-    // 使用原有的Kindle Score逻辑
-    console.log("[Lucky Component] ❌ 使用Kindle Score计算");
+    // API没有数据时，使用Kindle Score计算USDT奖励
+    console.log("[Lucky Component] ❌ API无数据，使用Kindle Score计算USDT奖励");
     console.log("[Lucky Component] Kindle Score:", user?.kindleScore);
     const calculatedGift = calculateWelcomeGift(user?.kindleScore);
     console.log("[Lucky Component] 计算的礼物金额:", calculatedGift);
@@ -342,7 +424,7 @@ export default function Lucky({
           className={
             isEligibleForGift
               ? "rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur"
-              : "rounded-2xl border border-[#ff9cb3]/40 bg-gradient-to-br from-[#361313] via-[#1f0c12] to-[#0c070b] p-10 text-white shadow-[0_40px_110px_rgba(95,18,35,0.55)] backdrop-blur"
+              : "rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur"
           }
         >
           <div className="space-y-4 text-white">
@@ -375,23 +457,23 @@ export default function Lucky({
                     address within 3 days.
                   </div>
                 </div>
-
-                {/* Connect Wallet Section */}
-                <div className="mt-6">
-                  <ConnectWallet userWalletAddress={user?.walletAddress} />
-                </div>
               </>
             ) : (
               <div className="space-y-2">
                 <p className="font-semibold text-lg text-white">
                   Better luck next time!
                 </p>
-                <p className="text-[#f6dce5] text-sm">
+                <p className="text-[#cdd6f8] text-sm">
                   You missed the welcome bonus this time, but you can invite
                   friends and earn 10% of their welcome bonus in USDT.
                 </p>
               </div>
             )}
+
+            {/* Connect Wallet Section - 所有用户都显示 */}
+            <div className="mt-6">
+              <ConnectWallet userWalletAddress={user?.walletAddress} />
+            </div>
           </div>
         </div>
 
@@ -491,7 +573,7 @@ export default function Lucky({
                 </p>
               </div>
             ) : (
-              inviteRecords.map((record) => (
+              inviteRecords.map((record: any) => (
                 <div key={record.id}>
                   <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
                     <div className="flex items-center justify-between">
