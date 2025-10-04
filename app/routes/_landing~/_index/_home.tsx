@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import CarouselIndicator from "~/components/CarouselIndicator";
+import FirstGetScoreDialog from "~/components/Dialogs/FirstGetScoreDialog";
 import GlowContainer from "~/components/GlowContainer";
 import enterpriseIcon from "~/components/Header/MenuContent/assets/enterprise.svg";
 import tiktokIcon from "~/components/Header/MenuContent/assets/tiktok.svg";
@@ -124,6 +125,11 @@ export default function Index({ loaderData }: Route.ComponentProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const { signInEnterprise, signInCreator } = useLogin();
+
+  const userScore =
+    loaderData.userData?.kindleScore != null
+      ? Math.round(loaderData.userData.kindleScore)
+      : null;
 
   useEffect(() => {
     if (!api) {
@@ -439,6 +445,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </div>
+      <FirstGetScoreDialog score={userScore} />
     </div>
   );
 }

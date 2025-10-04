@@ -108,9 +108,9 @@ export default function Header({ user }: { user: UserWithCampaigns }) {
           <div className="h-[14px] w-[1px] bg-white opacity-40" />
 
           {user && !user.isBusiness && (
-            <a href="https://example.com">
+            <Link to="/u/lucky" viewTransition>
               <img alt="Gift" className="h-5 w-5" src={giftIcon} />
-            </a>
+            </Link>
           )}
 
           <Popover onOpenChange={setPopoverOpen} open={popoverOpen}>
@@ -220,9 +220,9 @@ export default function Header({ user }: { user: UserWithCampaigns }) {
                     {user.email ? hideMiddleOfString(user.email) : "User"}
                   </span>
                   {!user.isBusiness && (
-                    <a href="https://example.com">
+                    <Link to="/u/lucky" viewTransition>
                       <img alt="Gift" className="h-5 w-5" src={giftIcon} />
-                    </a>
+                    </Link>
                   )}
                 </div>
               ) : (

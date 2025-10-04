@@ -165,7 +165,7 @@ export default function Hub({
           <FollowUs />
         </div>
       </div>
-      <FirstOpenHomeDialog score={userScore} />
+      <FirstOpenHomeDialog />
       <FirstGetScoreDialog score={userScore} />
     </>
   );

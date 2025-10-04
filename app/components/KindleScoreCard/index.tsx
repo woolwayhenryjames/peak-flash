@@ -38,9 +38,9 @@ export default function KindleScoreCard({
             >
               {score != null ? score : "Grading"}
             </div>
-            <a className="flex-shrink-0" href="https://example.com">
+            <Link className="flex-shrink-0" to="/u/lucky" viewTransition>
               <img alt="gift" className="size-6" src={gift} />
-            </a>
+            </Link>
           </div>
         </div>
 

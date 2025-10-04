@@ -1,0 +1,563 @@
+import { useState } from "react";
+import { redirect } from "react-router";
+import ConnectWallet from "~/components/ConnectWallet";
+import GlowContainer from "~/components/GlowContainer";
+import InviteeCampaigns from "~/components/inviteeCampaigns";
+import { cn } from "~/lib/utils";
+import { getDbUser } from "~/services/auth.server";
+import { logger } from "~/services/logger.server";
+import { getUserInviteRecords } from "~/services/user.server";
+import { getUserKindleRank } from "~/services/user-ranking.server";
+import type { Route } from "./+types/lucky";
+import fb from "./invite/assets/fb.svg";
+import ins from "./invite/assets/ins.png";
+import starsIcon from "./invite/assets/stars.svg";
+import tg from "./invite/assets/tg.svg";
+import tiktok from "./invite/assets/tiktok.svg";
+import whatsapp from "./invite/assets/whatsapp.png";
+import x from "./invite/assets/x.svg";
+import leaderboardBg from "./leaderboard/assets/bg.avif";
+
+// API 接口类型定义
+interface LuckyApiResponse {
+  success: boolean;
+  user_id: string;
+  usdt: number;
+  reward: number;
+}
+
+// 调用Lucky API获取用户数据
+async function fetchUserLuckyData(
+  userId: string
+): Promise<LuckyApiResponse | null> {
+  try {
+    const apiUrl = `https://api.distant.fun/api/user/${userId}`;
+    logger.info(
+      `[Lucky API] Fetching user data for ID: ${userId} from: ${apiUrl}`
+    );
+
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache", // 确保每次都获取最新数据
+      },
+    });
+
+    if (!response.ok) {
+      logger.warn(
+        `[Lucky API] Request failed: ${response.status} ${response.statusText}`
+      );
+      return null;
+    }
+
+    const data = (await response.json()) as LuckyApiResponse;
+    logger.info(`[Lucky API] Raw response for user ${userId}:`, data);
+
+    // 检查响应格式
+    if (data && typeof data === "object" && "success" in data) {
+      if (data.success) {
+        logger.info(
+          `[Lucky API] User ${userId} has USDT: ${data.usdt}, Reward: ${data.reward}`
+        );
+        return data;
+      }
+      logger.warn(`[Lucky API] User ${userId} - API returned success: false`);
+      return null;
+    }
+    logger.warn(`[Lucky API] User ${userId} - Invalid response format:`, data);
+    return null;
+  } catch (error) {
+    logger.error(`[Lucky API] Failed to fetch data for user ${userId}:`, {
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+    return null;
+  }
+}
+
+export function meta() {
+  return [
+    { title: "Lucky Center - Peak AI" },
+    {
+      name: "description",
+      content:
+        "Check your Kindle Score summary and manage your invite rewards in the Peak AI Lucky Center.",
+    },
+    { name: "robots", content: "noindex, nofollow" },
+  ];
+}
+
+const socialPlatforms = [
+  { name: "Twitter", icon: x },
+  { name: "TikTok", icon: tiktok },
+  { name: "Telegram", icon: tg },
+  { name: "WhatsApp", icon: whatsapp },
+  { name: "Facebook", icon: fb },
+  { name: "Instagram", icon: ins },
+];
+
+function calculateWelcomeGift(score: number | null | undefined) {
+  if (score == null) {
+    return null;
+  }
+
+  if (score >= 55) {
+    return 8;
+  }
+  if (score >= 50) {
+    return 6;
+  }
+  if (score >= 45) {
+    return 4;
+  }
+  if (score >= 35) {
+    return 2;
+  }
+
+  return null;
+}
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const userResult = await getDbUser(request);
+
+  if (userResult.isErr()) {
+    throw redirect("/");
+  }
+
+  const user = userResult.value;
+
+  const [inviteRecords, userRank, luckyApiData] = await Promise.all([
+    getUserInviteRecords(user.id),
+    getUserKindleRank(user.id),
+    fetchUserLuckyData(user.id), // 每次都会调用API
+  ]);
+
+  console.log("[Lucky Page] 步骤3: 所有API调用完成");
+  console.log("[Lucky Page] 邀请记录数量:", inviteRecords.length);
+  console.log("[Lucky Page] 用户排名:", userRank);
+  console.log("[Lucky Page] API数据结果:", luckyApiData);
+
+  // 临时测试：强制使用API数据，不使用测试数据
+  const finalApiData = luckyApiData;
+
+  // 记录API调用结果
+  console.log("[Lucky Page] 步骤4: 分析API调用结果");
+  if (luckyApiData) {
+    console.log("[Lucky Page] ✅ API调用成功！");
+    console.log("[Lucky Page] API返回数据:", {
+      success: luckyApiData.success,
+      user_id: luckyApiData.user_id,
+      usdt: luckyApiData.usdt,
+      reward: luckyApiData.reward,
+    });
+    logger.info(
+      `[Lucky Page] API data received for user ${user.id}: USDT=${luckyApiData.usdt}, Reward=${luckyApiData.reward}`
+    );
+  } else {
+    logger.warn(
+      `[Lucky Page] No API data received for user ${user.id}, API call may have failed`
+    );
+  }
+
+  // 调试：检查最终返回的数据
+  const finalData = {
+    user: { ...user, rank: userRank },
+    inviteRecords,
+    apiData: finalApiData,
+  };
+
+  logger.info("[Lucky Page] Final data being returned:", {
+    userId: finalData.user.id,
+    hasApiData: !!finalData.apiData,
+    apiUsdt: finalData.apiData?.usdt,
+    apiReward: finalData.apiData?.reward,
+    kindleScore: finalData.user.kindleScore,
+  });
+  return {
+    user: { ...user, rank: userRank },
+    inviteRecords,
+    apiData: finalApiData || undefined,
+  };
+}
+
+export default function Lucky({
+  loaderData: { user, inviteRecords, apiData },
+}: Route.ComponentProps) {
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedTikTok, setCopiedTikTok] = useState(false);
+  const [copiedInstagram, setCopiedInstagram] = useState(false);
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
+
+  const inviteLink = `${import.meta.env.VITE_ORIGIN || "http://localhost:5173"}invite/${user?.id}`;
+
+  // 根据API数据或Kindle Score计算奖励金额
+  let giftAmount = 0;
+  let isEligibleForGift = false;
+
+  // 临时测试：强制使用API数据（如果存在）
+  console.log("[Lucky Component] 开始计算奖励金额...");
+  if (apiData?.success) {
+    // 使用API数据
+    console.log("[Lucky Component] ✅ 使用API数据");
+    console.log(
+      "[Lucky Component] API USDT:",
+      apiData.usdt,
+      "API Reward:",
+      apiData.reward
+    );
+    giftAmount = apiData.usdt;
+    isEligibleForGift = apiData.usdt > 0;
+    console.log(
+      "[Lucky Component] 计算结果 - giftAmount:",
+      giftAmount,
+      "isEligibleForGift:",
+      isEligibleForGift
+    );
+  } else {
+    // 使用原有的Kindle Score逻辑
+    console.log("[Lucky Component] ❌ 使用Kindle Score计算");
+    console.log("[Lucky Component] Kindle Score:", user?.kindleScore);
+    const calculatedGift = calculateWelcomeGift(user?.kindleScore);
+    console.log("[Lucky Component] 计算的礼物金额:", calculatedGift);
+    giftAmount = calculatedGift || 0;
+    isEligibleForGift = calculatedGift != null && calculatedGift > 0;
+    console.log(
+      "[Lucky Component] 计算结果 - giftAmount:",
+      giftAmount,
+      "isEligibleForGift:",
+      isEligibleForGift
+    );
+  }
+
+  // 调试：显示最终计算结果
+  console.log("[Lucky Component] ===== 最终计算结果 =====");
+  console.log("[Lucky Component] 最终giftAmount:", giftAmount);
+  console.log("[Lucky Component] 最终isEligibleForGift:", isEligibleForGift);
+  console.log("[Lucky Component] 将显示在页面上的USDT金额:", giftAmount);
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+    }
+  };
+
+  const handleSocialShare = (platform: string) => {
+    const shareText =
+      "Join me on PEAK AI and start earning rewards! Use my invite link:";
+    const fullText = `${shareText} ${inviteLink}`;
+
+    const shareUrls = {
+      Twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullText)}`,
+      TikTok: inviteLink,
+      Telegram: `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`,
+      WhatsApp: `https://wa.me/?text=${encodeURIComponent(fullText)}`,
+      Facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(inviteLink)}`,
+      Instagram: inviteLink,
+    };
+
+    const url = shareUrls[platform as keyof typeof shareUrls];
+
+    if (platform === "TikTok") {
+      navigator.clipboard
+        .writeText(inviteLink)
+        .then(() => {
+          setCopiedTikTok(true);
+          setTimeout(() => setCopiedTikTok(false), 2000);
+        })
+        .catch((err) => {
+          console.error("Failed to copy link:", err);
+        });
+    } else if (platform === "Instagram") {
+      navigator.clipboard
+        .writeText(inviteLink)
+        .then(() => {
+          setCopiedInstagram(true);
+          setTimeout(() => setCopiedInstagram(false), 2000);
+        })
+        .catch((err) => {
+          console.error("Failed to copy link:", err);
+        });
+    } else {
+      window.open(url, "_blank");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24">
+      <div
+        className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover pl-10"
+        style={{ backgroundImage: `url(${leaderboardBg})` }}
+      >
+        <div>
+          <div className="font-medium text-2xl text-white tracking-tight">
+            Lucky Center
+          </div>
+          <div className="font-normal text-[#d7d7d7] text-xs">
+            Track your Kindle Score and invite bonuses
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 space-y-6 px-5 md:px-18">
+        <div className="flex items-center justify-between rounded-xl border border-gray-700 p-4">
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-600">
+              <img
+                alt={user?.name ? user.name.substring(0, 4).toUpperCase() : "U"}
+                className="h-full w-full object-cover"
+                src={user?.image || ""}
+              />
+            </div>
+
+            <div className="flex flex-col items-start gap-2">
+              <h3 className="font-medium text-white">
+                @{user?.email || "User"}
+              </h3>
+              {user?.kindleScore != null && (
+                <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
+                  #{user?.rank || 0}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {user?.kindleScore != null ? (
+            <div className="text-right">
+              <p className="bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-semibold text-2xl text-transparent">
+                {Math.round(user?.kindleScore || 0)}
+              </p>
+              <p className="text-gray-400 text-xs">KINDLE Score</p>
+            </div>
+          ) : (
+            <div className="bg-linear-114 from-[#7465ff] from-[12.87%] to-[#38bdff] to-[51.12%] bg-clip-text font-semibold text-transparent text-xs">
+              Grading
+            </div>
+          )}
+        </div>
+        <div
+          className={
+            isEligibleForGift
+              ? "rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur"
+              : "rounded-2xl border border-[#ff9cb3]/40 bg-gradient-to-br from-[#361313] via-[#1f0c12] to-[#0c070b] p-10 text-white shadow-[0_40px_110px_rgba(95,18,35,0.55)] backdrop-blur"
+          }
+        >
+          <div className="space-y-4 text-white">
+            <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
+              <span>Welcome Bonus</span>
+            </div>
+            {isEligibleForGift ? (
+              <>
+                <div className="space-y-2">
+                  <p className="font-semibold text-lg text-white">
+                    Congratulations!
+                  </p>
+                  <p className="text-[#cdd6f8] text-sm">
+                    Your Kindle Score has earned you an instant cash bonus.
+                  </p>
+                </div>
+                <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                      Bonus Amount
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="whitespace-nowrap font-semibold text-white text-xl">
+                        {giftAmount} USDT
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-[#b8caff] text-xs">
+                    Your rewards will be distributed to your bound EVM wallet
+                    address within 3 days.
+                  </div>
+                </div>
+
+                {/* Connect Wallet Section */}
+                <div className="mt-6">
+                  <ConnectWallet userWalletAddress={user?.walletAddress} />
+                </div>
+              </>
+            ) : (
+              <div className="space-y-2">
+                <p className="font-semibold text-lg text-white">
+                  Better luck next time!
+                </p>
+                <p className="text-[#f6dce5] text-sm">
+                  You missed the welcome bonus this time, but you can invite
+                  friends and earn 10% of their welcome bonus in USDT.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="h-px w-full bg-gray-600/30" />
+
+        <div className="space-y-8 rounded-2xl border border-white/10 bg-[rgba(14,16,24,0.85)] p-8 shadow-[0_30px_80px_rgba(4,9,20,0.55)] backdrop-blur">
+          <div className="space-y-3 text-white">
+            <h2 className="text-[#8c96c7] text-sm uppercase tracking-[0.3em]">
+              Referral Rewards
+            </h2>
+            <p className="text-[#cdd6f8] text-sm">
+              You earn 10% of each person you invite's welcome bonus. Referral
+              earnings are calculated every 3 days and will be distributed
+              together when the campaign ends.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <div className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-[#cdd6f8] text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[#98a4d8] text-xs uppercase tracking-[0.25em]">
+                  Rewards
+                </span>
+                {apiData?.success ? (
+                  <span className="font-semibold text-base text-white">
+                    {apiData.reward} USDT
+                  </span>
+                ) : (
+                  <span className="font-semibold text-base text-white">
+                    Pending
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 text-white">
+              <span className="text-[#8c96c7] text-xs uppercase tracking-[0.28em]">
+                Your Referral Link
+              </span>
+              <div className="rounded-2xl border border-white/15 bg-black/25 p-4 text-[#dde4ff] text-sm">
+                {inviteLink}
+              </div>
+              <button
+                className="self-end"
+                onClick={handleCopyLink}
+                type="button"
+              >
+                <GlowContainer className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 font-semibold text-[#dbe4ff] text-sm transition hover:bg-white/10">
+                  <span>{copiedLink ? "Copied" : "Copy Link"}</span>
+                </GlowContainer>
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {socialPlatforms.map((platform) => {
+              const isCopied =
+                (platform.name === "TikTok" && copiedTikTok) ||
+                (platform.name === "Instagram" && copiedInstagram);
+
+              return (
+                <button
+                  key={platform.name}
+                  onClick={() => handleSocialShare(platform.name)}
+                  type="button"
+                >
+                  <GlowContainer
+                    className="flex items-center justify-center gap-3 rounded-xl py-3"
+                    noShimmer
+                  >
+                    <img
+                      alt={`${platform.name} icon`}
+                      className="size-6"
+                      src={platform.icon}
+                    />
+                    <span className="font-normal text-sm text-white">
+                      {isCopied ? "Copied!" : platform.name}
+                    </span>
+                  </GlowContainer>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-7">
+          <div className="flex items-center gap-1">
+            <img alt="Stars icon" className="h-6 w-6" src={starsIcon} />
+            <h3 className="font-semibold text-white text-xl">Invite Records</h3>
+          </div>
+
+          <div className="space-y-6">
+            {inviteRecords.length === 0 ? (
+              <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-8 text-center">
+                <p className="text-[#979797] text-sm">
+                  No invites yet. Share your link to start earning!
+                </p>
+              </div>
+            ) : (
+              inviteRecords.map((record) => (
+                <div key={record.id}>
+                  <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#f9f9fb] text-lg">
+                          <img
+                            alt={`${record.name} avatar`}
+                            className="h-full w-full object-cover"
+                            src={record.avatar}
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <div className="font-medium text-base text-white leading-tight">
+                            {record.name}
+                          </div>
+                          <div className="text-[#979797] text-xs">
+                            @{record.email}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="text-[#979797] text-[10px] leading-relaxed">
+                          {record.timeAgo}
+                        </div>
+                        <button
+                          onClick={() =>
+                            setExpandedUserId(
+                              expandedUserId === record.id ? null : record.id
+                            )
+                          }
+                          type="button"
+                        >
+                          <GlowContainer className="rounded-sm px-2 py-2">
+                            <svg
+                              className={cn(
+                                "h-4 w-4 transition-transform",
+                                expandedUserId === record.id ? "rotate-180" : ""
+                              )}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <title>Chevron down</title>
+                              <path
+                                d="M6 9l6 6 6-6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                              />
+                            </svg>
+                          </GlowContainer>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  {expandedUserId === record.id && (
+                    <InviteeCampaigns inviter={user} userId={record.id} />
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

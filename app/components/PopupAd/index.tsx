@@ -24,7 +24,7 @@ export default function PopupAd() {
     dialogRef.current?.close();
   };
   const handleRedirect = () => {
-    window.open("https://example.com", "_blank");
+    window.open("/u/lucky", "_blank");
     handleDismiss();
   };
 

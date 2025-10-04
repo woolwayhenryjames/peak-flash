@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import GlowContainer from "~/components/GlowContainer";
 import DialogWithCloseButton from "../DialogWithCloseButton";
 import flower from "./assets/flower.svg";
@@ -86,11 +87,11 @@ export default function FirstGetScoreDialog({
           </div>
         </div>
         <div className="justify-bewtween flex w-full gap-4">
-          <a className="flex-1" href="https://example.com/">
+          <Link className="flex-1" to="/u/lucky" viewTransition>
             <GlowContainer className="whitespace-nowrap bg-gradient-to-b from-[#182d2e] to-[#4d8f94] text-sm text-white">
               Check Rewards
             </GlowContainer>
-          </a>
+          </Link>
           <button
             className="flex-1"
             onClick={() => handleDismiss(false)}
