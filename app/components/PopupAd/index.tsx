@@ -23,22 +23,18 @@ export default function PopupAd() {
     sessionStorage.setItem("adLastDismissed", Date.now().toString());
     dialogRef.current?.close();
   };
-  const handleRedirect = () => {
-    window.open("/u/lucky", "_blank");
-    handleDismiss();
-  };
 
   return (
     <dialog className="modal z-0" onClose={handleDismiss} ref={dialogRef}>
       <DesktopPopupAd
         className="hidden md:flex"
         handleDismiss={handleDismiss}
-        handleRedirect={handleRedirect}
+        handleRedirect={handleDismiss}
       />
       <MobilePopupAd
         className="flex md:hidden"
         handleDismiss={handleDismiss}
-        handleRedirect={handleRedirect}
+        handleRedirect={handleDismiss}
       />
       <form className="modal-backdrop" method="dialog">
         <button type="submit">close</button>
