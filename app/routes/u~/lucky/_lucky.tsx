@@ -136,20 +136,21 @@ function calculateWelcomeGift(score: number | null | undefined) {
     return null;
   }
 
+  // 20分是获得奖励的门槛
+  if (score >= 55) {
+    return 8; // 大于等于55分: 8u
+  }
+  if (score >= 50) {
+    return 6; // 50-54.9分: 6u
+  }
+  if (score >= 35) {
+    return 4; // 35-49.9分: 4u
+  }
   if (score >= 20) {
-    return 8;
-  }
-  if (score >= 12) {
-    return 6;
-  }
-  if (score >= 8) {
-    return 4;
-  }
-  if (score >= 5) {
-    return 2;
+    return 2; // 20-35分: 2u
   }
 
-  return null;
+  return null; // 低于20分无奖励
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -276,10 +277,12 @@ export default function Lucky({
   // 根据API数据或Kindle Score计算奖励金额
   let giftAmount = 0;
   let isEligibleForGift = false;
+  let hasApiData = false; // 新增：标记是否有API数据
 
   console.log("[Lucky Component] 开始计算奖励金额...");
   if (apiData?.success) {
     // 使用API数据
+    hasApiData = true;
     console.log("[Lucky Component] ✅ 使用API数据");
     console.log(
       "[Lucky Component] API USDT:",
@@ -297,6 +300,7 @@ export default function Lucky({
     );
   } else {
     // API没有数据时，使用Kindle Score计算USDT奖励
+    hasApiData = false;
     console.log("[Lucky Component] ❌ API无数据，使用Kindle Score计算USDT奖励");
     console.log("[Lucky Component] Kindle Score:", user?.kindleScore);
     const calculatedGift = calculateWelcomeGift(user?.kindleScore);
@@ -431,7 +435,15 @@ export default function Lucky({
             <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
               <span>Welcome Bonus</span>
             </div>
-            {isEligibleForGift ? (
+            {user?.kindleScore == null ? (
+              // 状态1: Kindle Score还在grading中
+              <div className="space-y-2">
+                <p className="font-semibold text-lg text-white">
+                  Your KINDLE Score is being graded. Please wait for your rewards.
+                </p>
+              </div>
+            ) : isEligibleForGift ? (
+              // 状态2: 有奖励
               <>
                 <div className="space-y-2">
                   <p className="font-semibold text-lg text-white">
@@ -454,18 +466,21 @@ export default function Lucky({
                   </div>
                   <div className="mt-3 text-[#b8caff] text-xs">
                     Your rewards will be distributed to your bound EVM wallet
-                    address within 3 days.
+                    address within 24 hours.
                   </div>
                 </div>
               </>
             ) : (
+              // 状态3: 没有奖励（包括API返回0的情况）
               <div className="space-y-2">
                 <p className="font-semibold text-lg text-white">
                   Better luck next time!
                 </p>
                 <p className="text-[#cdd6f8] text-sm">
-                  You missed the welcome bonus this time, but you can invite
-                  friends and earn 10% of their welcome bonus in USDT.
+                  {hasApiData 
+                    ? "You didn't qualify for the welcome bonus this time, but you can invite friends and earn 10% of their welcome bonus in USDT."
+                    : "You missed the welcome bonus this time, but you can invite friends and earn 10% of their welcome bonus in USDT."
+                  }
                 </p>
               </div>
             )}
@@ -486,7 +501,7 @@ export default function Lucky({
             </h2>
             <p className="text-[#cdd6f8] text-sm">
               You earn 10% of each person you invite's welcome bonus. Referral
-              earnings are calculated every 3 days and will be distributed
+              earnings are calculated <span className="text-yellow-400 font-semibold">every 24 hours</span> and will be distributed
               together when the campaign ends.
             </p>
           </div>
@@ -502,8 +517,8 @@ export default function Lucky({
                     {apiData.reward} USDT
                   </span>
                 ) : (
-                  <span className="font-semibold text-base text-white">
-                    Pending
+                  <span className="font-medium text-sm text-gray-400">
+                    Settled Every 24 Hours
                   </span>
                 )}
               </div>
@@ -513,7 +528,7 @@ export default function Lucky({
               <span className="text-[#8c96c7] text-xs uppercase tracking-[0.28em]">
                 Your Referral Link
               </span>
-              <div className="rounded-2xl border border-white/15 bg-black/25 p-4 text-[#dde4ff] text-sm">
+              <div className="rounded-2xl border border-white/15 bg-black/25 p-4 text-[#dde4ff] text-sm break-all overflow-hidden">
                 {inviteLink}
               </div>
               <button
