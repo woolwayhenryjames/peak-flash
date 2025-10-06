@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet } from "react-router";
 import Footer from "~/components/Footer";
 import Header from "~/components/Header";
@@ -33,6 +34,28 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function LandingLayout({ loaderData }: Route.ComponentProps) {
+  // Check for pending inviter ID and process it
+  useEffect(() => {
+    const processPendingInvite = async () => {
+      const pendingInviterId = sessionStorage.getItem("pendingInviterId");
+      if (!pendingInviterId) {
+        return;
+      }
+      try {
+        await fetch("/api/process-invite", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ inviterId: pendingInviterId }),
+        });
+      } finally {
+        sessionStorage.removeItem("pendingInviterId");
+      }
+    };
+
+    processPendingInvite();
+  }, []); // Run once on mount
   return (
     <div className="flex min-h-screen flex-col">
       <Header user={loaderData} />
