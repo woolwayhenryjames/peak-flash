@@ -24,6 +24,7 @@ interface LuckyApiResponse {
   user_id: string;
   usdt: number;
   reward: number;
+  claim: boolean;
 }
 
 // 调用Lucky API获取用户数据
@@ -138,16 +139,16 @@ function calculateWelcomeGift(score: number | null | undefined) {
 
   // 20分是获得奖励的门槛
   if (score >= 55) {
-    return 8; // 大于等于55分: 8u
+    return 8; // 55分及以上: 8u
   }
   if (score >= 50) {
     return 6; // 50-54.9分: 6u
   }
   if (score >= 35) {
-    return 4; // 35-49.9分: 4u
+    return 4; // 35-49.9分: 4u (包含35分)
   }
   if (score >= 20) {
-    return 2; // 20-35分: 2u
+    return 2; // 20-34.9分: 2u
   }
 
   return null; // 低于20分无奖励
@@ -278,17 +279,21 @@ export default function Lucky({
   let giftAmount = 0;
   let isEligibleForGift = false;
   let hasApiData = false; // 新增：标记是否有API数据
+  let isClaimed = false; // 新增：标记奖励是否已发放
 
   console.log("[Lucky Component] 开始计算奖励金额...");
   if (apiData?.success) {
     // 使用API数据
     hasApiData = true;
+    isClaimed = apiData.claim || false;
     console.log("[Lucky Component] ✅ 使用API数据");
     console.log(
       "[Lucky Component] API USDT:",
       apiData.usdt,
       "API Reward:",
-      apiData.reward
+      apiData.reward,
+      "API Claim:",
+      apiData.claim
     );
     giftAmount = apiData.usdt;
     isEligibleForGift = apiData.usdt > 0;
@@ -296,11 +301,14 @@ export default function Lucky({
       "[Lucky Component] 计算结果 - giftAmount:",
       giftAmount,
       "isEligibleForGift:",
-      isEligibleForGift
+      isEligibleForGift,
+      "isClaimed:",
+      isClaimed
     );
   } else {
     // API没有数据时，使用Kindle Score计算USDT奖励
     hasApiData = false;
+    isClaimed = false;
     console.log("[Lucky Component] ❌ API无数据，使用Kindle Score计算USDT奖励");
     console.log("[Lucky Component] Kindle Score:", user?.kindleScore);
     const calculatedGift = calculateWelcomeGift(user?.kindleScore);
@@ -311,7 +319,9 @@ export default function Lucky({
       "[Lucky Component] 计算结果 - giftAmount:",
       giftAmount,
       "isEligibleForGift:",
-      isEligibleForGift
+      isEligibleForGift,
+      "isClaimed:",
+      isClaimed
     );
   }
 
@@ -442,8 +452,38 @@ export default function Lucky({
                   Your KINDLE Score is being graded. Please wait for your rewards.
                 </p>
               </div>
+            ) : isEligibleForGift && isClaimed ? (
+              // 状态2: 有奖励且已发放
+              <>
+                <div className="space-y-2">
+                  <p className="font-semibold text-lg text-white">
+                    Rewards Distributed!
+                  </p>
+                  <p className="text-[#cdd6f8] text-sm">
+                    Your Kindle Score bonus has been successfully distributed to your wallet.
+                  </p>
+                </div>
+                <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                      Bonus Amount
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="whitespace-nowrap font-semibold text-white text-xl">
+                        {giftAmount} USDT
+                      </span>
+                      <span className="rounded-full bg-green-500/20 px-2 py-1 text-green-400 text-xs font-medium">
+                        ✓ Claimed
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-3 text-[#b8caff] text-xs">
+                    Your rewards have been distributed to your bound EVM wallet address.
+                  </div>
+                </div>
+              </>
             ) : isEligibleForGift ? (
-              // 状态2: 有奖励
+              // 状态3: 有奖励但未发放
               <>
                 <div className="space-y-2">
                   <p className="font-semibold text-lg text-white">
@@ -471,7 +511,7 @@ export default function Lucky({
                 </div>
               </>
             ) : (
-              // 状态3: 没有奖励（包括API返回0的情况）
+              // 状态4: 没有奖励（包括API返回0的情况）
               <div className="space-y-2">
                 <p className="font-semibold text-lg text-white">
                   Better luck next time!
