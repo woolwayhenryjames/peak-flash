@@ -10,7 +10,6 @@ export async function updateAllUserInfo() {
   });
   for (const user of users) {
     await updateUserInfo({ user });
-    await new Promise((resolve) => setTimeout(resolve, 500)); // Rate limit to 2 requests per second
   }
 }
 
