@@ -6,7 +6,9 @@ export async function action({ request }: { request: Request }) {
   if (request.method !== "POST") {
     return Response.json({ error: "Method not allowed" }, { status: 405 });
   }
-  const { campaignId, videoUrl } = await request.json();
+  const formData = await request.formData();
+  const campaignId = formData.get("campaignId")?.toString();
+  const videoUrl = formData.get("videoUrl")?.toString();
   const campaign = await db.campaign.findUnique({
     where: { id: campaignId },
   });
