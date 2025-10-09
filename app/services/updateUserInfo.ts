@@ -3,11 +3,29 @@ import { logger } from "~/services/logger.server";
 import { getUserInfo } from "~/services/tiktok-api.server";
 
 export async function updateAllUserInfo() {
-  const users = await db.user.findMany({
-    where: { isBusiness: false },
+  // First get users with null followerCount (never updated)
+  const usersWithNullFollowerCount = await db.user.findMany({
+    where: {
+      isBusiness: false,
+      followerCount: null,
+    },
     select: { id: true, email: true },
     orderBy: { updatedAt: "asc" },
   });
+
+  // Then get users with existing followerCount (previously updated)
+  const usersWithFollowerCount = await db.user.findMany({
+    where: {
+      isBusiness: false,
+      followerCount: { not: null },
+    },
+    select: { id: true, email: true },
+    orderBy: { updatedAt: "asc" },
+  });
+
+  // Process null followerCount users first, then existing users
+  const users = [...usersWithNullFollowerCount, ...usersWithFollowerCount];
+
   for (const user of users) {
     await updateUserInfo({ user });
   }
