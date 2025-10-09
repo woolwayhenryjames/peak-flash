@@ -15,7 +15,7 @@ export async function action({ request }: { request: Request }) {
   if (!campaign) {
     return Response.json({ error: "Campaign not found" }, { status: 403 });
   }
-  const url = `${import.meta.env.MODE === "production" ? "http://172.31.28.161:3333" : "http://localhost:3333"}/api/addUser`;
+  const url = `${import.meta.env.MODE === "production" ? "http://172.31.28.161:3333" : "http://localhost:3333"}/api/addVideo`;
   const body = JSON.stringify({
     video_url: videoUrl,
     keywords: (campaign.joinRequirement as JsonObject)?.["Required Tags"] || [],
