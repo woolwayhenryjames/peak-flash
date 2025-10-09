@@ -12,6 +12,7 @@ export default function ParticipationInfo({
   setExpand,
   campaignUser,
   userRank,
+  campaignId,
 }: {
   expand: boolean;
   setExpand: (expand: boolean) => void;
@@ -20,6 +21,7 @@ export default function ParticipationInfo({
     | null
     | undefined;
   userRank: number | null | undefined;
+  campaignId: string;
 }) {
   const [showMoreVideos, setShowMoreVideos] = useState(false);
   const [showSubmitVideoDialog, setShowSubmitVideoDialog] = useState(false);
@@ -45,32 +47,34 @@ export default function ParticipationInfo({
                 Profile Performance
               </h3>
               <div className="flex items-center gap-3">
-                <button
-                  className="flex-1"
-                  onClick={() => setExpand(!expand)}
-                  type="button"
-                >
-                  <GlowContainer className="rounded-sm px-4 py-1 text-sm">
-                    {expand ? "Collapse" : "Expand"}
-                    <svg
-                      className={cn(
-                        "ml-2 inline size-5 transition-transform",
-                        expand ? "rotate-180" : ""
-                      )}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <title>Chevron down</title>
-                      <path
-                        d="M6 9l6 6 6-6"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                      />
-                    </svg>
-                  </GlowContainer>
-                </button>
+                {campaignUser && (
+                  <button
+                    className="flex-1"
+                    onClick={() => setExpand(!expand)}
+                    type="button"
+                  >
+                    <GlowContainer className="rounded-sm px-4 py-1 text-sm">
+                      {expand ? "Collapse" : "Expand"}
+                      <svg
+                        className={cn(
+                          "ml-2 inline size-5 transition-transform",
+                          expand ? "rotate-180" : ""
+                        )}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <title>Chevron down</title>
+                        <path
+                          d="M6 9l6 6 6-6"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                        />
+                      </svg>
+                    </GlowContainer>
+                  </button>
+                )}
                 <button
                   onClick={() => setShowSubmitVideoDialog(true)}
                   type="button"
@@ -190,7 +194,7 @@ export default function ParticipationInfo({
         videos={fetcher.data ?? []}
       />
       <SubmitVideoDialog
-        id={campaignUser?.campaignId}
+        id={campaignId}
         setShow={setShowSubmitVideoDialog}
         show={showSubmitVideoDialog}
       />

@@ -212,17 +212,15 @@ export default function CampaignDetails({
               )}
             </div>
 
-            {/* Profile Performance */}
-            {campaign.isParticipating && (
-              <ParticipationInfo
-                campaignUser={campaignUser}
-                expand={expandedSection === "profile"}
-                setExpand={(expand) =>
-                  setExpandedSection(expand ? "profile" : null)
-                }
-                userRank={campaign.userRank}
-              />
-            )}
+            <ParticipationInfo
+              campaignId={campaign.id}
+              campaignUser={campaignUser}
+              expand={expandedSection === "profile"}
+              setExpand={(expand) =>
+                setExpandedSection(expand ? "profile" : null)
+              }
+              userRank={campaign.userRank}
+            />
           </div>
 
           <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
