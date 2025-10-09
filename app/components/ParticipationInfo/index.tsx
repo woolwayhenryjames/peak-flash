@@ -2,6 +2,7 @@ import type { CampaignUser, UserVideo } from ".prisma/main/client";
 import { useEffect, useState } from "react";
 import { useFetcher } from "react-router";
 import { MoreVideosDialog } from "~/components/Dialogs/MoreVideosDialog";
+import SubmitVideoDialog from "~/components/Dialogs/SubmitVideoDialog";
 import GlowContainer from "~/components/GlowContainer";
 import { cn } from "~/lib/utils";
 import profileIcon from "./assets/profile.svg";
@@ -15,12 +16,14 @@ export default function ParticipationInfo({
   expand: boolean;
   setExpand: (expand: boolean) => void;
   campaignUser:
-    | Pick<CampaignUser, "id" | "videoCount" | "score">
+    | Pick<CampaignUser, "id" | "videoCount" | "score" | "campaignId">
     | null
     | undefined;
   userRank: number | null | undefined;
 }) {
   const [showMoreVideos, setShowMoreVideos] = useState(false);
+  const [showSubmitVideoDialog, setShowSubmitVideoDialog] = useState(false);
+
   const fetcher = useFetcher<UserVideo[]>();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: we don't want to refetch on every refetch, that would be infinite loop
@@ -66,6 +69,14 @@ export default function ParticipationInfo({
                         strokeWidth={2}
                       />
                     </svg>
+                  </GlowContainer>
+                </button>
+                <button
+                  onClick={() => setShowSubmitVideoDialog(true)}
+                  type="button"
+                >
+                  <GlowContainer className="rounded-sm px-4 py-1 text-sm">
+                    Add
                   </GlowContainer>
                 </button>
               </div>
@@ -177,6 +188,11 @@ export default function ParticipationInfo({
         setShow={setShowMoreVideos}
         show={showMoreVideos}
         videos={fetcher.data ?? []}
+      />
+      <SubmitVideoDialog
+        id={campaignUser?.campaignId}
+        setShow={setShowSubmitVideoDialog}
+        show={showSubmitVideoDialog}
       />
     </div>
   );

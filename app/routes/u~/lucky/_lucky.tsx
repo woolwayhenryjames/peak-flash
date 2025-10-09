@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNestedTernary: this page is not written by the dev team */
 import { useState } from "react";
 import { redirect } from "react-router";
 import ConnectWallet from "~/components/ConnectWallet";
@@ -285,7 +286,7 @@ export default function Lucky({
   if (apiData?.success) {
     // 使用API数据
     hasApiData = true;
-    isClaimed = apiData.claim || false;
+    isClaimed = apiData.claim;
     console.log("[Lucky Component] ✅ 使用API数据");
     console.log(
       "[Lucky Component] API USDT:",
@@ -449,7 +450,8 @@ export default function Lucky({
               // 状态1: Kindle Score还在grading中
               <div className="space-y-2">
                 <p className="font-semibold text-lg text-white">
-                  Your KINDLE Score is being graded. Please wait for your rewards.
+                  Your KINDLE Score is being graded. Please wait for your
+                  rewards.
                 </p>
               </div>
             ) : isEligibleForGift && isClaimed ? (
@@ -460,7 +462,8 @@ export default function Lucky({
                     Rewards Distributed!
                   </p>
                   <p className="text-[#cdd6f8] text-sm">
-                    Your Kindle Score bonus has been successfully distributed to your wallet.
+                    Your Kindle Score bonus has been successfully distributed to
+                    your wallet.
                   </p>
                 </div>
                 <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
@@ -472,13 +475,14 @@ export default function Lucky({
                       <span className="whitespace-nowrap font-semibold text-white text-xl">
                         {giftAmount} USDT
                       </span>
-                      <span className="rounded-full bg-green-500/20 px-2 py-1 text-green-400 text-xs font-medium">
+                      <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
                         ✓ Claimed
                       </span>
                     </div>
                   </div>
                   <div className="mt-3 text-[#b8caff] text-xs">
-                    Your rewards have been distributed to your bound EVM wallet address.
+                    Your rewards have been distributed to your bound EVM wallet
+                    address.
                   </div>
                 </div>
               </>
@@ -517,10 +521,9 @@ export default function Lucky({
                   Better luck next time!
                 </p>
                 <p className="text-[#cdd6f8] text-sm">
-                  {hasApiData 
+                  {hasApiData
                     ? "You didn't qualify for the welcome bonus this time, but you can invite friends and earn 10% of their welcome bonus in USDT."
-                    : "You missed the welcome bonus this time, but you can invite friends and earn 10% of their welcome bonus in USDT."
-                  }
+                    : "You missed the welcome bonus this time, but you can invite friends and earn 10% of their welcome bonus in USDT."}
                 </p>
               </div>
             )}
@@ -541,8 +544,11 @@ export default function Lucky({
             </h2>
             <p className="text-[#cdd6f8] text-sm">
               You earn 10% of each person you invite's welcome bonus. Referral
-              earnings are calculated <span className="text-yellow-400 font-semibold">every 24 hours</span> and will be distributed
-              together when the campaign ends.
+              earnings are calculated{" "}
+              <span className="font-semibold text-yellow-400">
+                every 24 hours
+              </span>{" "}
+              and will be distributed together when the campaign ends.
             </p>
           </div>
 
@@ -557,7 +563,7 @@ export default function Lucky({
                     {apiData.reward} USDT
                   </span>
                 ) : (
-                  <span className="font-medium text-sm text-gray-400">
+                  <span className="font-medium text-gray-400 text-sm">
                     Settled Every 24 Hours
                   </span>
                 )}
@@ -568,7 +574,7 @@ export default function Lucky({
               <span className="text-[#8c96c7] text-xs uppercase tracking-[0.28em]">
                 Your Referral Link
               </span>
-              <div className="rounded-2xl border border-white/15 bg-black/25 p-4 text-[#dde4ff] text-sm break-all overflow-hidden">
+              <div className="overflow-hidden break-all rounded-2xl border border-white/15 bg-black/25 p-4 text-[#dde4ff] text-sm">
                 {inviteLink}
               </div>
               <button
@@ -628,7 +634,7 @@ export default function Lucky({
                 </p>
               </div>
             ) : (
-              inviteRecords.map((record: any) => (
+              inviteRecords.map((record) => (
                 <div key={record.id}>
                   <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
                     <div className="flex items-center justify-between">
