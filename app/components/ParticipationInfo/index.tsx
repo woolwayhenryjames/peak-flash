@@ -42,11 +42,13 @@ export default function ParticipationInfo({
           <div className="flex w-full items-center gap-4">
             <img alt="Profile icon" className="size-13" src={profileIcon} />
 
-            <div className="flex w-full flex-col gap-3">
+            <div
+              className={cn("flex w-full gap-3", campaignUser && "flex-col")}
+            >
               <h3 className="font-medium text-lg text-white">
                 Profile Performance
               </h3>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-1 items-center gap-3">
                 {campaignUser && (
                   <button
                     className="flex-1"
@@ -76,6 +78,7 @@ export default function ParticipationInfo({
                   </button>
                 )}
                 <button
+                  className="ml-auto"
                   onClick={() => setShowSubmitVideoDialog(true)}
                   type="button"
                 >

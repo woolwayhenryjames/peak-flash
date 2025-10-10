@@ -195,13 +195,13 @@ const faqs: FAQ[] = [
     id: "faq-3",
     question: "Who determines PeakAI's reward distribution rules?",
     answer:
-      "PeakAI provides a professional AI scoring system that precisely captures and analyzes creator content, updating corresponding scores and rankings to project teams. The specific reward distribution rules are determined by the project teams themselves, who can reference SPARK Points, KINDLE Scores, and the actual content published by creators to establish their reward criteria.\n\n PeakAI will provide a creators list (including wallet addresses) based on project requirements, and rewards are distributed independently by the project teams.",
+      "PeakAI provides a professional AI scoring system that precisely captures and analyzes creator content, updating corresponding scores and rankings to project teams. The specific reward distribution rules are determined by the project teams themselves, who can reference SPARK Points, KINDLE Scores, and the actual content published by creators to establish their reward criteria.\n\n\t PeakAI will provide a creators list (including wallet addresses) based on project requirements, and rewards are distributed independently by the project teams.",
   },
   {
     id: "faq-4",
     question: "What are PeakAI's specific scoring criteria and dimensions?",
     answer:
-      "We use two primary metrics: SPARK Points and KINDLE Score. These metrics evaluate creators across multiple dimensions including content quality, engagement rates, audience authenticity, campaign alignment, and performance consistency.\n\n Our AI system analyzes these factors to provide comprehensive scoring that reflects true creator value and impact.",
+      "We use two primary metrics: SPARK Points and KINDLE Score. These metrics evaluate creators across multiple dimensions including content quality, engagement rates, audience authenticity, campaign alignment, and performance consistency.\n\n\t Our AI system analyzes these factors to provide comprehensive scoring that reflects true creator value and impact.",
   },
   {
     id: "faq-5",
