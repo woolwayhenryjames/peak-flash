@@ -1,16 +1,33 @@
+import { useEffect, useState } from "react";
+
 export const HomeSeparator = () => {
-  // Generate dots configuration
-  const dots = Array.from({ length: 12 }, (_, i) => ({
-    id: `dot-${i}-${Math.random().toString(36).substr(2, 9)}`, // Unique ID
-    cx: 50 + i * 30 + Math.random() * 20, // Spread across width with some randomness
-    r: 0.8 + Math.random() * 0.8, // Random size between 0.8 and 1.6
-    color: ["#A8A3FF", "#6366f1", "#8b5cf6", "#a855f7"][
-      Math.floor(Math.random() * 4)
-    ],
-    duration: 3 + Math.random() * 3, // Random duration between 3-6 seconds
-    delay: Math.random() * 4, // Random delay up to 4 seconds
-    opacity: 0.4 + Math.random() * 0.4, // Random opacity between 0.4-0.8
-  }));
+  const [dots, setDots] = useState<
+    Array<{
+      id: string;
+      cx: number;
+      r: number;
+      color: string;
+      duration: number;
+      delay: number;
+      opacity: number;
+    }>
+  >([]);
+
+  useEffect(() => {
+    // Generate dots configuration only on client side to avoid hydration mismatch
+    const dotsConfig = Array.from({ length: 12 }, (_, i) => ({
+      id: `dot-${i}-${Math.random().toString(36).substr(2, 9)}`, // Unique ID
+      cx: 50 + i * 30 + Math.random() * 20, // Spread across width with some randomness
+      r: 0.8 + Math.random() * 0.8, // Random size between 0.8 and 1.6
+      color: ["#A8A3FF", "#6366f1", "#8b5cf6", "#a855f7"][
+        Math.floor(Math.random() * 4)
+      ],
+      duration: 3 + Math.random() * 3, // Random duration between 3-6 seconds
+      delay: Math.random() * 4, // Random delay up to 4 seconds
+      opacity: 0.4 + Math.random() * 0.4, // Random opacity between 0.4-0.8
+    }));
+    setDots(dotsConfig);
+  }, []);
 
   return (
     <div className="relative w-full md:hidden">
