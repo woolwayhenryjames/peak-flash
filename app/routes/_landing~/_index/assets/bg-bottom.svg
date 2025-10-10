@@ -1,41 +1,5 @@
 <svg width="1731" height="1006" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M0 0h1729v1006H0V0z" fill="url(#prefix__paint0_radial_880_455)" />
-  <ellipse cx="372.602" cy="766.611" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="536.382" cy="876.628" rx="1.13" ry=".991" fill="#AAF" />
-  <ellipse cx="844.741" cy="627.849" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="823.28" cy="852.841" rx="1.13" ry=".991" fill="#AAF" />
-  <ellipse cx="311.608" cy="943.036" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="289.018" cy="853.832" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="368.084" cy="911.319" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="98.129" cy="499.991" rx="1.13" ry=".991" fill="#AAF" />
-  <ellipse cx="587.211" cy="790.398" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="223.506" cy="778.504" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="657.241" cy="897.443" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="779.229" cy="855.814" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="740.825" cy="770.576" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="203.175" cy="899.426" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="433.596" cy="873.656" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="612.06" cy="873.656" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="392.934" cy="772.557" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="472" cy="550.54" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1074.6" cy="766.611" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1238.38" cy="876.628" rx="1.13" ry=".991" fill="#AAF" />
-  <ellipse cx="1546.74" cy="627.849" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1525.28" cy="852.841" rx="1.13" ry=".991" fill="#AAF" />
-  <ellipse cx="1013.61" cy="943.036" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="991.018" cy="853.832" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1070.08" cy="911.319" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="800.13" cy="499.991" rx="1.13" ry=".991" fill="#AAF" />
-  <ellipse cx="1289.21" cy="790.398" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="925.506" cy="778.504" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1359.24" cy="897.443" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1481.23" cy="855.814" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1442.83" cy="770.576" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="905.175" cy="899.426" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1135.6" cy="873.656" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1314.06" cy="873.656" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1094.93" cy="772.557" rx="2.259" ry="1.982" fill="#AAF" />
-  <ellipse cx="1174" cy="550.54" rx="2.259" ry="1.982" fill="#AAF" />
   <path d="M52 742H0v264h404v-64.15H124.5V802.695H52V742zM543 908h206v98H543zM749 976h206v30H749zM1025 976h206v30h-206z"
     fill="#000" />
   <path fill="#000"

@@ -1,6 +1,6 @@
 import Autoplay from "embla-carousel-autoplay";
 import type { CSSProperties } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import CarouselIndicator from "~/components/CarouselIndicator";
 import FirstGetScoreDialog from "~/components/Dialogs/FirstGetScoreDialog";
@@ -130,6 +130,20 @@ export default function Index({ loaderData }: Route.ComponentProps) {
     loaderData.userData?.kindleScore != null
       ? Math.round(loaderData.userData.kindleScore)
       : null;
+
+  // Generate stable dots that don't change on re-render
+  const floatingDots = useMemo(() => {
+    return Array.from({ length: 35 }, (_, i) => ({
+      id: `highlight-dot-${i}`,
+      cx: 50 + (i % 15) * 110 + ((i * 37) % 80), // Use deterministic positioning
+      cy: 1006 - Math.floor(i / 15) * 200,
+      r: 1.0 + ((i * 13) % 100) / 66, // Deterministic radius between 1.0-2.5
+      color: "#ffffff",
+      duration: 7 + ((i * 17) % 100) / 10, // Deterministic duration between 7-17s
+      delay: ((i * 23) % 80) / 10, // Deterministic delay between 0-8s
+      opacity: 0.15 + ((i * 41) % 100) / 285, // Deterministic opacity between 0.15-0.5
+    }));
+  }, []);
 
   useEffect(() => {
     if (!api) {
@@ -287,7 +301,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
 
       {/* Product Highlight Section */}
       <div
-        className="flex aspect-[390/658] w-full flex-col items-center bg-[image:var(--bg-bottom-mobile)] bg-cover px-5 max-md:mt-12 md:aspect-[1728/1006] md:bg-[image:var(--bg-bottom)]"
+        className="relative flex aspect-[390/658] w-full flex-col items-center overflow-hidden bg-[image:var(--bg-bottom-mobile)] bg-cover px-5 max-md:mt-12 md:aspect-[1728/1006] md:bg-[image:var(--bg-bottom)]"
         style={
           {
             "--bg-bottom": `url("${bgBottom}")`,
@@ -295,6 +309,49 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           } as CSSProperties
         }
       >
+        {/* Animated dots flying upward - behind everything */}
+        <svg
+          className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+          preserveAspectRatio="xMidYMid slice"
+          viewBox="0 0 1728 1006"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>Floating Animation Dots</title>
+          <g>
+            {floatingDots.map((dot) => (
+              <circle
+                cx={dot.cx}
+                cy={dot.cy}
+                fill={dot.color}
+                key={dot.id}
+                opacity="0"
+                r={dot.r}
+              >
+                <animate
+                  attributeName="cy"
+                  begin={`${dot.delay}s`}
+                  dur={`${dot.duration}s`}
+                  repeatCount="indefinite"
+                  values={`${dot.cy};${Math.max(dot.cy - 400, 200)}`}
+                />
+                <animate
+                  attributeName="opacity"
+                  begin={`${dot.delay}s`}
+                  dur={`${dot.duration}s`}
+                  repeatCount="indefinite"
+                  values={`0;${dot.opacity};${dot.opacity * 0.8};0`}
+                />
+                <animate
+                  attributeName="cx"
+                  begin={`${dot.delay}s`}
+                  dur={`${dot.duration}s`}
+                  repeatCount="indefinite"
+                  values={`${dot.cx};${dot.cx + (((dot.cx * 7) % 100) - 50) / 2}`}
+                />
+              </circle>
+            ))}
+          </g>
+        </svg>
         <img
           alt="Product Highlight"
           className="md:hidden"
@@ -303,7 +360,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           width="148"
         />
         <div
-          className="container flex flex-col items-center gap-8 bg-[image:var(--bg-highlight-mobile)] bg-cover bg-no-repeat max-md:mt-7 max-md:border max-md:border-white/15 max-md:p-7 md:mx-auto md:gap-16 md:bg-[image:var(--bg-highlight)] md:pt-11"
+          className="container relative z-10 flex flex-col items-center gap-8 bg-[image:var(--bg-highlight-mobile)] bg-cover bg-no-repeat max-md:mt-7 max-md:border max-md:border-white/15 max-md:p-7 md:mx-auto md:gap-16 md:bg-[image:var(--bg-highlight)] md:pt-11"
           style={
             {
               "--bg-highlight": `url("${bgHighlight}")`,
