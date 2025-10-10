@@ -4,7 +4,6 @@ import CampaignList from "~/components/CampaignList";
 import ConnectWallet from "~/components/ConnectWallet";
 import { getDbUser } from "~/services/auth.server";
 import { getCampaignsForUser } from "~/services/campaign.server";
-import { getUserKindleRank } from "~/services/user-ranking.server";
 import type { Route } from "./+types/_profile";
 import starIcon from "./assets/star-icon.svg";
 import walletIcon from "./assets/wallet-icon.svg";
@@ -13,7 +12,7 @@ export function meta({ data }: Route.MetaArgs) {
   const user = data?.user;
   const campaigns = data?.campaigns || [];
   const totalVideos = data?.totalVideos || 0;
-  const userRank = user?.kindleRank || "N/A";
+  const userRank = user?.rank || "N/A";
   const userScore = user?.kindleScore || 0;
   const username = "User";
 
@@ -57,20 +56,17 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   // Get user with kindle rank and their campaigns
-  const [kindleRank, userCampaigns] = await Promise.all([
-    getUserKindleRank(user.value.id),
-    getCampaignsForUser(
-      user.value,
-      {
-        id: { in: user.value.campaignUsers.map((cu) => cu.campaignId) },
-      },
-      1,
-      100
-    ),
-  ]);
+  const userCampaigns = await getCampaignsForUser(
+    user.value,
+    {
+      id: { in: user.value.campaignUsers.map((cu) => cu.campaignId) },
+    },
+    1,
+    100
+  );
 
   return {
-    user: { ...user.value, kindleRank },
+    user: user.value,
     campaigns: userCampaigns.campaigns.map((campaign) => {
       const campaignUser = user.value.campaignUsers.find(
         (cu) => cu.campaignId === campaign.id
@@ -157,7 +153,7 @@ export default function Profile({
 
           <div className="flex flex-col items-center gap-1">
             <span className="font-semibold text-2xl text-white">
-              {user.kindleScore != null ? `#${user.kindleRank}` : "N/A"}
+              {user.kindleScore != null ? `#${user.rank}` : "N/A"}
             </span>
             <span className="font-light text-[#C0C0C0] text-xs">
               Global Rank

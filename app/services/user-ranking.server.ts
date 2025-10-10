@@ -23,21 +23,6 @@ export interface PaginatedLeaderboardResult {
   };
 }
 
-export async function getUserKindleRank(userId: string): Promise<number> {
-  try {
-    const result = await db.user.findUnique({
-      where: { id: userId },
-      select: {
-        rank: true,
-      },
-    });
-    return result?.rank ?? 1;
-  } catch (error) {
-    logger.error("Failed to get user kindle rank:", error);
-    return 1; // Return default rank on error
-  }
-}
-
 /**
  * Get global leaderboard with pagination (Top 100 users only)
  * Returns top users by kindle score with their ranks

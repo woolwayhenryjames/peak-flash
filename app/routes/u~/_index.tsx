@@ -9,13 +9,12 @@ import QuickActions from "~/components/QuickActions";
 import StartEarningSection from "~/components/StartEarningSection";
 import { getDbUser } from "~/services/auth.server";
 import { getCampaignsForUser } from "~/services/campaign.server";
-import { getUserKindleRank } from "~/services/user-ranking.server";
 import type { Route } from "./+types/_index";
 
 export function meta({ data }: Route.MetaArgs) {
   const user = data?.user;
   const campaigns = data?.campaigns || [];
-  const userRank = user?.kindleRank || "N/A";
+  const userRank = user?.rank || "N/A";
   const userScore = user?.kindleScore || 0;
 
   return [
@@ -61,13 +60,15 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   // Get user with kindle rank and active campaigns with user participation
-  const [kindleRank, campaigns] = await Promise.all([
-    getUserKindleRank(user.value.id),
-    getCampaignsForUser(user.value, { endDate: { gte: new Date() } }, 1, 3),
-  ]);
+  const campaigns = await getCampaignsForUser(
+    user.value,
+    { endDate: { gte: new Date() } },
+    1,
+    3
+  );
 
   return {
-    user: { ...user.value, kindleRank },
+    user: user.value,
     campaigns: campaigns.campaigns,
   };
 }
@@ -80,7 +81,7 @@ export default function Hub({
   return (
     <>
       <div className="flex flex-col justify-evenly gap-6 px-6 pt-6 md:px-18">
-        <KindleScoreCard rank={user.kindleRank ?? 1} score={userScore} />
+        <KindleScoreCard rank={user.rank ?? 1} score={userScore} />
         <StartEarningSection />
       </div>
       <HomeSeparator />

@@ -8,7 +8,6 @@ import { cn } from "~/lib/utils";
 import { getDbUser } from "~/services/auth.server";
 import { logger } from "~/services/logger.server";
 import { getUserInviteRecords } from "~/services/user.server";
-import { getUserKindleRank } from "~/services/user-ranking.server";
 import fb from "../invite/assets/fb.svg";
 import ins from "../invite/assets/ins.png";
 import starsIcon from "../invite/assets/stars.svg";
@@ -184,11 +183,11 @@ export async function loader({ request }: Route.LoaderArgs) {
   );
 
   // 并行调用API和获取其他数据
-  const [inviteRecords, userRank, luckyApiData] = await Promise.all([
+  const [inviteRecords, luckyApiData] = await Promise.all([
     getUserInviteRecords(user.id),
-    getUserKindleRank(user.id),
     fetchUserLuckyData(user.id), // 始终调用API获取真实数据
   ]);
+  const userRank = user.rank;
 
   console.log("[Lucky Page] 步骤3: 所有API调用完成");
   console.log("[Lucky Page] 邀请记录数量:", inviteRecords.length);
