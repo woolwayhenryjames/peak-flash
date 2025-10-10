@@ -41,7 +41,7 @@ export const auth = betterAuth({
       logger.debug("New session created:", newSession);
       if (newSession) {
         persistUserImage(newSession.user);
-        checkUserCampaignAlgo();
+        checkUserCampaignAlgo(newSession.user.email);
         updateUserInfo({ user: newSession.user });
         setTimeout(() => updateUserPoints(), 10_000);
       }

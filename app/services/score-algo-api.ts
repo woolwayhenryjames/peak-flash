@@ -2,7 +2,62 @@ import type { JsonObject } from ".prisma/main/internal/prismaNamespace";
 import { db } from "~/services/db.server";
 import { logger } from "~/services/logger.server";
 
-export async function checkUserCampaignAlgo() {
+export async function checkUserCampaignAlgo(userEmail: string) {
+  const campains = await db.campaign.findMany({
+    select: { joinRequirement: true },
+  });
+  const keywordsList = campains.map(
+    (campaign) =>
+      ((campaign.joinRequirement as JsonObject)?.[
+        "Required Tags"
+      ] as string[]) || []
+  );
+  const algoTasks = await db.$queryRaw<{ keyword: string }[]>`
+SELECT
+  tiktok_creator_score.keyword_scores.keyword,
+FROM
+	tiktok_creator_score.keyword_scores
+	INNER JOIN
+	tiktok_creator_score.users
+	ON
+		tiktok_creator_score.keyword_scores.user_id = tiktok_creator_score.users.id
+WHERE tiktok_creator_score.users.username = ${userEmail};
+  `;
+  for (const task of keywordsList) {
+    const matchingTask = algoTasks.find(
+      (algoTask) =>
+        algoTask.keyword.split(" | ").sort().join(" | ") ===
+        task.sort().join(" | ")
+    );
+    if (!matchingTask) {
+      fetch(
+        `${import.meta.env.MODE === "production" ? "http://172.31.28.161:3333" : "http://localhost:3333"}/api/addUser`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: userEmail,
+            keywords: task,
+          }),
+        }
+      )
+        .then((res) => {
+          if (!res.ok) {
+            logger.error("Failed to send task:", { res, task });
+          }
+          logger.info("Task sent successfully for", {
+            username: userEmail,
+            keywords: task,
+          });
+        })
+        .catch((error) => {
+          logger.error("Error sending task:", error);
+        });
+    }
+  }
+}
+
+export async function checkAllUserCampaignAlgo() {
   const users = await db.user.findMany({ select: { email: true } });
   const campains = await db.campaign.findMany({
     select: { joinRequirement: true },
