@@ -93,7 +93,7 @@ export function PricingCard({
           </ul>
 
           {/* CTA Button */}
-          <a href="https://t.me/Jenn_0066" rel="noreferrer" target="_blank">
+          <a href="https://t.me/PeakAI_Intern" rel="noreferrer" target="_blank">
             <GlowContainer
               className={cn(
                 "w-fit cursor-pointer whitespace-nowrap px-8 py-4 transition-transform duration-300",
