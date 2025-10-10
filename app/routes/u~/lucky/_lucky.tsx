@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/style/noNestedTernary: this page is not written by the dev team */
+/** biome-ignore-all lint/style/noNestedTernary: not written by dev team */
 import { useState } from "react";
 import { redirect } from "react-router";
 import ConnectWallet from "~/components/ConnectWallet";
@@ -8,7 +8,6 @@ import { cn } from "~/lib/utils";
 import { getDbUser } from "~/services/auth.server";
 import { logger } from "~/services/logger.server";
 import { getUserInviteRecords } from "~/services/user.server";
-import { getUserKindleRank } from "~/services/user-ranking.server";
 import fb from "../invite/assets/fb.svg";
 import ins from "../invite/assets/ins.png";
 import starsIcon from "../invite/assets/stars.svg";
@@ -138,21 +137,18 @@ function calculateWelcomeGift(score: number | null | undefined) {
     return null;
   }
 
-  // 20分是获得奖励的门槛
+  // 40分是获得奖励的门槛
   if (score >= 55) {
-    return 8; // 55分及以上: 8u
+    return 6; // 55分及以上: 6u
   }
   if (score >= 50) {
-    return 6; // 50-54.9分: 6u
+    return 4; // 50-54.9分: 4u
   }
-  if (score >= 35) {
-    return 4; // 35-49.9分: 4u (包含35分)
-  }
-  if (score >= 20) {
-    return 2; // 20-34.9分: 2u
+  if (score >= 40) {
+    return 2; // 40-49.9分: 2u
   }
 
-  return null; // 低于20分无奖励
+  return null; // 低于40分无奖励
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -187,11 +183,11 @@ export async function loader({ request }: Route.LoaderArgs) {
   );
 
   // 并行调用API和获取其他数据
-  const [inviteRecords, userRank, luckyApiData] = await Promise.all([
+  const [inviteRecords, luckyApiData] = await Promise.all([
     getUserInviteRecords(user.id),
-    getUserKindleRank(user.id),
     fetchUserLuckyData(user.id), // 始终调用API获取真实数据
   ]);
+  const userRank = user.rank;
 
   console.log("[Lucky Page] 步骤3: 所有API调用完成");
   console.log("[Lucky Page] 邀请记录数量:", inviteRecords.length);

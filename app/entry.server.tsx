@@ -5,6 +5,7 @@ import type { RenderToPipeableStreamOptions } from "react-dom/server";
 import { renderToPipeableStream } from "react-dom/server";
 import type { AppLoadContext, EntryContext } from "react-router";
 import { ServerRouter } from "react-router";
+import { checkAllUserCampaignAlgo } from "~/services/score-algo-api";
 import { updateAllUserInfo } from "~/services/updateUserInfo";
 
 export const streamTimeout = 5000;
@@ -82,5 +83,6 @@ export default function handleRequest(
 
 setInterval(() => {
   console.log("Updating all user info...");
+  checkAllUserCampaignAlgo();
   updateAllUserInfo();
 }, 3_600_000); // Update all user info every hour

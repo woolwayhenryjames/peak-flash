@@ -29,8 +29,6 @@ export const auth = betterAuth({
   },
   socialProviders: {
     tiktok: {
-      // @ts-expect-error TikTok does not use clientId
-      clientId: process.env.TIKTOK_CLIENT_ID as string,
       clientSecret: process.env.TIKTOK_CLIENT_SECRET as string,
       clientKey: process.env.TIKTOK_CLIENT_KEY as string,
       scope: ["user.info.basic", "user.info.profile", "user.info.stats"],
@@ -43,7 +41,7 @@ export const auth = betterAuth({
       logger.debug("New session created:", newSession);
       if (newSession) {
         persistUserImage(newSession.user);
-        checkUserCampaignAlgo();
+        checkUserCampaignAlgo(newSession.user.email);
         updateUserInfo({ user: newSession.user });
         setTimeout(() => updateUserPoints(), 10_000);
       }

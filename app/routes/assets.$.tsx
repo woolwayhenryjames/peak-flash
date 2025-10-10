@@ -7,13 +7,36 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   if (!s3Key) {
     return new Response("Not found", { status: 404 });
   }
-  const assets = await getAsset(s3Key);
 
-  // Add long cache headers for static assets
-  return new Response(assets?.Body as unknown as ReadableStream, {
-    headers: {
-      "Cache-Control": "public, max-age=31536000, immutable",
-      "Content-Type": assets?.ContentType ?? "application/octet-stream",
-    },
-  });
+  // Future: Check client capabilities for WebP optimization
+  // const acceptHeader = request.headers.get("Accept") || "";
+  // const supportsWebP = acceptHeader.includes("image/webp");
+
+  const assets = await getAsset(s3Key);
+  if (!assets?.Body) {
+    return new Response("Asset not found", { status: 404 });
+  }
+
+  // Determine content type and set appropriate headers
+  const contentType = assets.ContentType ?? "application/octet-stream";
+  const isImage = contentType.startsWith("image/");
+
+  const headers: Record<string, string> = {
+    "Cache-Control": "public, max-age=31536000, immutable",
+    "Content-Type": contentType,
+  };
+
+  // Add performance headers for images
+  if (isImage) {
+    headers.Vary = "Accept";
+    // Enable compression for SVGs
+    if (contentType === "image/svg+xml") {
+      headers["Content-Encoding"] = "gzip";
+    }
+  }
+
+  // Add security headers for all assets
+  headers["X-Content-Type-Options"] = "nosniff";
+
+  return new Response(assets.Body as unknown as ReadableStream, { headers });
 };

@@ -22,6 +22,9 @@ export async function action({ request }: ActionFunctionArgs) {
     if (!inviterId) {
       return new Response("Inviter ID is required", { status: 400 });
     }
+    if (user.id === inviterId) {
+      return new Response("Cannot invite yourself", { status: 400 });
+    }
     // Process the invite
     const result = await processInviteSignup(user.id, inviterId);
 

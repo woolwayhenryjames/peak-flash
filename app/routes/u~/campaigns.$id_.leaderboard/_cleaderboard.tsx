@@ -117,7 +117,7 @@ export default function Leaderboard({
     setIsLoadingMore(true);
     const nextPage = currentPage.current + 1;
 
-    fetcher.load(`/campaigns/${params.id}/leaderboard?page=${nextPage}`);
+    fetcher.load(`/u/campaigns/${params.id}/leaderboard?page=${nextPage}`);
   }, [hasNextPage, isLoadingMore, fetcher, params.id]);
 
   // Handle fetcher data

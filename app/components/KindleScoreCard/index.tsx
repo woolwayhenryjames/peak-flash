@@ -11,11 +11,7 @@ export default function KindleScoreCard({
   rank: number;
 }) {
   return (
-    <Link
-      className="block rounded-2xl border border-gray-700/50 bg-gradient-to-b from-[#0f1219] to-141% to-[#212637] p-6 backdrop-blur-sm"
-      to="/u/leaderboard"
-      viewTransition
-    >
+    <div className="block rounded-2xl border border-gray-700/50 bg-gradient-to-b from-[#0f1219] to-141% to-[#212637] p-6 backdrop-blur-sm">
       <div className="flex flex-col gap-6">
         {/* Header and Score Section */}
         <div className="flex items-center justify-between gap-5">
@@ -45,7 +41,11 @@ export default function KindleScoreCard({
         </div>
 
         {/* Progress Bar */}
-        <div className="flex flex-col gap-2">
+        <Link
+          className="flex flex-col gap-2"
+          to="/u/leaderboard"
+          viewTransition
+        >
           <div className="h-3 w-full overflow-hidden bg-gray-700">
             <div
               className="h-full bg-[#8080DA] transition-all duration-500"
@@ -79,8 +79,8 @@ export default function KindleScoreCard({
               />
             </svg>
           </GlowContainer>
-        </div>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 }

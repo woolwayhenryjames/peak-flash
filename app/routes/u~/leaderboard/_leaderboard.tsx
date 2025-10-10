@@ -4,10 +4,7 @@ import ExpandedUserProfile from "~/components/ExpandedUserProfile";
 import GlowContainer from "~/components/GlowContainer";
 import { cn } from "~/lib/utils";
 import { getDbUser } from "~/services/auth.server";
-import {
-  getGlobalLeaderboard,
-  getUserKindleRank,
-} from "~/services/user-ranking.server";
+import { getGlobalLeaderboard } from "~/services/user-ranking.server";
 import type { Route } from "./+types/_leaderboard";
 import bg from "./assets/bg.avif";
 
@@ -64,15 +61,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   const page = Number.parseInt(url.searchParams.get("page") || "1", 10);
 
   // Get global leaderboard data with pagination
-  const [leaderboardData, userKindleRank] = await Promise.all([
-    getGlobalLeaderboard(page, 10),
-    getUserKindleRank(user.value.id),
-  ]);
+  const leaderboardData = await getGlobalLeaderboard(page, 10);
 
   return {
     users: leaderboardData.users,
     pagination: leaderboardData.pagination,
-    user: { ...user.value, rank: userKindleRank },
+    user: user.value,
   };
 }
 
