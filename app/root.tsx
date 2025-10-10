@@ -15,6 +15,9 @@ import { useEffect } from "react";
 import { AppKitProvider } from "~/components/AppKitProvider";
 import LoadingProgressBar from "~/components/LoadingProgressBar";
 import { pageview } from "~/lib/gtags.client";
+import { headersMiddleware } from "~/middleware/headers";
+
+export const middleware = [headersMiddleware];
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -41,6 +44,10 @@ export const links: Route.LinksFunction = () => [
     href: "/icons/apple-touch-icon.png",
   },
   { rel: "manifest", href: "/icons/site.webmanifest" },
+
+  // Prefetch critical routes for faster navigation
+  { rel: "prefetch", href: "/u" },
+  { rel: "prefetch", href: "/u/ascent" },
 ];
 
 const gaTrackingId = "G-FD4ZDVH6YP";
