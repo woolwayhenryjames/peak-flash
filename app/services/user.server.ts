@@ -186,9 +186,12 @@ export const persistUserImage = async (user: {
 };
 
 // Get all users for admin selection (e.g., campaign owner assignment)
-export async function getAllUsers() {
+export async function getAllBusinessUsers() {
   try {
     const users = await db.user.findMany({
+      where: {
+        isBusiness: true,
+      },
       select: {
         id: true,
         name: true,
