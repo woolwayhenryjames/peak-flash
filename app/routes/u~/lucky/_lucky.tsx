@@ -426,105 +426,136 @@ export default function Lucky({
             </div>
           )}
         </div>
-        <div
-          className={
-            isEligibleForGift
-              ? "rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur"
-              : "rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur"
-          }
-        >
+
+        {/* Registration Welcome Gift - CLOSED Section */}
+        <div className="space-y-6 rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-8 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
           <div className="space-y-4 text-white">
             <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
-              <span>Welcome Bonus</span>
+              <span>Registration Welcome Gift - CLOSED!</span>
             </div>
-            {user?.kindleScore == null ? (
-              // 状态1: Kindle Score还在grading中
+            
+            <div className="space-y-4">
               <div className="space-y-2">
                 <p className="font-semibold text-lg text-white">
-                  Your KINDLE Score is being graded. Please wait for your
-                  rewards.
-                </p>
-              </div>
-            ) : isEligibleForGift && isClaimed ? (
-              // 状态2: 有奖励且已发放
-              <>
-                <div className="space-y-2">
-                  <p className="font-semibold text-lg text-white">
-                    Rewards Distributed!
-                  </p>
-                  <p className="text-[#cdd6f8] text-sm">
-                    Your Kindle Score bonus has been successfully distributed to
-                    your wallet.
-                  </p>
-                </div>
-                <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                      Bonus Amount
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="whitespace-nowrap font-semibold text-white text-xl">
-                        {giftAmount} USDT
-                      </span>
-                      <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
-                        ✓ Claimed
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mt-3 text-[#b8caff] text-xs">
-                    Your rewards have been distributed to your bound EVM wallet
-                    address.
-                  </div>
-                </div>
-              </>
-            ) : isEligibleForGift ? (
-              // 状态3: 有奖励但未发放
-              <>
-                <div className="space-y-2">
-                  <p className="font-semibold text-lg text-white">
-                    Congratulations!
-                  </p>
-                  <p className="text-[#cdd6f8] text-sm">
-                    Your Kindle Score has earned you an instant cash bonus.
-                  </p>
-                </div>
-                <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                      Bonus Amount
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="whitespace-nowrap font-semibold text-white text-xl">
-                        {giftAmount} USDT
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mt-3 text-[#b8caff] text-xs">
-                    Your rewards will be distributed to your bound EVM wallet
-                    address within 24 hours.
-                  </div>
-                </div>
-              </>
-            ) : (
-              // 状态4: 没有奖励（包括API返回0的情况）
-              <div className="space-y-2">
-                <p className="font-semibold text-lg text-white">
-                  Better luck next time!
+                  Thank you to all our early bird supporters!
                 </p>
                 <p className="text-[#cdd6f8] text-sm">
-                  {hasApiData
-                    ? "You didn't qualify for the welcome bonus this time, but you can invite friends and earn 10% of their welcome bonus in USDT."
-                    : "You missed the welcome bonus this time, but you can invite friends and earn 10% of their welcome bonus in USDT."}
+                  We will issue a <span className="font-semibold text-yellow-400">Peak Badge</span> to our <span className="font-semibold text-yellow-400">first 30K</span> registered users, unlocking exclusive benefits including boosted campaign rewards, airdrops, and more.
                 </p>
               </div>
-            )}
-
-            {/* Connect Wallet Section - 所有用户都显示 */}
-            <div className="mt-6">
-              <ConnectWallet userWalletAddress={user?.walletAddress} />
+              
+              <div className="space-y-2">
+                <p className="font-semibold text-lg text-white">
+                  Stay tuned!
+                </p>
+                <p className="text-[#cdd6f8] text-sm">
+                  We're launching a brand new <span className="font-semibold text-yellow-400">Campaign Welcome Gift</span> with exciting rewards coming soon. Follow our announcements closely for details!
+                </p>
+              </div>
+              
+              <div className="mt-6">
+                <a
+                  href="/u/ascent"
+                  className="inline-block w-full"
+                >
+                  <GlowContainer className="flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 font-semibold text-[#dbe4ff] text-base transition hover:bg-white/10 w-full">
+                    <span>Start</span>
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M9 5l7 7-7 7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                      />
+                    </svg>
+                  </GlowContainer>
+                </a>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Welcome Bonus Section - 只在有奖励的情况下显示 */}
+        {isEligibleForGift && (
+          <div className="rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
+            <div className="space-y-4 text-white">
+              <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
+                <span>Welcome Bonus</span>
+              </div>
+              {isClaimed ? (
+                // 已发放
+                <>
+                  <div className="space-y-2">
+                    <p className="font-semibold text-lg text-white">
+                      Rewards Distributed!
+                    </p>
+                    <p className="text-[#cdd6f8] text-sm">
+                      Your Kindle Score bonus has been successfully distributed to
+                      your wallet.
+                    </p>
+                  </div>
+                  <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                        Bonus Amount
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className="whitespace-nowrap font-semibold text-white text-xl">
+                          {giftAmount} USDT
+                        </span>
+                        <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
+                          ✓ Claimed
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-3 text-[#b8caff] text-xs">
+                      Your rewards have been distributed to your bound EVM wallet
+                      address.
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // 未发放
+                <>
+                  <div className="space-y-2">
+                    <p className="font-semibold text-lg text-white">
+                      Congratulations!
+                    </p>
+                    <p className="text-[#cdd6f8] text-sm">
+                      Your Kindle Score has earned you an instant cash bonus.
+                    </p>
+                  </div>
+                  <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                        Bonus Amount
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <span className="whitespace-nowrap font-semibold text-white text-xl">
+                          {giftAmount} USDT
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-3 text-[#b8caff] text-xs">
+                      Your rewards will be distributed to your bound EVM wallet
+                      address within 24 hours.
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Connect Wallet Section */}
+              <div className="mt-6">
+                <ConnectWallet userWalletAddress={user?.walletAddress} />
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="h-px w-full bg-gray-600/30" />
 
@@ -533,33 +564,35 @@ export default function Lucky({
             <h2 className="text-[#8c96c7] text-sm uppercase tracking-[0.3em]">
               Referral Rewards
             </h2>
-            <p className="text-[#cdd6f8] text-sm">
-              You earn 10% of each person you invite's welcome bonus. Referral
-              earnings are calculated{" "}
-              <span className="font-semibold text-yellow-400">
-                every 24 hours
-              </span>{" "}
-              and will be distributed together when the campaign ends.
-            </p>
+            <div className="space-y-3 text-[#cdd6f8] text-sm">
+              <p>
+                * Referral rewards from the registration welcome bonus have been fully distributed. Please check your <span className="font-semibold text-yellow-400">connected wallet</span> for transaction details.
+              </p>
+              <p>
+                * We're launching a <span className="font-semibold text-yellow-400">new welcome bonus</span> <span className="font-semibold text-yellow-400">campaign</span> soon, where referral count will also be a key factor for reward distribution. Keep going!
+              </p>
+            </div>
           </div>
 
           <div className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-[#cdd6f8] text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-[#98a4d8] text-xs uppercase tracking-[0.25em]">
-                  Rewards
-                </span>
-                {apiData?.success ? (
-                  <span className="font-semibold text-base text-white">
-                    {apiData.reward} USDT
+            {/* Rewards Section - 只在有奖励的情况下显示 */}
+            {apiData?.success && apiData.reward > 0 && (
+              <div className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-[#cdd6f8] text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-[#98a4d8] text-xs uppercase tracking-[0.25em]">
+                    Rewards
                   </span>
-                ) : (
-                  <span className="font-medium text-gray-400 text-sm">
-                    Settled Every 24 Hours
-                  </span>
-                )}
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-base text-white">
+                      {apiData.reward} USDT
+                    </span>
+                    <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
+                      ✓ Claimed
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="flex flex-col gap-3 text-white">
               <span className="text-[#8c96c7] text-xs uppercase tracking-[0.28em]">
