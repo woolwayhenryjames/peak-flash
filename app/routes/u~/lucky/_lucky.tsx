@@ -137,18 +137,15 @@ function calculateWelcomeGift(score: number | null | undefined) {
     return null;
   }
 
-  // 40分是获得奖励的门槛
-  if (score >= 55) {
-    return 6; // 55分及以上: 6u
+  // 110分是获得奖励的门槛
+  if (score >= 120) {
+    return 3; // 120分及以上: 3u
   }
-  if (score >= 50) {
-    return 4; // 50-54.9分: 4u
-  }
-  if (score >= 40) {
-    return 2; // 40-49.9分: 2u
+  if (score >= 110) {
+    return 2; // 110-119.9分: 2u
   }
 
-  return null; // 低于40分无奖励
+  return null; // 低于110分无奖励
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -187,11 +184,9 @@ export async function loader({ request }: Route.LoaderArgs) {
     getUserInviteRecords(user.id),
     fetchUserLuckyData(user.id), // 始终调用API获取真实数据
   ]);
-  const userRank = user.rank;
 
   console.log("[Lucky Page] 步骤3: 所有API调用完成");
   console.log("[Lucky Page] 邀请记录数量:", inviteRecords.length);
-  console.log("[Lucky Page] 用户排名:", userRank);
   console.log("[Lucky Page] API数据结果:", luckyApiData);
 
   // 使用API返回的真实数据
@@ -222,7 +217,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   // 调试：检查最终返回的数据
   const finalData = {
-    user: { ...user, rank: userRank },
+    user,
     inviteRecords,
     apiData: finalApiData,
   };
@@ -246,7 +241,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   console.log("[Lucky Page] ===== 页面加载完成 =====");
   return {
-    user: { ...user, rank: userRank },
+    user,
     inviteRecords,
     apiData: finalApiData || undefined,
   };
@@ -630,7 +625,7 @@ export default function Lucky({
                 </p>
               </div>
             ) : (
-              inviteRecords.map((record) => (
+              inviteRecords.map((record: any) => (
                 <div key={record.id}>
                   <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
                     <div className="flex items-center justify-between">
