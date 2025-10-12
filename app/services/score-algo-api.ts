@@ -41,7 +41,10 @@ WHERE tiktok_creator_score.users.username = ${userEmail};
 }
 
 export async function checkAllUserCampaignAlgo() {
-  const users = await db.user.findMany({ select: { email: true } });
+  const users = await db.user.findMany({
+    select: { email: true },
+    where: { isBusiness: false },
+  });
   const campains = await db.campaign.findMany({
     select: { joinRequirement: true },
   });
