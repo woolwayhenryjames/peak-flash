@@ -270,13 +270,11 @@ export default function Lucky({
   // 根据API数据或Kindle Score计算奖励金额
   let giftAmount = 0;
   let isEligibleForGift = false;
-  let hasApiData = false; // 新增：标记是否有API数据
   let isClaimed = false; // 新增：标记奖励是否已发放
 
   console.log("[Lucky Component] 开始计算奖励金额...");
   if (apiData?.success) {
     // 使用API数据
-    hasApiData = true;
     isClaimed = apiData.claim;
     console.log("[Lucky Component] ✅ 使用API数据");
     console.log(
@@ -299,7 +297,6 @@ export default function Lucky({
     );
   } else {
     // API没有数据时，使用Kindle Score计算USDT奖励
-    hasApiData = false;
     isClaimed = false;
     console.log("[Lucky Component] ❌ API无数据，使用Kindle Score计算USDT奖励");
     console.log("[Lucky Component] Kindle Score:", user?.kindleScore);
@@ -433,32 +430,41 @@ export default function Lucky({
             <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
               <span>Registration Welcome Gift - CLOSED!</span>
             </div>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <p className="font-semibold text-lg text-white">
                   Thank you to all our early bird supporters!
                 </p>
                 <p className="text-[#cdd6f8] text-sm">
-                  We will issue a <span className="font-semibold text-yellow-400">Peak Badge</span> to our <span className="font-semibold text-yellow-400">first 30K</span> registered users, unlocking exclusive benefits including boosted campaign rewards, airdrops, and more.
+                  We will issue a{" "}
+                  <span className="font-semibold text-yellow-400">
+                    Peak Badge
+                  </span>{" "}
+                  to our{" "}
+                  <span className="font-semibold text-yellow-400">
+                    first 30K
+                  </span>{" "}
+                  registered users, unlocking exclusive benefits including
+                  boosted campaign rewards, airdrops, and more.
                 </p>
               </div>
-              
+
               <div className="space-y-2">
-                <p className="font-semibold text-lg text-white">
-                  Stay tuned!
-                </p>
+                <p className="font-semibold text-lg text-white">Stay tuned!</p>
                 <p className="text-[#cdd6f8] text-sm">
-                  We're launching a brand new <span className="font-semibold text-yellow-400">Campaign Welcome Gift</span> with exciting rewards coming soon. Follow our announcements closely for details!
+                  We're launching a brand new{" "}
+                  <span className="font-semibold text-yellow-400">
+                    Campaign Welcome Gift
+                  </span>{" "}
+                  with exciting rewards coming soon. Follow our announcements
+                  closely for details!
                 </p>
               </div>
-              
+
               <div className="mt-6">
-                <a
-                  href="/u/ascent"
-                  className="inline-block w-full"
-                >
-                  <GlowContainer className="flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 font-semibold text-[#dbe4ff] text-base transition hover:bg-white/10 w-full">
+                <a className="inline-block w-full" href="/u/ascent">
+                  <GlowContainer className="flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 font-semibold text-[#dbe4ff] text-base transition hover:bg-white/10">
                     <span>Start</span>
                     <svg
                       className="h-5 w-5"
@@ -466,6 +472,7 @@ export default function Lucky({
                       stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
+                      <title>Arrow Right</title>
                       <path
                         d="M9 5l7 7-7 7"
                         strokeLinecap="round"
@@ -495,8 +502,8 @@ export default function Lucky({
                       Rewards Distributed!
                     </p>
                     <p className="text-[#cdd6f8] text-sm">
-                      Your Kindle Score bonus has been successfully distributed to
-                      your wallet.
+                      Your Kindle Score bonus has been successfully distributed
+                      to your wallet.
                     </p>
                   </div>
                   <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
@@ -514,8 +521,8 @@ export default function Lucky({
                       </div>
                     </div>
                     <div className="mt-3 text-[#b8caff] text-xs">
-                      Your rewards have been distributed to your bound EVM wallet
-                      address.
+                      Your rewards have been distributed to your bound EVM
+                      wallet address.
                     </div>
                   </div>
                 </>
@@ -566,10 +573,21 @@ export default function Lucky({
             </h2>
             <div className="space-y-3 text-[#cdd6f8] text-sm">
               <p>
-                * Referral rewards from the registration welcome bonus have been fully distributed. Please check your <span className="font-semibold text-yellow-400">connected wallet</span> for transaction details.
+                * Referral rewards from the registration welcome bonus have been
+                fully distributed. Please check your{" "}
+                <span className="font-semibold text-yellow-400">
+                  connected wallet
+                </span>{" "}
+                for transaction details.
               </p>
               <p>
-                * We're launching a <span className="font-semibold text-yellow-400">new welcome bonus</span> <span className="font-semibold text-yellow-400">campaign</span> soon, where referral count will also be a key factor for reward distribution. Keep going!
+                * We're launching a{" "}
+                <span className="font-semibold text-yellow-400">
+                  new welcome bonus
+                </span>{" "}
+                <span className="font-semibold text-yellow-400">campaign</span>{" "}
+                soon, where referral count will also be a key factor for reward
+                distribution. Keep going!
               </p>
             </div>
           </div>
@@ -658,7 +676,7 @@ export default function Lucky({
                 </p>
               </div>
             ) : (
-              inviteRecords.map((record: any) => (
+              inviteRecords.map((record) => (
                 <div key={record.id}>
                   <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
                     <div className="flex items-center justify-between">

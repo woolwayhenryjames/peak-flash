@@ -7,6 +7,7 @@ import {
   ScrollRestoration,
   useLocation,
 } from "react-router";
+import PopupAd from "~/components/PopupAd";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -163,6 +164,7 @@ export default function App() {
     <AppKitProvider>
       <LoadingProgressBar />
       <Outlet />
+      <PopupAd />
     </AppKitProvider>
   );
 }
