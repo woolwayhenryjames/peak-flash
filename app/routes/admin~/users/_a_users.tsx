@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { redirect, useFetcher } from "react-router";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
+import { checkAllUserCampaignAlgo } from "~/services/score-algo-api";
 import { getUserStatistics } from "~/services/user-statistics.server";
 import type { Route } from "./+types/_a_users";
 import UserStatisticsComponent from "./components/UserStatistics";
@@ -92,9 +93,17 @@ export async function action({ request }: Route.ActionArgs) {
   if (user.isErr() || !user.value.isAdmin) {
     throw redirect("/");
   }
+  const formData = await request.formData();
+  const actionType = formData.get("actionType");
+
+  // Example action handling (expand as needed)
+  if (actionType === "updateAllUserScore") {
+    await checkAllUserCampaignAlgo();
+    return { success: true, message: "User info update initiated" };
+  }
 
   // Add user management actions here as needed
-  return { success: true, message: "Action completed" };
+  return { success: false, message: "Unknown action" };
 }
 
 export default function AdminUsers({ loaderData }: Route.ComponentProps) {
@@ -106,6 +115,7 @@ export default function AdminUsers({ loaderData }: Route.ComponentProps) {
     order,
   } = loaderData;
   const fetcher = useFetcher<typeof loader>();
+  const actionFetcher = useFetcher<typeof action>();
 
   // State management
   const [users, setUsers] = useState(initialUsers);
@@ -203,6 +213,38 @@ export default function AdminUsers({ loaderData }: Route.ComponentProps) {
           <p className="text-red-400">Failed to load statistics data</p>
         </div>
       )}
+
+      {/* Admin Actions */}
+      <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-4">
+        <h3 className="mb-3 font-medium text-lg text-white">Admin Actions</h3>
+        <actionFetcher.Form method="post">
+          <input name="actionType" type="hidden" value="updateAllUserScore" />
+          <button
+            className="rounded bg-purple-600 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={actionFetcher.state !== "idle"}
+            type="submit"
+          >
+            {actionFetcher.state !== "idle" ? (
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                Updating...
+              </div>
+            ) : (
+              "Update All User Score"
+            )}
+          </button>
+        </actionFetcher.Form>
+        {actionFetcher.data?.success && (
+          <p className="mt-2 text-green-400 text-sm">
+            {actionFetcher.data.message}
+          </p>
+        )}
+        {actionFetcher.data?.success === false && (
+          <p className="mt-2 text-red-400 text-sm">
+            {actionFetcher.data.message}
+          </p>
+        )}
+      </div>
 
       <div className="overflow-x-auto bg-gray-900 shadow ring-1 ring-gray-700 md:rounded-lg">
         <div className="flex justify-between px-6 py-4">

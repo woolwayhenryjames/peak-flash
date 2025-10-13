@@ -21,7 +21,7 @@ FROM
 	tiktok_creator_score.users
 	ON
 		tiktok_creator_score.keyword_scores.user_id = tiktok_creator_score.users.id
-WHERE tiktok_creator_score.users.username = ${userEmail};
+WHERE tiktok_creator_score.users.username = "${userEmail}";
   `;
   for (const task of keywordsList) {
     const matchingTask = algoTasks.find(
