@@ -26,6 +26,10 @@ export const navItems = [
   { name: "Home", href: "/" },
   { name: "Peekaboos", href: "/leaderboard" },
   { name: "Pricing", href: "/pricing" },
+  {
+    name: "Learn",
+    href: "https://take-a-peak-ai.notion.site/PEAK-AI-Quick-Start-Guide-28867d1116d68059a7e4df94944b0520#28867d1116d6805dbaead05c71f9b3cd",
+  },
 ];
 
 export default function Header({ user }: { user: UserWithCampaigns }) {
