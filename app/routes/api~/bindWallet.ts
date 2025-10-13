@@ -1,13 +1,16 @@
 import type { ActionFunctionArgs } from "react-router";
-import { getSessionUser } from "~/services/auth.server";
+import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import { logger } from "~/services/logger.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   // Get the authenticated user
-  const userResult = await getSessionUser(request);
+  const userResult = await getDbUser(request);
   if (userResult.isErr()) {
     return new Response("Unauthorized", { status: 401 });
+  }
+  if (userResult.value.isBusiness) {
+    return new Response("Forbidden", { status: 403 });
   }
 
   const user = userResult.value;
