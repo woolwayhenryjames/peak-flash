@@ -14,14 +14,14 @@ export async function checkUserCampaignAlgo(userEmail: string) {
   );
   const algoTasks = await db.$queryRaw<{ keyword: string }[]>`
 SELECT
-  tiktok_creator_score.keyword_scores.keyword,
+  tiktok_creator_score.keyword_scores.keyword
 FROM
 	tiktok_creator_score.keyword_scores
 	INNER JOIN
 	tiktok_creator_score.users
 	ON
 		tiktok_creator_score.keyword_scores.user_id = tiktok_creator_score.users.id
-WHERE tiktok_creator_score.users.username = "${userEmail}";
+WHERE tiktok_creator_score.users.username = ${userEmail};
   `;
   for (const task of keywordsList) {
     const matchingTask = algoTasks.find(
