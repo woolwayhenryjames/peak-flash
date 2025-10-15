@@ -26,8 +26,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
       include: {
         user: {
           include: {
-            invitees: {
-              select: { id: true },
+            _count: {
+              select: {
+                invitees: true,
+              },
             },
           },
         },
@@ -99,7 +101,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
         .join(", ");
 
       // Calculate invitee stats
-      const successfulInvites = cu.user.invitees.length;
+      const successfulInvites = cu.user._count.invitees;
 
       // Get TikTok stats
       const tiktokStats = tiktokStatsMap.get(cu.user.id) || {
