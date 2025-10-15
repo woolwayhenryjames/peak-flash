@@ -1,7 +1,6 @@
 import type { LoaderFunctionArgs } from "react-router";
 import { utils, write } from "xlsx";
 import { db } from "~/services/db.server";
-import { getUserInfo } from "~/services/tiktok-api.server";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { campaignId } = params;
@@ -49,35 +48,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
       })
     );
 
-    // Fetch TikTok stats for all users
-    const tiktokStatsMap = new Map<
-      string,
-      { followers: number; likes: number }
-    >();
-
-    await Promise.all(
-      campaignUsersWithVideos.map(async (cu) => {
-        const tiktokUsername = cu.user.email;
-        if (tiktokUsername) {
-          try {
-            const userInfoResult = await getUserInfo(tiktokUsername);
-            if (userInfoResult.isOk()) {
-              const userInfo = userInfoResult.value;
-              tiktokStatsMap.set(cu.user.id, {
-                followers: userInfo.follower_count || 0,
-                likes: userInfo.total_favorited || 0,
-              });
-            }
-          } catch (error) {
-            console.error(
-              `Failed to fetch TikTok stats for ${tiktokUsername}:`,
-              error
-            );
-          }
-        }
-      })
-    );
-
     // Transform data for Excel export
     const exportData = campaignUsersWithVideos.map((cu) => {
       const tiktokUsername = cu.user.email || "";
@@ -103,17 +73,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
       // Calculate invitee stats
       const successfulInvites = cu.user._count.invitees;
 
-      // Get TikTok stats
-      const tiktokStats = tiktokStatsMap.get(cu.user.id) || {
-        followers: 0,
-        likes: 0,
-      };
-
       return {
         "User ID": cu.user.email,
         "TikTok Account Link": tiktokProfileUrl,
-        Followers: tiktokStats.followers,
-        Likes: tiktokStats.likes,
+        Followers: cu.user.followerCount || 0,
+        Likes: cu.user.likeCount || 0,
         "Kindle Score": cu.user.kindleScore || 0,
         "Spark Points": cu.score,
         "Posted Videos Count": cu.videos.length,

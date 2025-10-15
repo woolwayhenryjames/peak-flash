@@ -7,12 +7,13 @@ BEGIN
   DECLARE deleted_campaigns INT DEFAULT 0;
   
   -- Step 1: Create missing CampaignUser records based on keyword matches
-  INSERT INTO CampaignUser (userId, campaignId, baseScore, videoCount, joinedAt, createdAt, updatedAt)
-  SELECT DISTINCT 
+  -- Using INSERT IGNORE to skip duplicates and MAX() to handle multiple keyword_scores per user-campaign
+  INSERT IGNORE INTO CampaignUser (userId, campaignId, baseScore, videoCount, joinedAt, createdAt, updatedAt)
+  SELECT 
     u.id as userId,
     c.id as campaignId,
-    ks.total_score as baseScore,
-    JSON_LENGTH(ks.video_scores_json) as videoCount,
+    MAX(ks.total_score) as baseScore,  -- Use MAX to pick highest score if multiple matches
+    MAX(JSON_LENGTH(ks.video_scores_json)) as videoCount,  -- Use MAX for video count too
     NOW() as joinedAt,
     NOW() as createdAt,
     NOW() as updatedAt
@@ -52,7 +53,8 @@ BEGIN
   WHERE 
     ks.total_score IS NOT NULL
     AND ks.total_score != 0
-    AND existing_cu.id IS NULL; -- Only insert if CampaignUser doesn't exist
+    AND existing_cu.id IS NULL  -- Only insert if CampaignUser doesn't exist
+  GROUP BY u.id, c.id;  -- Group by to ensure one row per user-campaign combination
       
   SET created_campaigns = ROW_COUNT();
   
