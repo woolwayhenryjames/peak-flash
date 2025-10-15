@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/style/noNestedTernary: not written by dev team */
 import { useState } from "react";
 import { redirect } from "react-router";
 import ConnectWallet from "~/components/ConnectWallet";
@@ -25,6 +24,17 @@ interface LuckyApiResponse {
   usdt: number;
   reward: number;
   claim: boolean;
+}
+
+// Early Bird Bonus API 接口类型定义
+interface EarlyBirdBonusApiResponse {
+  success: boolean;
+  user_id: string;
+  bonus_amount: number;
+  score: number;
+  is_distributed: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 // 调用Lucky API获取用户数据
@@ -111,6 +121,108 @@ async function fetchUserLuckyData(
   }
 }
 
+// 调用Early Bird Bonus API获取用户数据
+async function fetchEarlyBirdBonusData(
+  userId: string
+): Promise<EarlyBirdBonusApiResponse | null> {
+  try {
+    console.log("[Early Bird Bonus API] ===== 开始API调用 =====");
+    const apiUrl = `https://api.distant.fun/api/bonus/${userId}`;
+    console.log(`[Early Bird Bonus API] API URL: ${apiUrl}`);
+    console.log(
+      "[Early Bird Bonus API] 用户ID类型:",
+      typeof userId,
+      "值:",
+      userId
+    );
+    console.log("[Early Bird Bonus API] 用户ID长度:", userId.length);
+    logger.info(
+      `[Early Bird Bonus API] Fetching bonus data for ID: ${userId} from: ${apiUrl}`
+    );
+
+    console.log("[Early Bird Bonus API] 发送请求中...");
+    const startTime = Date.now();
+
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache", // 确保每次都获取最新数据
+      },
+    });
+
+    const endTime = Date.now();
+    console.log(
+      `[Early Bird Bonus API] 请求完成，耗时: ${endTime - startTime}ms`
+    );
+    console.log(
+      `[Early Bird Bonus API] 响应状态: ${response.status} ${response.statusText}`
+    );
+    logger.info(`[Early Bird Bonus API] Response status: ${response.status}`);
+
+    if (!response.ok) {
+      console.log(
+        `[Early Bird Bonus API] ❌ 请求失败: ${response.status} ${response.statusText}`
+      );
+      logger.warn(
+        `[Early Bird Bonus API] Request failed: ${response.status} ${response.statusText}`
+      );
+      return null;
+    }
+
+    console.log("[Early Bird Bonus API] 解析响应数据...");
+    const data = (await response.json()) as EarlyBirdBonusApiResponse;
+    console.log("[Early Bird Bonus API] 原始响应数据:", data);
+    logger.info(
+      `[Early Bird Bonus API] Raw response for user ${userId}:`,
+      data
+    );
+
+    // 检查响应格式
+    console.log("[Early Bird Bonus API] 验证响应格式...");
+    if (data && typeof data === "object" && "success" in data) {
+      console.log("[Early Bird Bonus API] 响应格式正确");
+      if (data.success) {
+        console.log("[Early Bird Bonus API] ✅ API调用成功！");
+        console.log(
+          `[Early Bird Bonus API] 用户 ${userId} 数据: bonus_amount=${data.bonus_amount}, score=${data.score}`
+        );
+        logger.info(
+          `[Early Bird Bonus API] User ${userId} has bonus_amount: ${data.bonus_amount}, score: ${data.score}`
+        );
+        return data;
+      }
+      console.log("[Early Bird Bonus API] ❌ API返回 success: false");
+      logger.warn(
+        `[Early Bird Bonus API] User ${userId} - API returned success: false`
+      );
+      return null;
+    }
+    console.log("[Early Bird Bonus API] ❌ 响应格式无效:", data);
+    logger.warn(
+      `[Early Bird Bonus API] User ${userId} - Invalid response format:`,
+      data
+    );
+    return null;
+  } catch (error) {
+    console.log("[Early Bird Bonus API] ❌ 请求异常:", error);
+    console.log("[Early Bird Bonus API] 错误类型:", typeof error);
+    console.log(
+      "[Early Bird Bonus API] 错误信息:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
+    logger.error(
+      `[Early Bird Bonus API] Failed to fetch data for user ${userId}:`,
+      {
+        error: error instanceof Error ? error.message : "Unknown error",
+      }
+    );
+    return null;
+  } finally {
+    console.log("[Early Bird Bonus API] ===== API调用结束 =====");
+  }
+}
+
 export function meta() {
   return [
     { title: "Lucky Center - Peak AI" },
@@ -180,14 +292,16 @@ export async function loader({ request }: Route.LoaderArgs) {
   );
 
   // 并行调用API和获取其他数据
-  const [inviteRecords, luckyApiData] = await Promise.all([
+  const [inviteRecords, luckyApiData, earlyBirdBonusData] = await Promise.all([
     getUserInviteRecords(user.id),
     fetchUserLuckyData(user.id), // 始终调用API获取真实数据
+    fetchEarlyBirdBonusData(user.id), // 调用Early Bird Bonus API
   ]);
 
   console.log("[Lucky Page] 步骤3: 所有API调用完成");
   console.log("[Lucky Page] 邀请记录数量:", inviteRecords.length);
   console.log("[Lucky Page] API数据结果:", luckyApiData);
+  console.log("[Lucky Page] Early Bird Bonus数据结果:", earlyBirdBonusData);
 
   // 使用API返回的真实数据
   const finalApiData = luckyApiData;
@@ -220,6 +334,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     user,
     inviteRecords,
     apiData: finalApiData,
+    earlyBirdBonusData,
   };
 
   console.log("[Lucky Page] 步骤5: 最终返回数据");
@@ -228,6 +343,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     hasApiData: !!finalData.apiData,
     apiUsdt: finalData.apiData?.usdt,
     apiReward: finalData.apiData?.reward,
+    hasEarlyBirdBonusData: !!finalData.earlyBirdBonusData,
+    earlyBirdBonusAmount: finalData.earlyBirdBonusData?.bonus_amount,
     kindleScore: finalData.user.kindleScore,
   });
 
@@ -236,6 +353,8 @@ export async function loader({ request }: Route.LoaderArgs) {
     hasApiData: !!finalData.apiData,
     apiUsdt: finalData.apiData?.usdt,
     apiReward: finalData.apiData?.reward,
+    hasEarlyBirdBonusData: !!finalData.earlyBirdBonusData,
+    earlyBirdBonusAmount: finalData.earlyBirdBonusData?.bonus_amount,
     kindleScore: finalData.user.kindleScore,
   });
 
@@ -244,11 +363,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     user,
     inviteRecords,
     apiData: finalApiData || undefined,
+    earlyBirdBonusData: earlyBirdBonusData || undefined,
   };
 }
 
 export default function Lucky({
-  loaderData: { user, inviteRecords, apiData },
+  loaderData: { user, inviteRecords, apiData, earlyBirdBonusData },
 }: Route.ComponentProps) {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedTikTok, setCopiedTikTok] = useState(false);
@@ -286,7 +406,7 @@ export default function Lucky({
       apiData.claim
     );
     giftAmount = apiData.usdt;
-    isEligibleForGift = apiData.usdt > 0;
+    isEligibleForGift = apiData.usdt > 0 || apiData.reward > 0;
     console.log(
       "[Lucky Component] 计算结果 - giftAmount:",
       giftAmount,
@@ -424,44 +544,183 @@ export default function Lucky({
           )}
         </div>
 
-        {/* Registration Welcome Gift - CLOSED Section */}
+        {/* Connect Wallet Section - 对所有用户显示 */}
+        <ConnectWallet userWalletAddress={user?.walletAddress} />
+
+        {/* Campaign Main Title */}
+        <div className="text-center">
+          <h1 className="mb-2 bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-bold text-3xl text-transparent">
+            NEWCOMER GIFT ROUND 2
+          </h1>
+          <p className="text-[#8c96c7] text-sm uppercase tracking-[0.3em]">
+            Campaign Participants Only
+          </p>
+        </div>
+
+        {/* Early Bird Bonus Section */}
         <div className="space-y-6 rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-8 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
           <div className="space-y-4 text-white">
             <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
-              <span>Registration Welcome Gift - CLOSED!</span>
+              <span>Early Bird Bonus</span>
+              <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
+                LIVE
+              </span>
             </div>
 
             <div className="space-y-4">
-              <div className="space-y-2">
-                <p className="font-semibold text-lg text-white">
-                  Thank you to all our early bird supporters!
-                </p>
-                <p className="text-[#cdd6f8] text-sm">
-                  We will issue a{" "}
-                  <span className="font-semibold text-yellow-400">
-                    Peak Badge
-                  </span>{" "}
-                  to our{" "}
-                  <span className="font-semibold text-yellow-400">
-                    first 30K
-                  </span>{" "}
-                  registered users, unlocking exclusive benefits including
-                  boosted campaign rewards, airdrops, and more.
-                </p>
-              </div>
+              {/* Early Bird Bonus 内容 */}
+              {(() => {
+                // 判断三种情况
+                if (!earlyBirdBonusData?.success) {
+                  // 第一种情况：接口没返回用户数据
+                  return (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <p className="font-semibold text-lg text-white">
+                          You may not have published videos yet, or your content
+                          hasn't been indexed.
+                        </p>
+                      </div>
+                      <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                            Bonus Amount
+                          </span>
+                          <div className="flex items-center gap-3">
+                            <span className="whitespace-nowrap font-semibold text-white text-xl">
+                              0 USDT
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-3 text-[#cdd6f8] text-sm">
+                        <p>
+                          <span className="font-semibold text-yellow-400">
+                            Please publish videos as soon as possible.
+                          </span>{" "}
+                          If you've already published, please be patient - we'll
+                          index your videos and calculate rewards (if
+                          applicable) within{" "}
+                          <span className="font-semibold text-yellow-400">
+                            24-48 hours
+                          </span>
+                          .
+                        </p>
+                        <p>
+                          <em>
+                            *This campaign runs independently from Ascent
+                            activities - you can earn rewards from both!
+                          </em>
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+                if (earlyBirdBonusData.bonus_amount === 0) {
+                  // 第二种情况：有数据但bonus_amount为0
+                  return (
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <p className="font-semibold text-lg text-white">
+                          Your videos currently don't meet our Early Bird reward
+                          requirements.
+                        </p>
+                      </div>
+                      <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                            Bonus Amount
+                          </span>
+                          <div className="flex items-center gap-3">
+                            <span className="whitespace-nowrap font-semibold text-white text-xl">
+                              0 USDT
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-3 text-[#cdd6f8] text-sm">
+                        <p>
+                          <span className="font-semibold text-yellow-400">
+                            Keep creating high-quality content and boosting
+                            engagement
+                          </span>{" "}
+                          - we re-evaluate videos every{" "}
+                          <span className="font-semibold text-yellow-400">
+                            24-48 hours
+                          </span>
+                          , so you might qualify for rewards in the next update!
+                        </p>
+                        <p>
+                          <em>
+                            *This campaign runs independently from Ascent
+                            activities - you can earn rewards from both!
+                          </em>
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+                // 第三种情况：有数据且bonus_amount不为0
+                return (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <p className="font-semibold text-lg text-white">
+                        Congratulations!
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                          Bonus Amount
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <span className="whitespace-nowrap font-semibold text-white text-xl">
+                            {earlyBirdBonusData.bonus_amount} USDT
+                          </span>
+                          {earlyBirdBonusData.is_distributed && (
+                            <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
+                              ✓ Claimed
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-3 text-[#cdd6f8] text-sm">
+                      <p>
+                        💡 Reward amounts update{" "}
+                        <span className="font-semibold text-yellow-400">
+                          every 24 hours
+                        </span>{" "}
+                        based on your{" "}
+                        <span className="font-semibold text-yellow-400">
+                          contents
+                        </span>{" "}
+                        and{" "}
+                        <span className="font-semibold text-yellow-400">
+                          invitations
+                        </span>
+                        . Continue creating and inviting to maximize your
+                        earnings!
+                      </p>
+                      <p>
+                        All rewards will be sent out together{" "}
+                        <span className="font-semibold text-yellow-400">
+                          after the campaign concludes
+                        </span>
+                        . Please stay patient!
+                      </p>
+                      <p>
+                        <em>
+                          *This campaign runs independently from Ascent
+                          activities - you can earn rewards from both!
+                        </em>
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()}
 
-              <div className="space-y-2">
-                <p className="font-semibold text-lg text-white">Stay tuned!</p>
-                <p className="text-[#cdd6f8] text-sm">
-                  We're launching a brand new{" "}
-                  <span className="font-semibold text-yellow-400">
-                    Campaign Welcome Gift
-                  </span>{" "}
-                  with exciting rewards coming soon. Follow our announcements
-                  closely for details!
-                </p>
-              </div>
-
+              {/* Start Button */}
               <div className="mt-6">
                 <a className="inline-block w-full" href="/u/ascent">
                   <GlowContainer className="flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 font-semibold text-[#dbe4ff] text-base transition hover:bg-white/10">
@@ -487,91 +746,32 @@ export default function Lucky({
           </div>
         </div>
 
-        {/* Welcome Bonus Section - 只在有奖励的情况下显示 */}
-        {isEligibleForGift && (
-          <div className="rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
-            <div className="space-y-4 text-white">
-              <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
-                <span>Welcome Bonus</span>
-              </div>
-              {isClaimed ? (
-                // 已发放
-                <>
-                  <div className="space-y-2">
-                    <p className="font-semibold text-lg text-white">
-                      Rewards Distributed!
-                    </p>
-                    <p className="text-[#cdd6f8] text-sm">
-                      Your Kindle Score bonus has been successfully distributed
-                      to your wallet.
-                    </p>
-                  </div>
-                  <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                        Bonus Amount
-                      </span>
-                      <div className="flex items-center gap-3">
-                        <span className="whitespace-nowrap font-semibold text-white text-xl">
-                          {giftAmount} USDT
-                        </span>
-                        <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
-                          ✓ Claimed
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mt-3 text-[#b8caff] text-xs">
-                      Your rewards have been distributed to your bound EVM
-                      wallet address.
-                    </div>
-                  </div>
-                </>
-              ) : (
-                // 未发放
-                <>
-                  <div className="space-y-2">
-                    <p className="font-semibold text-lg text-white">
-                      Congratulations!
-                    </p>
-                    <p className="text-[#cdd6f8] text-sm">
-                      Your Kindle Score has earned you an instant cash bonus.
-                    </p>
-                  </div>
-                  <div className="mt-6 rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                        Bonus Amount
-                      </span>
-                      <div className="flex items-center gap-3">
-                        <span className="whitespace-nowrap font-semibold text-white text-xl">
-                          {giftAmount} USDT
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mt-3 text-[#b8caff] text-xs">
-                      Your rewards will be distributed to your bound EVM wallet
-                      address within 24 hours.
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* Connect Wallet Section */}
-              <div className="mt-6">
-                <ConnectWallet userWalletAddress={user?.walletAddress} />
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="h-px w-full bg-gray-600/30" />
-
+        {/* Referral Rewards Section */}
         <div className="space-y-8 rounded-2xl border border-white/10 bg-[rgba(14,16,24,0.85)] p-8 shadow-[0_30px_80px_rgba(4,9,20,0.55)] backdrop-blur">
           <div className="space-y-3 text-white">
             <h2 className="text-[#8c96c7] text-sm uppercase tracking-[0.3em]">
               Referral Rewards
             </h2>
             <div className="space-y-3 text-[#cdd6f8] text-sm">
+              <p>
+                *{" "}
+                <span className="font-semibold text-yellow-400">
+                  Newcomer Gift Round 2
+                </span>{" "}
+                is now live! Earn rewards by:{" "}
+                <span className="font-semibold text-yellow-400">
+                  joining campaigns
+                </span>
+                ,{" "}
+                <span className="font-semibold text-yellow-400">
+                  creating quality content
+                </span>
+                , and{" "}
+                <span className="font-semibold text-yellow-400">
+                  inviting friends
+                </span>
+                . Start now!
+              </p>
               <p>
                 * Referral rewards from the registration welcome bonus have been
                 fully distributed. Please check your{" "}
@@ -580,38 +780,10 @@ export default function Lucky({
                 </span>{" "}
                 for transaction details.
               </p>
-              <p>
-                * We're launching a{" "}
-                <span className="font-semibold text-yellow-400">
-                  new welcome bonus
-                </span>{" "}
-                <span className="font-semibold text-yellow-400">campaign</span>{" "}
-                soon, where referral count will also be a key factor for reward
-                distribution. Keep going!
-              </p>
             </div>
           </div>
 
           <div className="flex flex-col gap-6">
-            {/* Rewards Section - 只在有奖励的情况下显示 */}
-            {apiData?.success && apiData.reward > 0 && (
-              <div className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-[#cdd6f8] text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-[#98a4d8] text-xs uppercase tracking-[0.25em]">
-                    Rewards
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-base text-white">
-                      {apiData.reward} USDT
-                    </span>
-                    <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
-                      ✓ Claimed
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div className="flex flex-col gap-3 text-white">
               <span className="text-[#8c96c7] text-xs uppercase tracking-[0.28em]">
                 Your Referral Link
@@ -662,6 +834,7 @@ export default function Lucky({
           </div>
         </div>
 
+        {/* Invite Records Section */}
         <div className="space-y-7">
           <div className="flex items-center gap-1">
             <img alt="Stars icon" className="h-6 w-6" src={starsIcon} />
@@ -676,7 +849,7 @@ export default function Lucky({
                 </p>
               </div>
             ) : (
-              inviteRecords.map((record) => (
+              inviteRecords.map((record: any) => (
                 <div key={record.id}>
                   <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
                     <div className="flex items-center justify-between">
@@ -742,6 +915,159 @@ export default function Lucky({
             )}
           </div>
         </div>
+
+        {/* Registration Welcome Gift - CLOSED Section */}
+        <div className="space-y-6 rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-8 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
+          <div className="space-y-4 text-white">
+            <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
+              <span>Registration Welcome Gift - CLOSED!</span>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <p className="font-semibold text-lg text-white">
+                  Thank you to all our early bird supporters!
+                </p>
+                <p className="text-[#cdd6f8] text-sm">
+                  We will issue a{" "}
+                  <span className="font-semibold text-yellow-400">
+                    Peak Badge
+                  </span>{" "}
+                  to our{" "}
+                  <span className="font-semibold text-yellow-400">
+                    first 30K
+                  </span>{" "}
+                  registered users, unlocking exclusive benefits including
+                  boosted campaign rewards, airdrops, and more.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <p className="font-semibold text-lg text-white">
+                  Phase 2 is Live!
+                </p>
+                <p className="text-[#cdd6f8] text-sm">
+                  Our{" "}
+                  <span className="font-semibold text-yellow-400">
+                    Newcomer Gift Round 2
+                  </span>{" "}
+                  is now active! Check your Early Bird Bonus section above to
+                  see your rewards and start earning more.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Welcome Bonus Section - 只在有奖励的情况下显示 */}
+        {isEligibleForGift &&
+          (giftAmount > 0 || (apiData?.success && apiData.reward > 0)) && (
+            <div className="rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
+              <div className="space-y-4 text-white">
+                <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
+                  <span>NEWCOMER GIFT ROUND 1</span>
+                </div>
+                {isClaimed ? (
+                  // 已发放
+                  <>
+                    <div className="space-y-2">
+                      <p className="text-[#cdd6f8] text-sm">
+                        * Bonus amount/ Referral rewards from the registration
+                        welcome bonus have been fully distributed. Please check
+                        your connected wallet for transaction details.
+                      </p>
+                    </div>
+                    <div className="mt-6 space-y-4">
+                      {/* Bonus Amount Section - 只在有gift奖励的情况下显示 */}
+                      {giftAmount > 0 && (
+                        <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                              Bonus Amount
+                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className="whitespace-nowrap font-semibold text-white text-xl">
+                                {giftAmount} USDT
+                              </span>
+                              <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
+                                ✓ Claimed
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* API Rewards Section - 只在有API奖励的情况下显示 */}
+                      {apiData?.success && apiData.reward > 0 && (
+                        <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                              REFERRAL REWARDS
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-white text-xl">
+                                {apiData.reward} USDT
+                              </span>
+                              <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
+                                ✓ Claimed
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  // 未发放
+                  <>
+                    <div className="space-y-2">
+                      <p className="text-[#cdd6f8] text-sm">
+                        * Bonus amount/ Referral rewards from the registration
+                        welcome bonus have been fully distributed. Please check
+                        your connected wallet for transaction details.
+                      </p>
+                    </div>
+                    <div className="mt-6 space-y-4">
+                      {/* Bonus Amount Section - 只在有gift奖励的情况下显示 */}
+                      {giftAmount > 0 && (
+                        <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                              Bonus Amount
+                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className="whitespace-nowrap font-semibold text-white text-xl">
+                                {giftAmount} USDT
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* API Rewards Section - 只在有API奖励的情况下显示 */}
+                      {apiData?.success && apiData.reward > 0 && (
+                        <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
+                              REFERRAL REWARDS
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-white text-xl">
+                                {apiData.reward} USDT
+                              </span>
+                              <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
+                                ✓ Claimed
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );
