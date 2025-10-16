@@ -47,6 +47,7 @@ model User {
   visibleVideosCount Int?
   likeCount          Int?
   Campaign           Campaign[] @relation("CampaignOwner")
+  firstComerBadge    Boolean    @default(false)
 
   @@unique([email])
   @@index([id])

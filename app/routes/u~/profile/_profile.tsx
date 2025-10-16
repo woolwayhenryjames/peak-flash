@@ -5,6 +5,7 @@ import ConnectWallet from "~/components/ConnectWallet";
 import { getDbUser } from "~/services/auth.server";
 import { getCampaignsForUser } from "~/services/campaign.server";
 import type { Route } from "./+types/_profile";
+import firstComerBadge from "./assets/first-comer-badge.avif";
 import starIcon from "./assets/star-icon.svg";
 import walletIcon from "./assets/wallet-icon.svg";
 
@@ -115,6 +116,22 @@ export default function Profile({
                 </div>
               )}
             </div>
+            {user.firstComerBadge && (
+              <div className="-right-5 absolute bottom-0 flex gap-1">
+                <img
+                  alt="First Comer Badge"
+                  height="27"
+                  src={firstComerBadge}
+                  width="27"
+                />
+                <div
+                  className="tooltip flex size-3 items-center justify-center rounded-full border border-white text-xs"
+                  data-tip="This badge is for the first 30,000 registered users, unlocking significant bonuses for future airdrops and activities."
+                >
+                  i
+                </div>
+              </div>
+            )}
           </div>
 
           {/* User Info */}
