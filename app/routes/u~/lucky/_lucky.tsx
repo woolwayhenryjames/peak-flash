@@ -562,9 +562,6 @@ export default function Lucky({
           <div className="space-y-4 text-white">
             <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
               <span>Early Bird Bonus</span>
-              <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
-                LIVE
-              </span>
             </div>
 
             <div className="space-y-4">
@@ -577,35 +574,22 @@ export default function Lucky({
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <p className="font-semibold text-lg text-white">
-                          You may not have published videos yet, or your content
-                          hasn't been indexed.
-                        </p>
-                      </div>
-                      <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                            Bonus Amount
-                          </span>
-                          <div className="flex items-center gap-3">
-                            <span className="whitespace-nowrap font-semibold text-white text-xl">
-                              0 USDT
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="space-y-3 text-[#cdd6f8] text-sm">
-                        <p>
+                          Thank you for your support! Newcomer Gift Round 2 has
+                          now{" "}
                           <span className="font-semibold text-yellow-400">
-                            Please publish videos as soon as possible.
-                          </span>{" "}
-                          If you've already published, please be patient - we'll
-                          index your videos and calculate rewards (if
-                          applicable) within{" "}
-                          <span className="font-semibold text-yellow-400">
-                            24-48 hours
+                            concluded
                           </span>
                           .
                         </p>
+                        <p className="font-semibold text-lg text-white">
+                          We have{" "}
+                          <span className="font-semibold text-yellow-400">
+                            more reward activities
+                          </span>{" "}
+                          coming up ahead. Stay active and engaged!
+                        </p>
+                      </div>
+                      <div className="space-y-3 text-[#cdd6f8] text-sm">
                         <p>
                           <em>
                             *This campaign runs independently from Ascent
@@ -622,34 +606,22 @@ export default function Lucky({
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <p className="font-semibold text-lg text-white">
-                          Your videos currently don't meet our Early Bird reward
-                          requirements.
-                        </p>
-                      </div>
-                      <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                            Bonus Amount
+                          Thank you for your support! Newcomer Gift Round 2 has
+                          now{" "}
+                          <span className="font-semibold text-yellow-400">
+                            concluded
                           </span>
-                          <div className="flex items-center gap-3">
-                            <span className="whitespace-nowrap font-semibold text-white text-xl">
-                              0 USDT
-                            </span>
-                          </div>
-                        </div>
+                          .
+                        </p>
+                        <p className="font-semibold text-lg text-white">
+                          We have{" "}
+                          <span className="font-semibold text-yellow-400">
+                            more reward activities
+                          </span>{" "}
+                          coming up ahead. Stay active and engaged!
+                        </p>
                       </div>
                       <div className="space-y-3 text-[#cdd6f8] text-sm">
-                        <p>
-                          <span className="font-semibold text-yellow-400">
-                            Keep creating high-quality content and boosting
-                            engagement
-                          </span>{" "}
-                          - we re-evaluate videos every{" "}
-                          <span className="font-semibold text-yellow-400">
-                            24-48 hours
-                          </span>
-                          , so you might qualify for rewards in the next update!
-                        </p>
                         <p>
                           <em>
                             *This campaign runs independently from Ascent
@@ -687,27 +659,18 @@ export default function Lucky({
                     </div>
                     <div className="space-y-3 text-[#cdd6f8] text-sm">
                       <p>
-                        💡 Reward amounts update{" "}
+                        Thank you for supporting PeakAI! Your reward has been
+                        sent to your{" "}
                         <span className="font-semibold text-yellow-400">
-                          every 24 hours
+                          connected wallet
                         </span>{" "}
-                        based on your{" "}
-                        <span className="font-semibold text-yellow-400">
-                          contents
-                        </span>{" "}
-                        and{" "}
-                        <span className="font-semibold text-yellow-400">
-                          invitations
-                        </span>
-                        . Continue creating and inviting to maximize your
-                        earnings!
+                        address—please check it out!
                       </p>
                       <p>
-                        All rewards will be sent out together{" "}
                         <span className="font-semibold text-yellow-400">
-                          after the campaign concludes
+                          More rewards are on the way
                         </span>
-                        . Please stay patient!
+                        , so stay active and keep it up!
                       </p>
                       <p>
                         <em>
@@ -758,27 +721,15 @@ export default function Lucky({
                 <span className="font-semibold text-yellow-400">
                   Newcomer Gift Round 2
                 </span>{" "}
-                is now live! Earn rewards by:{" "}
-                <span className="font-semibold text-yellow-400">
-                  joining campaigns
-                </span>
-                ,{" "}
-                <span className="font-semibold text-yellow-400">
-                  creating quality content
-                </span>
-                , and{" "}
-                <span className="font-semibold text-yellow-400">
-                  inviting friends
-                </span>
-                . Start now!
+                has ended!
               </p>
               <p>
-                * Referral rewards from the registration welcome bonus have been
-                fully distributed. Please check your{" "}
+                * More reward activities are currently in the works. Keep
+                building your{" "}
                 <span className="font-semibold text-yellow-400">
-                  connected wallet
-                </span>{" "}
-                for transaction details.
+                  referral record
+                </span>
+                —it will benefit you in future reward programs. Stay active!
               </p>
             </div>
           </div>
@@ -916,49 +867,6 @@ export default function Lucky({
           </div>
         </div>
 
-        {/* Registration Welcome Gift - CLOSED Section */}
-        <div className="space-y-6 rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-8 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
-          <div className="space-y-4 text-white">
-            <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
-              <span>Registration Welcome Gift - CLOSED!</span>
-            </div>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <p className="font-semibold text-lg text-white">
-                  Thank you to all our early bird supporters!
-                </p>
-                <p className="text-[#cdd6f8] text-sm">
-                  We will issue a{" "}
-                  <span className="font-semibold text-yellow-400">
-                    Peak Badge
-                  </span>{" "}
-                  to our{" "}
-                  <span className="font-semibold text-yellow-400">
-                    first 30K
-                  </span>{" "}
-                  registered users, unlocking exclusive benefits including
-                  boosted campaign rewards, airdrops, and more.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <p className="font-semibold text-lg text-white">
-                  Phase 2 is Live!
-                </p>
-                <p className="text-[#cdd6f8] text-sm">
-                  Our{" "}
-                  <span className="font-semibold text-yellow-400">
-                    Newcomer Gift Round 2
-                  </span>{" "}
-                  is now active! Check your Early Bird Bonus section above to
-                  see your rewards and start earning more.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Welcome Bonus Section - 只在有奖励的情况下显示 */}
         {isEligibleForGift &&
           (giftAmount > 0 || (apiData?.success && apiData.reward > 0)) && (
@@ -1000,12 +908,12 @@ export default function Lucky({
                       {/* API Rewards Section - 只在有API奖励的情况下显示 */}
                       {apiData?.success && apiData.reward > 0 && (
                         <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-wrap items-center justify-between gap-3">
                             <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
                               REFERRAL REWARDS
                             </span>
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-white text-xl">
+                            <div className="flex items-center gap-3">
+                              <span className="whitespace-nowrap font-semibold text-white text-xl">
                                 {apiData.reward} USDT
                               </span>
                               <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
@@ -1047,12 +955,12 @@ export default function Lucky({
                       {/* API Rewards Section - 只在有API奖励的情况下显示 */}
                       {apiData?.success && apiData.reward > 0 && (
                         <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-wrap items-center justify-between gap-3">
                             <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
                               REFERRAL REWARDS
                             </span>
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-white text-xl">
+                            <div className="flex items-center gap-3">
+                              <span className="whitespace-nowrap font-semibold text-white text-xl">
                                 {apiData.reward} USDT
                               </span>
                               <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
