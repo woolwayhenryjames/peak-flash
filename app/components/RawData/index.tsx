@@ -42,15 +42,21 @@ export default function RawData({
     setSearchParams(newParams);
   };
   return (
-    <div className="space-y-8">
+    <div
+      className="container mx-auto space-y-8 rounded-xl border border-[#2d3338] p-6 md:space-y-16 md:pb-16"
+      style={{
+        background:
+          "linear-gradient(290deg, rgba(45, 51, 56, 0.06) 7.74%, rgba(127, 144, 158, 0.14) 92.27%)",
+      }}
+    >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <img alt="Data" className="size-5" src={DataIcon} />
-          <h3 className="font-semibold text-white text-xl">Raw data</h3>
+        <div className="flex items-center gap-1 font-medium text-lg text-white md:gap-4 md:text-2xl">
+          <img alt="Data" className="size-5 md:size-9" src={DataIcon} />
+          Raw data
         </div>
         <div className="flex items-center">
           <select
-            className="cursor-pointer appearance-none border-none bg-transparent pr-8 text-[#CFCFCF] text-sm outline-none"
+            className="cursor-pointer appearance-none border-none bg-transparent pr-8 text-[#CFCFCF] text-sm outline-none md:text-lg"
             onChange={(e) => handleCampaignChange(e.target.value)}
             value={selectedCampaign}
           >
@@ -73,55 +79,39 @@ export default function RawData({
       </div>
 
       {/* Analytics Cards Grid */}
-      <div
-        className="rounded-xl border border-[#2d3338] px-5 py-9"
-        style={{
-          background:
-            "linear-gradient(249deg, rgba(15, 16, 21, 0.55) 9.26%, rgba(18, 19, 23, 0.55) 38.41%, rgba(31, 25, 44, 0.55) 87.29%, rgba(21, 22, 31, 0.55) 114.78%)",
-        }}
-      >
-        <div className="grid grid-cols-3 gap-6">
-          <AnalyticsCard
-            icon={
-              <img
-                alt="Participants"
-                className="size-4"
-                src={ParticipantsIcon}
-              />
-            }
-            title="Total Participants"
-            value={formatNumber(totalParticipants)}
-          />
-          <AnalyticsCard
-            icon={<img alt="Videos" className="size-4" src={VideosIcon} />}
-            showDivider
-            title="Videos Submitted"
-            value={formatNumber(videosSubmitted)}
-          />
-          <AnalyticsCard
-            icon={<img alt="Likes" className="size-4" src={LikesIcon} />}
-            showDivider
-            title="Total Likes"
-            value={formatNumber(totalLikes)}
-          />
-          <AnalyticsCard
-            icon={<img alt="Comments" className="size-4" src={CommentsIcon} />}
-            title="Total Comments"
-            value={formatNumber(totalComments)}
-          />
-          <AnalyticsCard
-            icon={<img alt="Shares" className="size-4" src={SharesIcon} />}
-            showDivider
-            title="Total Shares"
-            value={formatNumber(totalShares)}
-          />
-          <AnalyticsCard
-            icon={<img alt="Views" className="size-4" src={ViewsIcon} />}
-            showDivider
-            title="Total Views"
-            value={formatNumber(totalViews)}
-          />
-        </div>
+      <div className="grid grid-cols-3 place-items-center gap-6 md:grid-cols-6">
+        <AnalyticsCard
+          icon={
+            <img alt="Participants" className="size-4" src={ParticipantsIcon} />
+          }
+          title="Total Participants"
+          value={formatNumber(totalParticipants)}
+        />
+        <AnalyticsCard
+          icon={<img alt="Videos" className="size-4" src={VideosIcon} />}
+          title="Videos Submitted"
+          value={formatNumber(videosSubmitted)}
+        />
+        <AnalyticsCard
+          icon={<img alt="Likes" className="size-4" src={LikesIcon} />}
+          title="Total Likes"
+          value={formatNumber(totalLikes)}
+        />
+        <AnalyticsCard
+          icon={<img alt="Comments" className="size-4" src={CommentsIcon} />}
+          title="Total Comments"
+          value={formatNumber(totalComments)}
+        />
+        <AnalyticsCard
+          icon={<img alt="Shares" className="size-4" src={SharesIcon} />}
+          title="Total Shares"
+          value={formatNumber(totalShares)}
+        />
+        <AnalyticsCard
+          icon={<img alt="Views" className="size-4" src={ViewsIcon} />}
+          title="Total Views"
+          value={formatNumber(totalViews)}
+        />
       </div>
     </div>
   );

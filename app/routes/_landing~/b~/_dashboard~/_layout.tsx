@@ -147,22 +147,20 @@ export default function Dashboard({
     <div>
       {/* Analytics Center Title */}
       <div
-        className="flex h-51 items-center justify-start px-18"
+        className="flex h-48 items-center justify-start px-4"
         style={{
           background:
-            "linear-gradient(to bottom left, #FDFFF7 0%, #91BBB4 27%, #604D6C 40%, #02030D 50%) bottom right / 60% 50% no-repeat, linear-gradient(to top left, #FDFFF7 0%, #91BBB4 27%, #604D6C 40%, #02030D 50%) top right / 60% 50% no-repeat",
+            "linear-gradient(to bottom left, #FDFFF7 0%, #89BACC 26.5%, #435F76 35%, #1B2C45 40%, black 50%) bottom right / 40% 50% no-repeat, linear-gradient(to top left, #FDFFF7 0%, #89BACC 26.5%, #435F76 35%, #1B2C45 40%, black 50%) top right / 40% 50% no-repeat",
         }}
       >
-        <h2 className="font-medium text-2xl text-[#f9f9fb]">
-          Analytics
-          <br />
-          Center
+        <h2 className="container mx-auto text-4xl text-[#f2edea]">
+          Analytics Center
         </h2>
       </div>
 
       {/* Main Content */}
       <div
-        className="flex-1 px-18 pb-14"
+        className="flex-1 px-4 pb-14"
         style={{
           background:
             "linear-gradient(180deg, #02040D 0%, #0A1517 30.78%, #130F1C 67.5%, #090608 100%)",
@@ -178,7 +176,7 @@ export default function Dashboard({
           videosSubmitted={analytics.videosSubmitted}
         />
         <div className="my-18 h-px w-full bg-gradient-to-r from-transparent via-[#6c6c6c]/50 to-transparent" />
-        <div className="flex items-center justify-between">
+        <div className="container mx-auto flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <svg

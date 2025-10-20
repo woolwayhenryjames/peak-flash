@@ -13,7 +13,7 @@ export default function CampaignAnalytics({
     campaign?.endDate ?? new Date()
   );
   return (
-    <div className="rounded-xl border border-[#2D3338] pt-6.5 pl-6.5">
+    <div className="flex-1 rounded-xl border border-[#2D3338] pt-6.5 pl-6.5">
       <div className="flex flex-col gap-20 rounded-xl border border-[#2D3338] p-6">
         {/* Campaign Header */}
         <div className="flex justify-between">

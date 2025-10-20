@@ -49,7 +49,7 @@ export const auth = betterAuth({
     }),
   },
   trustedOrigins: [
-    "http://localhost:5173",
+    "http://localhost:5100",
     "https://staging.peakboom.ai",
     "https://www.peakboom.ai",
     "https://peakboom.ai",
