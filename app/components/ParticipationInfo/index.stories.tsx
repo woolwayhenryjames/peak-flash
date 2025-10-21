@@ -96,7 +96,7 @@ export const HighPerformer: Story = {
     campaignUser: {
       id: 456,
       videoCount: 42,
-      score: 95.8,
+      score: 795.8,
     },
     userRank: 1,
     initialExpand: true,
