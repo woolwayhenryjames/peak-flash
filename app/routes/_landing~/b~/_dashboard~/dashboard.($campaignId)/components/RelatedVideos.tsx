@@ -10,14 +10,14 @@ export default function RelatedVideos({
   topVideos: Route.ComponentProps["loaderData"]["topVideos"];
 }) {
   return (
-    <div className="flex-1 rounded-xl border border-[#2D3338] pt-6.5 pl-6.5">
+    <div className="flex-1 rounded-xl border border-[#2D3338] pt-6.5">
       <div className="flex flex-col items-center justify-between rounded-xl border border-[#2D3338] p-6">
-        <div className="flex items-center gap-2">
+        <div className="mb-5 flex w-full items-center gap-2">
           <svg
             fill="none"
-            height="12"
+            height="21"
             viewBox="0 0 13 12"
-            width="13"
+            width="23"
             xmlns="http://www.w3.org/2000/svg"
           >
             <title>video icon</title>
@@ -27,7 +27,7 @@ export default function RelatedVideos({
             />
           </svg>
 
-          <h4 className="font-medium text-base text-white">Related Videos</h4>
+          <h4 className="font-medium text-white text-xl">Related Videos</h4>
 
           <Link
             className="ml-auto text-[#ACACAC] text-sm underline"
@@ -38,14 +38,14 @@ export default function RelatedVideos({
           </Link>
         </div>
 
-        <div className="space-y-[15px]">
+        <div className="space-y-[10px]">
           {topVideos.length > 0 ? (
-            topVideos.map((video, index) => (
+            topVideos.map((video) => (
               <VideoCard
+                className="h-26"
                 creator={video.campaignUser.user.name}
                 key={video.id}
                 kindleScore={video.campaignUser.user.kindleScore || 0}
-                rank={(index + 1).toString()}
                 video={video}
               />
             ))
