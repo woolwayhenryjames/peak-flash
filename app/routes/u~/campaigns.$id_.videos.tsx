@@ -163,7 +163,7 @@ export default function CampaignVideos({
 
         {/* Campaign Cards */}
         {campaignVideos.length > 0 && (
-          <div className="w-full space-y-4">
+          <div className="@container w-full space-y-4">
             {campaignVideos.map((campaign) => (
               <VideoCard
                 creator={campaign.campaignUser.user.name}

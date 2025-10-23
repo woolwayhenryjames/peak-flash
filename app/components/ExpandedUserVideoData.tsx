@@ -58,6 +58,17 @@ export default function ExpandedUserVideoData({
     position: cu.rank || index + 1, // Use actual rank if available, otherwise use index
   }));
 
+  const cardStats = [
+    {
+      label: "Posted Videos",
+      value: formatNumber(fetcher.data?.videoCount),
+    },
+    {
+      label: "Total Likes",
+      value: formatNumber(fetcher.data?.likeCount),
+    },
+  ];
+
   return (
     <div className="mt-4 flex flex-col gap-px">
       {/* Stats Section */}
@@ -69,47 +80,28 @@ export default function ExpandedUserVideoData({
 
         {/* Stats Cards */}
         <div className="flex w-full gap-6">
-          {/* Posted Videos Card */}
-          <div className="flex flex-1 gap-2.5 rounded-2 border border-white/20 px-7 py-6">
-            <div className="flex flex-col items-end gap-2">
+          {cardStats.map(({ label, value }) => (
+            <div
+              className="flex flex-1 flex-col gap-2.5 rounded-md border border-white/20 px-7 py-6 md:items-center"
+              key={label}
+            >
               <span
                 className={cn(
                   "bg-gradient-to-r from-[#B871FF] to-[#2CFFBC]",
                   "bg-clip-text font-medium text-transparent text-xl leading-[1.5em]"
                 )}
               >
-                {formatNumber(fetcher.data?.videoCount)}
+                {value}
               </span>
               <span
                 className={cn(
                   "font-light text-[#A7A7A7] text-xs leading-[1.5em]"
                 )}
               >
-                Posted Videos
+                {label}
               </span>
             </div>
-          </div>
-
-          {/* Total Likes Card */}
-          <div className="flex flex-1 gap-2.5 rounded-2 border border-white/20 px-7 py-6">
-            <div className="flex flex-col items-end gap-2">
-              <span
-                className={cn(
-                  "bg-gradient-to-r from-[#B871FF] to-[#2CFFBC]",
-                  "bg-clip-text font-medium text-transparent text-xl leading-[1.5em]"
-                )}
-              >
-                {formatNumber(fetcher.data?.likeCount)}
-              </span>
-              <span
-                className={cn(
-                  "font-light text-[#A7A7A7] text-xs leading-[1.5em]"
-                )}
-              >
-                Total Likes
-              </span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -123,29 +115,36 @@ export default function ExpandedUserVideoData({
         <div
           className={cn(
             "flex w-full gap-2.5 rounded-2 border border-[#292F32]",
-            "px-5 pt-2 pb-6"
+            "px-5 pt-2 pb-6 xl:px-9 xl:py-9"
           )}
         >
           <div className="flex w-full flex-col gap-6">
-            <h3 className="font-medium text-sm text-white leading-[1.5em]">
-              FEATURED VIDEOS
-            </h3>
+            <div className="flex items-center justify-between text-white">
+              <h3 className="font-medium text-sm leading-[1.5em]">
+                FEATURED VIDEOS
+              </h3>
+              <Link
+                className="font-normal text-sm underline"
+                to={`/u/profile/${userData.id}/videos`}
+                viewTransition
+              >
+                View Videos
+              </Link>
+            </div>
 
             <div className="flex flex-col items-center gap-8">
               <div className="flex w-full flex-col gap-8">
-                <div className="flex flex-col gap-4">
+                <div className="@container flex gap-4 max-xl:flex-col xl:justify-between">
                   {/* Render VideoCard components for each video */}
                   {videos && videos.length > 0 ? (
-                    videos
-                      .slice(0, 3)
-                      .map((video: UserVideo) => (
-                        <VideoCard
-                          creator={`@${userData.name || "creator"}`}
-                          key={video.id}
-                          kindleScore={userData.kindleScore || 8.9}
-                          video={video}
-                        />
-                      ))
+                    videos.map((video: UserVideo) => (
+                      <VideoCard
+                        creator={`@${userData.name || "creator"}`}
+                        key={video.id}
+                        kindleScore={userData.kindleScore || 8.9}
+                        video={video}
+                      />
+                    ))
                   ) : (
                     <div className="flex items-center justify-center py-8">
                       <span className="text-gray-400 text-sm">
@@ -159,6 +158,7 @@ export default function ExpandedUserVideoData({
                     "flex w-full gap-5 border-[#414149] border-b pb-8"
                   )}
                 >
+                  <div className="hidden flex-1 xl:block" />
                   <a
                     className="flex-1"
                     href={`https://www.tiktok.com/@${userData.email}`}
@@ -166,8 +166,9 @@ export default function ExpandedUserVideoData({
                     <GlowContainer>Tiktok Profile</GlowContainer>
                   </a>
                   <Link
-                    className="flex-1"
+                    className="flex-1 xl:hidden"
                     to={`/u/profile/${userData.id}/videos`}
+                    viewTransition
                   >
                     <GlowContainer>See All</GlowContainer>
                   </Link>
@@ -185,7 +186,7 @@ export default function ExpandedUserVideoData({
                     campaigns.map((campaign, index) => (
                       <div className="flex flex-col gap-3" key={campaign.name}>
                         <div className="flex w-full items-center justify-between">
-                          <div className="flex items-end gap-6">
+                          <div className="flex items-center gap-6">
                             <div className="h-2 w-2 rounded-full bg-[#71FFCB]" />
                             <span
                               className={cn(

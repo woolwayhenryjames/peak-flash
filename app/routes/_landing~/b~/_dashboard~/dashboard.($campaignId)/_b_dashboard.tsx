@@ -194,12 +194,21 @@ export default function Dashboard({
                 Spark Points Leaderboard
               </h4>
             </div>
-            <span className="cursor-not-allowed text-[#ACACAC] text-sm opacity-50">
+            <span className="cursor-not-allowed text-[#ACACAC] text-sm underline">
               View All
             </span>
           </div>
 
-          <div className="space-y-[14px]">
+          <div className="grid grid-cols-3 gap-y-10">
+            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+              Rank
+            </div>
+            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+              Name
+            </div>
+            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+              SPARK Points
+            </div>
             {topSpark.map((participant, index) => (
               <RankingCard
                 campaignId={campaign.id}
@@ -239,12 +248,21 @@ export default function Dashboard({
                 KINDLE Score Leaderboard
               </h4>
             </div>
-            <span className="cursor-not-allowed text-[#ACACAC] text-sm opacity-50">
+            <span className="cursor-not-allowed text-[#ACACAC] text-sm underline">
               View All
             </span>
           </div>
 
-          <div className="space-y-[14px]">
+          <div className="grid grid-cols-3 gap-y-10">
+            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+              Rank
+            </div>
+            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+              Name
+            </div>
+            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+              KINDLE Score
+            </div>
             {topKindle.map((user, index) => (
               <RankingCard
                 key={user.name}

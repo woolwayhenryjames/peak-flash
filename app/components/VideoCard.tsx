@@ -27,7 +27,10 @@ export default function VideoCard({
     >
       {rank && <span className="font-medium text-base text-white">{rank}</span>}
       <a
-        className={cn("flex h-33 w-full items-center gap-4.5", className)}
+        className={cn(
+          "flex @5xl:h-auto h-33 @5xl:w-83 w-full @5xl:flex-col items-center gap-4.5",
+          className
+        )}
         href={video.videoUrl ?? undefined}
         key={video.videoId}
         rel="noopener noreferrer"
@@ -35,7 +38,7 @@ export default function VideoCard({
       >
         {/* Thumbnail */}
         <div
-          className="relative h-full w-[88px] flex-shrink-0 rounded-[5px] bg-center bg-cover bg-gray-800"
+          className="relative @5xl:h-77 h-full @5xl:w-63 w-[88px] rounded-[5px] bg-center bg-cover bg-gray-800"
           style={{
             backgroundImage: `url(${video.coverUrl})`,
           }}

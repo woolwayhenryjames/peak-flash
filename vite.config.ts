@@ -2,6 +2,7 @@ import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import babel from "vite-plugin-babel";
+import devtoolsJson from "vite-plugin-devtools-json";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ command, mode }) => ({
@@ -20,6 +21,7 @@ export default defineConfig(({ command, mode }) => ({
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
+    devtoolsJson(),
   ],
   esbuild:
     command === "build" && mode === "production"
@@ -39,8 +41,5 @@ export default defineConfig(({ command, mode }) => ({
   server: {
     port: 5100,
     allowedHosts: true,
-    watch: {
-      usePolling: true,
-    },
   },
 }));

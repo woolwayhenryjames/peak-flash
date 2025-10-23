@@ -38,7 +38,7 @@ export default function RelatedVideos({
           </Link>
         </div>
 
-        <div className="space-y-[10px]">
+        <div className="@container w-full space-y-[10px]">
           {topVideos.length > 0 ? (
             topVideos.map((video) => (
               <VideoCard

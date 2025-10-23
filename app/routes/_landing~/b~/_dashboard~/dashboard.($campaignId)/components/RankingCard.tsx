@@ -26,36 +26,32 @@ export default function RankingCard({
 }: RankingCardProps) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="border-[#6A6B6B] border-t p-6 first:border-0">
+    <>
+      <div className="font-medium text-lg text-white">{rank}</div>
+      <div className="font-medium text-lg text-white">{user.name}</div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-[18px]">
-          <span className="letterspacing-[1.5%] font-medium text-base text-white">
-            {rank}
-          </span>
-          <span className="letterspacing-[1.5%] font-medium text-base text-white">
-            {user.name}
-          </span>
+        <div>
+          <div className="font-medium text-lg text-white">{points}</div>
+          <div className="text-[#979797] text-xs">{pointsLabel}</div>
         </div>
-        <div className="flex gap-[27px]">
-          <div className="text-right">
-            <div className="letterspacing-[1.5%] bg-gradient-to-r from-[#b871ff] to-[#2cffbc] bg-clip-text font-medium text-transparent text-xl">
-              {points}
-            </div>
-            <div className="text-[#979797] text-xs">{pointsLabel}</div>
-          </div>
-          <button onClick={() => setExpanded(!expanded)} type="button">
-            <GlowContainer className="rounded-sm px-2 py-2">
-              <ChevronDownIcon
-                className={cn("size-4", expanded ? "rotate-180" : "")}
-              />
-            </GlowContainer>
-          </button>
-        </div>
+        <button onClick={() => setExpanded(!expanded)} type="button">
+          <GlowContainer className="rounded-sm px-2 py-2">
+            <ChevronDownIcon
+              className={cn("size-4", expanded ? "rotate-180" : "")}
+            />
+          </GlowContainer>
+        </button>
       </div>
-      {expanded && !campaignId && <ExpandedUserProfile user={user} />}
-      {expanded && campaignId && (
-        <ExpandedUserVideoData campaignId={campaignId} user={user} />
+      {expanded && !campaignId && (
+        <div className="col-span-3">
+          <ExpandedUserProfile user={user} />
+        </div>
       )}
-    </div>
+      {expanded && campaignId && (
+        <div className="col-span-3">
+          <ExpandedUserVideoData campaignId={campaignId} user={user} />
+        </div>
+      )}
+    </>
   );
 }
