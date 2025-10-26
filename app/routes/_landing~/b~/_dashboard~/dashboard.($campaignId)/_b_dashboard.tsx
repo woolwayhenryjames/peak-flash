@@ -158,7 +158,7 @@ export default function Dashboard({
 }: Route.ComponentProps) {
   return (
     <div className="container mx-auto space-y-6 pt-6">
-      <div className="flex justify-between gap-7">
+      <div className="flex justify-between gap-7 max-md:flex-col">
         <CampaignAnalytics campaign={campaign} />
         <RelatedVideos campaignId={campaign.id} topVideos={topVideos} />
       </div>
@@ -168,7 +168,7 @@ export default function Dashboard({
         {/* Spark Rankings */}
         <div className="space-y-[25px]">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 rounded-lg border border-[#1c1e1f] bg-linear-234 from-[#2d3338]/5 to-[#7e8f9e]/10 px-2 py-3">
+            <div className="flex items-center gap-1 rounded-lg border-[#1c1e1f] from-[#2d3338]/5 to-[#7e8f9e]/10 md:border md:bg-linear-234 md:px-2 md:py-3">
               <svg
                 fill="none"
                 height="18"
@@ -190,8 +190,11 @@ export default function Dashboard({
                 </defs>
               </svg>
 
-              <h4 className="font-semibold text-white text-xl">
+              <h4 className="hidden font-semibold text-white text-xl md:block">
                 Spark Points Leaderboard
+              </h4>
+              <h4 className="block font-medium text-base text-white md:hidden">
+                Spark Rankings
               </h4>
             </div>
             <Link
@@ -202,15 +205,17 @@ export default function Dashboard({
             </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-y-10">
-            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
-              Rank
-            </div>
-            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
-              Name
-            </div>
-            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
-              SPARK Points
+          <div className="flex flex-col">
+            <div className="mb-10 grid grid-cols-[15%_45%_40%] md:grid-cols-3">
+              <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+                Rank
+              </div>
+              <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+                Name
+              </div>
+              <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+                SPARK Points
+              </div>
             </div>
             {topSpark.map((participant, index) => (
               <RankingCard
@@ -228,7 +233,7 @@ export default function Dashboard({
         {/* KINDLE Score Rankings */}
         <div className="space-y-[25px]">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 rounded-lg border border-[#1c1e1f] bg-linear-234 from-[#2d3338]/5 to-[#7e8f9e]/10 px-2 py-3">
+            <div className="flex items-center gap-1 rounded-lg border-[#1c1e1f] from-[#2d3338]/5 to-[#7e8f9e]/10 md:border md:bg-linear-234 md:px-2 md:py-3">
               <svg
                 fill="none"
                 height="28"
@@ -247,8 +252,11 @@ export default function Dashboard({
                 />
               </svg>
 
-              <h4 className="font-semibold text-white text-xl">
+              <h4 className="hidden font-semibold text-white text-xl md:block">
                 KINDLE Score Leaderboard
+              </h4>
+              <h4 className="block font-medium text-base text-white md:hidden">
+                KINDLE Score Rankings
               </h4>
             </div>
             <Link
@@ -259,15 +267,17 @@ export default function Dashboard({
             </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-y-10">
-            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
-              Rank
-            </div>
-            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
-              Name
-            </div>
-            <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
-              KINDLE Score
+          <div className="flex flex-col">
+            <div className="mb-10 grid grid-cols-[15%_45%_40%] md:grid-cols-3">
+              <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+                Rank
+              </div>
+              <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+                Name
+              </div>
+              <div className="border-[#3c3c3c] border-b font-light text-[#adadad] text-lg">
+                KINDLE Score
+              </div>
             </div>
             {topKindle.map((user, index) => (
               <RankingCard

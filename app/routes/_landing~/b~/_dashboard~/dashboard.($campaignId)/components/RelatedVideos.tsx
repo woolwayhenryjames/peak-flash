@@ -10,8 +10,8 @@ export default function RelatedVideos({
   topVideos: Route.ComponentProps["loaderData"]["topVideos"];
 }) {
   return (
-    <div className="flex-1 rounded-xl border border-[#2D3338] pt-6.5">
-      <div className="flex flex-col items-center justify-between rounded-xl border border-[#2D3338] p-6">
+    <div className="flex-1 rounded-xl border border-[#2D3338] pt-6.5 max-md:contents">
+      <div className="flex flex-col items-center justify-between rounded-xl border-[#2D3338] md:border md:p-6">
         <div className="mb-5 flex w-full items-center gap-2">
           <svg
             fill="none"
