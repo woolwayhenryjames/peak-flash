@@ -1,12 +1,15 @@
 import type { Campaign } from ".prisma/main/client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { useFetcher, useNavigate } from "react-router";
+import { useInfiniteScroll } from "~/lib/useInfiniteScroll";
 import type { getCampaignLeaderboard } from "~/services/campaign.server";
 import bg from "./assets/bg.avif";
 
 type ILoaderData = Awaited<ReturnType<typeof getCampaignLeaderboard>> & {
   campaign: Campaign;
 };
+
+const selectCampaignUsers = (data: ILoaderData) => data.campaignUsers;
 
 export default function Leaderboard({
   loaderData,
@@ -15,78 +18,22 @@ export default function Leaderboard({
 }: {
   loaderData: ILoaderData;
   uri: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }) {
   const fetcher = useFetcher<ILoaderData>();
   const navigate = useNavigate();
-
-  // State management
-  const [campaignUsers, setCampaignUsers] = useState(loaderData.campaignUsers);
-  const currentPage = useRef(1);
-  const [hasNextPage, setHasNextPage] = useState(
-    loaderData.pagination.hasNextPage
-  );
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  // Intersection observer ref for infinite scroll
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  // Load more campaigns
-  const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
-      return;
-    }
-
-    setIsLoadingMore(true);
-    const nextPage = currentPage.current + 1;
-
-    fetcher.load(`${uri}?page=${nextPage}`);
-  }, [hasNextPage, isLoadingMore, fetcher, uri]);
-
-  // Handle fetcher data
-  useEffect(() => {
-    if (fetcher.data && fetcher.state === "idle") {
-      const data = fetcher.data;
-      setCampaignUsers((prev) => [...prev, ...data.campaignUsers]);
-      currentPage.current = data.pagination.page;
-      setHasNextPage(data.pagination.hasNextPage);
-      setIsLoadingMore(false);
-    }
-  }, [fetcher.data, fetcher.state]);
-
-  // Initialize campaigns from loader data
-  useEffect(() => {
-    setCampaignUsers(loaderData.campaignUsers);
-    currentPage.current = loaderData.pagination.page;
-    setHasNextPage(loaderData.pagination.hasNextPage);
-    setIsLoadingMore(false);
-  }, [loaderData]);
-
-  // Set up intersection observer
-  useEffect(() => {
-    const loadMoreElement = loadMoreRef.current;
-    if (!loadMoreElement) {
-      return;
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current.observe(loadMoreElement);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore]);
+  const {
+    items: campaignUsers,
+    hasNextPage,
+    isLoadingMore,
+    loadMoreRef,
+  } = useInfiniteScroll({
+    fetcher,
+    uri,
+    initialItems: loaderData.campaignUsers,
+    initialPagination: loaderData.pagination,
+    selectItems: selectCampaignUsers,
+  });
 
   return (
     <div

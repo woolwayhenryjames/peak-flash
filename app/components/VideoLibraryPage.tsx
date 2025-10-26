@@ -1,7 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useFetcher, useNavigate } from "react-router";
 import VideoCard from "~/components/VideoCard";
+import { useInfiniteScroll } from "~/lib/useInfiniteScroll";
 import type { getVideosPaginated } from "~/services/campaign.server";
+
+const selectVideoItems = (
+  data: Awaited<ReturnType<typeof getVideosPaginated>>
+) => data.campaignVideos;
+
 export default function VideoLibraryPage({
   loaderData,
   uri,
@@ -13,76 +18,18 @@ export default function VideoLibraryPage({
 }) {
   const fetcher = useFetcher<Awaited<ReturnType<typeof getVideosPaginated>>>();
   const navigate = useNavigate();
-
-  // State management
-  const [campaignVideos, setCampaignVideos] = useState(
-    loaderData.campaignVideos
-  );
-  const currentPage = useRef(1);
-  const [hasNextPage, setHasNextPage] = useState(
-    loaderData.pagination.hasNextPage
-  );
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  // Intersection observer ref for infinite scroll
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  // Load more campaigns
-  const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
-      return;
-    }
-
-    setIsLoadingMore(true);
-    const nextPage = currentPage.current + 1;
-
-    fetcher.load(`${uri}?page=${nextPage}`);
-  }, [hasNextPage, isLoadingMore, fetcher, uri]);
-
-  // Handle fetcher data
-  useEffect(() => {
-    if (fetcher.data && fetcher.state === "idle") {
-      const data = fetcher.data;
-      setCampaignVideos((prev) => [...prev, ...data.campaignVideos]);
-      currentPage.current = data.pagination.page;
-      setHasNextPage(data.pagination.hasNextPage);
-      setIsLoadingMore(false);
-    }
-  }, [fetcher.data, fetcher.state]);
-
-  // Initialize campaigns from loader data
-  useEffect(() => {
-    setCampaignVideos(loaderData.campaignVideos);
-    currentPage.current = loaderData.pagination.page;
-    setHasNextPage(loaderData.pagination.hasNextPage);
-    setIsLoadingMore(false);
-  }, [loaderData]);
-
-  // Set up intersection observer
-  useEffect(() => {
-    const loadMoreElement = loadMoreRef.current;
-    if (!loadMoreElement) {
-      return;
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current.observe(loadMoreElement);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore]);
+  const {
+    items: campaignVideos,
+    hasNextPage,
+    isLoadingMore,
+    loadMoreRef,
+  } = useInfiniteScroll({
+    fetcher,
+    uri,
+    initialItems: loaderData.campaignVideos,
+    initialPagination: loaderData.pagination,
+    selectItems: selectVideoItems,
+  });
 
   return (
     <>
@@ -122,9 +69,9 @@ export default function VideoLibraryPage({
                 y1="12.0007"
                 y2="12.0007"
               >
-                <stop stop-color="#6D7077" />
-                <stop offset="0.363695" stop-color="#FEFEFE" />
-                <stop offset="1" stop-color="#3C4041" />
+                <stop stopColor="#6D7077" />
+                <stop offset="0.363695" stopColor="#FEFEFE" />
+                <stop offset="1" stopColor="#3C4041" />
               </linearGradient>
             </defs>
           </svg>

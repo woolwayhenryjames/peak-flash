@@ -1,7 +1,8 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useState } from "react";
 import { useFetcher, useNavigate } from "react-router";
 import ExpandedUserProfile from "~/components/ExpandedUserProfile";
 import GlowContainer from "~/components/GlowContainer";
+import { useInfiniteScroll } from "~/lib/useInfiniteScroll";
 import { cn } from "~/lib/utils";
 
 type ILoaderData = {
@@ -20,6 +21,8 @@ type ILoaderData = {
   };
 };
 
+const selectKindleUsers = (data: ILoaderData) => data.users;
+
 export default function KindleScoresPage({
   loaderData,
   uri,
@@ -29,76 +32,19 @@ export default function KindleScoresPage({
 }) {
   const fetcher = useFetcher<ILoaderData>();
   const navigate = useNavigate();
-
-  // State management
-  const [users, setUsers] = useState(loaderData.users);
-  const currentPage = useRef(1);
-  const [hasNextPage, setHasNextPage] = useState(
-    loaderData.pagination.hasNextPage
-  );
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
-
-  // Intersection observer ref for infinite scroll
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  // Load more users
-  const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
-      return;
-    }
-
-    setIsLoadingMore(true);
-    const nextPage = currentPage.current + 1;
-
-    fetcher.load(`${uri}?page=${nextPage}`);
-  }, [hasNextPage, isLoadingMore, fetcher, uri]);
-
-  // Handle fetcher data
-  useEffect(() => {
-    if (fetcher.data && fetcher.state === "idle") {
-      const data = fetcher.data;
-      setUsers((prev) => [...prev, ...data.users]);
-      currentPage.current = data.pagination.page;
-      setHasNextPage(data.pagination.hasNextPage);
-      setIsLoadingMore(false);
-    }
-  }, [fetcher.data, fetcher.state]);
-
-  // Initialize users from loader data
-  useEffect(() => {
-    setUsers(loaderData.users);
-    currentPage.current = loaderData.pagination.page;
-    setHasNextPage(loaderData.pagination.hasNextPage);
-    setIsLoadingMore(false);
-  }, [loaderData]);
-
-  // Set up intersection observer
-  useEffect(() => {
-    const loadMoreElement = loadMoreRef.current;
-    if (!loadMoreElement) {
-      return;
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current.observe(loadMoreElement);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore]);
+  const {
+    items: users,
+    hasNextPage,
+    isLoadingMore,
+    loadMoreRef,
+  } = useInfiniteScroll({
+    fetcher,
+    uri,
+    initialItems: loaderData.users,
+    initialPagination: loaderData.pagination,
+    selectItems: selectKindleUsers,
+  });
 
   return (
     <div className="container mx-auto min-h-screen">

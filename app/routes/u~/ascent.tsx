@@ -1,8 +1,15 @@
 import type { Prisma } from ".prisma/main/client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, redirect, useFetcher, useSearchParams } from "react-router";
+import { useMemo } from "react";
+import {
+  Link,
+  redirect,
+  useFetcher,
+  useNavigation,
+  useSearchParams,
+} from "react-router";
 import CampaignCard from "~/components/CampaignCard";
 import GlowContainer from "~/components/GlowContainer";
+import { useInfiniteScroll } from "~/lib/useInfiniteScroll";
 import { cn } from "~/lib/utils";
 import { getDbUser } from "~/services/auth.server";
 import { getCampaignsForUser } from "~/services/campaign.server";
@@ -106,98 +113,52 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function Ascent({ loaderData }: Route.ComponentProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const fetcher = useFetcher<typeof loader>();
-
-  // State management
-  const [campaigns, setCampaigns] = useState(loaderData.campaigns);
-  const currentPage = useRef(1);
-  const [hasNextPage, setHasNextPage] = useState(
-    loaderData.pagination.hasNextPage
-  );
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const navigation = useNavigation();
 
   // Current status from URL params
   const currentStatus = (searchParams.get("status") || "all") as CampaignStatus;
 
-  // Intersection observer ref for infinite scroll
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  const baseUri = useMemo(() => {
+    const params = new URLSearchParams();
+    if (currentStatus !== "all") {
+      params.set("status", currentStatus);
+    }
+    const query = params.toString();
+    return query ? `/ascent?${query}` : "/ascent";
+  }, [currentStatus]);
+
+  const {
+    items: campaignItems,
+    hasNextPage,
+    isLoadingMore,
+    loadMoreRef,
+  } = useInfiniteScroll({
+    fetcher,
+    uri: baseUri,
+    initialItems: loaderData.campaigns,
+    initialPagination: loaderData.pagination,
+    selectItems: (data) => data.campaigns,
+  });
 
   // Handle filter change
-  const handleFilterChange = useCallback(
-    (status: CampaignStatus) => {
-      const newParams = new URLSearchParams(searchParams);
-      if (status === "all") {
-        newParams.delete("status");
-      } else {
-        newParams.set("status", status);
-      }
-      newParams.delete("page"); // Reset to first page
-      setSearchParams(newParams, { replace: true });
-
-      // Reset state
-      setCampaigns([]);
-      currentPage.current = 1;
-      setIsLoadingMore(true);
-    },
-    [searchParams, setSearchParams]
-  );
-
-  // Load more campaigns
-  const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
-      return;
+  const handleFilterChange = (status: CampaignStatus) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (status === "all") {
+      newParams.delete("status");
+    } else {
+      newParams.set("status", status);
     }
+    newParams.delete("page");
+    setSearchParams(newParams, { replace: true });
+  };
 
-    setIsLoadingMore(true);
+  const isFilterLoading =
+    navigation.state !== "idle" &&
+    navigation.location?.pathname?.endsWith("/ascent");
 
-    const nextPage = currentPage.current + 1;
-
-    fetcher.load(`/ascent?page=${nextPage}&status=${currentStatus}`);
-  }, [hasNextPage, isLoadingMore, fetcher, currentStatus]);
-
-  // Handle fetcher data
-  useEffect(() => {
-    if (fetcher.data && fetcher.state === "idle") {
-      const data = fetcher.data;
-      setCampaigns((prev) => [...prev, ...data.campaigns]);
-      currentPage.current = data.pagination.page;
-      setHasNextPage(data.pagination.hasNextPage);
-      setIsLoadingMore(false);
-    }
-  }, [fetcher.data, fetcher.state]);
-
-  // Initialize campaigns from loader data
-  useEffect(() => {
-    setCampaigns(loaderData.campaigns);
-    currentPage.current = loaderData.pagination.page;
-    setHasNextPage(loaderData.pagination.hasNextPage);
-    setIsLoadingMore(false);
-  }, [loaderData]);
-
-  // Set up intersection observer
-  useEffect(() => {
-    const loadMoreElement = loadMoreRef.current;
-    if (!loadMoreElement) {
-      return;
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current.observe(loadMoreElement);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore]);
+  const displayCampaigns = isFilterLoading ? [] : campaignItems;
+  const showInitialLoadingState =
+    (isFilterLoading || isLoadingMore) && displayCampaigns.length === 0;
 
   const filterTabs = [
     { key: "all" as const, label: "All" },
@@ -299,7 +260,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
       </div>
 
       {/* Loading state for filter changes */}
-      {isLoadingMore && campaigns.length === 0 && (
+      {showInitialLoadingState && (
         <div className="flex justify-center py-8">
           <div className="flex items-center gap-2 text-gray-400">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-600 border-t-white" />
@@ -309,9 +270,9 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
       )}
 
       {/* Campaign Cards */}
-      {campaigns.length > 0 && (
+      {displayCampaigns.length > 0 && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {campaigns.map((campaign) => (
+          {displayCampaigns.map((campaign) => (
             <div key={campaign.id}>
               <div className="mb-8 h-px w-full bg-gradient-to-r from-transparent via-gray-600/50 to-transparent" />
               <div className="w-full rounded-xl border border-[#2D3338] pt-4 pl-4">
@@ -323,7 +284,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
       )}
 
       {/* No campaigns message */}
-      {campaigns.length === 0 && !isLoadingMore && (
+      {displayCampaigns.length === 0 && !isLoadingMore && !isFilterLoading && (
         <div className="py-12 text-center">
           <p className="text-gray-400 text-lg">
             No campaigns found for the selected filter.
@@ -332,7 +293,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
       )}
 
       {/* Load more trigger */}
-      {hasNextPage && (
+      {hasNextPage && !isFilterLoading && (
         <div className="py-8" ref={loadMoreRef}>
           <div className="flex justify-center">
             <div className="flex items-center gap-2 text-gray-400">
@@ -344,7 +305,7 @@ export default function Ascent({ loaderData }: Route.ComponentProps) {
       )}
 
       {/* End of results message */}
-      {!hasNextPage && campaigns.length > 0 && (
+      {!hasNextPage && displayCampaigns.length > 0 && !isFilterLoading && (
         <div className="py-8 text-center">
           <p className="text-gray-500 text-sm">
             You've reached the end of the campaigns.

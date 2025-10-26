@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { useFetcher } from "react-router";
 import UserProfileTooltip from "~/components/UserProfileTooltip";
+import { useInfiniteScroll } from "~/lib/useInfiniteScroll";
 import { formatNumber } from "~/lib/utils";
 import { getGlobalLeaderboard } from "~/services/user-ranking.server";
 import type { Route } from "./+types/leaderboard";
@@ -55,74 +55,18 @@ export function loader({ request }: Route.LoaderArgs) {
 
 export default function Leaderboard({ loaderData }: Route.ComponentProps) {
   const fetcher = useFetcher<typeof loader>();
-
-  // State management
-  const [users, setUsers] = useState(loaderData.users);
-  const currentPage = useRef(1);
-  const [hasNextPage, setHasNextPage] = useState(
-    loaderData.pagination.hasNextPage
-  );
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  // Intersection observer ref for infinite scroll
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  // Load more users
-  const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
-      return;
-    }
-
-    setIsLoadingMore(true);
-    const nextPage = currentPage.current + 1;
-
-    fetcher.load(`/leaderboard?page=${nextPage}`);
-  }, [hasNextPage, isLoadingMore, fetcher]);
-
-  // Handle fetcher data
-  useEffect(() => {
-    if (fetcher.data && fetcher.state === "idle") {
-      const data = fetcher.data;
-      setUsers((prev) => [...prev, ...data.users]);
-      currentPage.current = data.pagination.page;
-      setHasNextPage(data.pagination.hasNextPage);
-      setIsLoadingMore(false);
-    }
-  }, [fetcher.data, fetcher.state]);
-
-  // Initialize users from loader data
-  useEffect(() => {
-    setUsers(loaderData.users);
-    currentPage.current = loaderData.pagination.page;
-    setHasNextPage(loaderData.pagination.hasNextPage);
-    setIsLoadingMore(false);
-  }, [loaderData]);
-
-  // Set up intersection observer
-  useEffect(() => {
-    const loadMoreElement = loadMoreRef.current;
-    if (!loadMoreElement) {
-      return;
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current.observe(loadMoreElement);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore]);
+  const {
+    items: users,
+    hasNextPage,
+    isLoadingMore,
+    loadMoreRef,
+  } = useInfiniteScroll({
+    fetcher,
+    uri: "/leaderboard",
+    initialItems: loaderData.users,
+    initialPagination: loaderData.pagination,
+    selectItems: (data) => data.users,
+  });
 
   return (
     <div className="bg-black">

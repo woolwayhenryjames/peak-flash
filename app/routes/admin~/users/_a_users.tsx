@@ -1,11 +1,66 @@
-import { useCallback, useEffect, useRef, useState } from "react";
 import { redirect, useFetcher } from "react-router";
+import { useInfiniteScroll } from "~/lib/useInfiniteScroll";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import { checkAllUserCampaignAlgo } from "~/services/score-algo-api";
 import { getUserStatistics } from "~/services/user-statistics.server";
 import type { Route } from "./+types/_a_users";
 import UserStatisticsComponent from "./components/UserStatistics";
+
+type AdminUser = Route.ComponentProps["loaderData"]["users"][number];
+
+function AdminUserRow({ user }: { user: AdminUser }) {
+  return (
+    <tr className="hover:bg-gray-800">
+      <td className="whitespace-nowrap px-6 py-4">
+        <div className="flex items-center gap-3">
+          {user.image ? (
+            <img
+              alt={`${user.name || "User"} avatar`}
+              className="h-8 w-8 rounded-full"
+              src={user.image}
+            />
+          ) : (
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-600 font-medium text-gray-200 text-sm">
+              {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+            </div>
+          )}
+          <div>
+            <div className="font-medium text-sm text-white">
+              {user.name || "No name"}{" "}
+              {user.name !== user.email && `<${user.email}>`}
+            </div>
+            <div className="text-gray-400 text-sm">ID: {user.id}</div>
+          </div>
+        </div>
+      </td>
+      <td className="whitespace-nowrap px-6 py-4">
+        <div className="text-sm text-white">
+          {user.isAdmin && "Admin\t"}
+          {user.isBusiness && "Enterprise"}
+        </div>
+      </td>
+      <td className="whitespace-nowrap px-6 py-4">
+        {user.kindleScore !== null ? (
+          <span className="font-mono text-sm text-white">
+            {user.kindleScore.toLocaleString()}
+          </span>
+        ) : (
+          <span className="text-gray-400 text-sm">N/A</span>
+        )}
+      </td>
+      <td className="whitespace-nowrap px-6 py-4">
+        {user.walletAddress ? (
+          <span className="font-mono text-sm text-white">
+            {user.walletAddress}
+          </span>
+        ) : (
+          <span className="text-gray-400 text-sm">N/A</span>
+        )}
+      </td>
+    </tr>
+  );
+}
 
 export function meta({ data }: Route.MetaArgs) {
   const totalUsers = data?.pagination?.total || 0;
@@ -117,77 +172,19 @@ export default function AdminUsers({ loaderData }: Route.ComponentProps) {
   const fetcher = useFetcher<typeof loader>();
   const actionFetcher = useFetcher<typeof action>();
 
-  // State management
-  const [users, setUsers] = useState(initialUsers);
-  const currentPage = useRef(1);
-  const [hasNextPage, setHasNextPage] = useState(pagination.hasNextPage);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  // Intersection observer ref for infinite scroll
-  const loadMoreRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  // Load more users
-  const loadMore = useCallback(() => {
-    if (!hasNextPage || isLoadingMore || fetcher.state !== "idle") {
-      return;
-    }
-
-    setIsLoadingMore(true);
-    const nextPage = currentPage.current + 1;
-
-    const searchParams = new URLSearchParams({
-      page: nextPage.toString(),
-      orderBy,
-      order,
-    });
-
-    fetcher.load(`/admin/users?${searchParams.toString()}`);
-  }, [hasNextPage, isLoadingMore, fetcher, orderBy, order]);
-
-  // Handle fetcher data
-  useEffect(() => {
-    if (fetcher.data && fetcher.state === "idle") {
-      const data = fetcher.data;
-      setUsers((prev) => [...prev, ...data.users]);
-      currentPage.current = data.pagination.page;
-      setHasNextPage(data.pagination.hasNextPage);
-      setIsLoadingMore(false);
-    }
-  }, [fetcher.data, fetcher.state]);
-
-  // Initialize users from loader data
-  useEffect(() => {
-    setUsers(initialUsers);
-    currentPage.current = pagination.page;
-    setHasNextPage(pagination.hasNextPage);
-    setIsLoadingMore(false);
-  }, [initialUsers, pagination]);
-
-  // Set up intersection observer
-  useEffect(() => {
-    const loadMoreElement = loadMoreRef.current;
-    if (!loadMoreElement) {
-      return;
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observerRef.current.observe(loadMoreElement);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loadMore]);
+  const baseUri = `/admin/users?orderBy=${orderBy}&order=${order}`;
+  const {
+    items: users,
+    hasNextPage,
+    isLoadingMore,
+    loadMoreRef,
+  } = useInfiniteScroll({
+    fetcher,
+    uri: baseUri,
+    initialItems: initialUsers,
+    initialPagination: pagination,
+    selectItems: (data) => data.users,
+  });
 
   return (
     <div className="space-y-6">
@@ -325,58 +322,7 @@ export default function AdminUsers({ loaderData }: Route.ComponentProps) {
                 </thead>
                 <tbody className="divide-y divide-gray-700 bg-gray-900">
                   {users.map((user) => (
-                    <tr className="hover:bg-gray-800" key={user.id}>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          {user.image ? (
-                            <img
-                              alt={`${user.name || "User"} avatar`}
-                              className="h-8 w-8 rounded-full"
-                              src={user.image}
-                            />
-                          ) : (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-600 font-medium text-gray-200 text-sm">
-                              {user.name
-                                ? user.name.charAt(0).toUpperCase()
-                                : "U"}
-                            </div>
-                          )}
-                          <div>
-                            <div className="font-medium text-sm text-white">
-                              {user.name || "No name"}{" "}
-                              {user.name !== user.email && `<${user.email}>`}
-                            </div>
-                            <div className="text-gray-400 text-sm">
-                              ID: {user.id}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        <div className="text-sm text-white">
-                          {user.isAdmin && "Admin\t"}
-                          {user.isBusiness && "Enterprise"}
-                        </div>
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {user.kindleScore !== null ? (
-                          <span className="font-mono text-sm text-white">
-                            {user.kindleScore.toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-gray-400 text-sm">N/A</span>
-                        )}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
-                        {user.walletAddress ? (
-                          <span className="font-mono text-sm text-white">
-                            {user.walletAddress}
-                          </span>
-                        ) : (
-                          <span className="text-gray-400 text-sm">N/A</span>
-                        )}
-                      </td>
-                    </tr>
+                    <AdminUserRow key={user.id} user={user} />
                   ))}
                 </tbody>
               </table>
