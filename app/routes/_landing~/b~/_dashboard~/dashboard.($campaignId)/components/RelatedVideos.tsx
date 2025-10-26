@@ -31,7 +31,7 @@ export default function RelatedVideos({
 
           <Link
             className="ml-auto text-[#ACACAC] text-sm underline"
-            to={`/u/campaigns/${campaignId}/videos`}
+            to={`/b/campaigns/${campaignId}/videos`}
             viewTransition
           >
             View All

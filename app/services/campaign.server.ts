@@ -191,6 +191,53 @@ export async function getCampaignLeaderboard(id: string, page = 1, limit = 10) {
   };
 }
 
+/**
+ * Get users who have joined a specific campaign, ordered by their user rank
+ * @param campaignId - The ID of the campaign
+ * @param page - Page number for pagination (1-based)
+ * @param limit - Number of items per page
+ * @returns Users with their campaign participation data, ordered by user rank
+ */
+export async function getCampaignUsersByUserRank(
+  campaignId: string,
+  page = 1,
+  limit = 10
+) {
+  const offset = (page - 1) * limit;
+
+  // Get total count of users in this campaign
+  const totalCount = await db.campaignUser.count({
+    where: { campaignId },
+  });
+
+  // Get campaign users with their user data, ordered by user rank
+  const campaignUsers = await db.campaignUser.findMany({
+    where: { campaignId },
+    include: {
+      user: true,
+    },
+    orderBy: {
+      user: {
+        kindleScore: "desc",
+      },
+    },
+    skip: offset,
+    take: limit,
+  });
+
+  return {
+    campaignUsers,
+    pagination: {
+      page,
+      limit,
+      total: totalCount,
+      totalPages: Math.ceil(totalCount / limit),
+      hasNextPage: page * limit < totalCount,
+      hasPreviousPage: page > 1,
+    },
+  };
+}
+
 export async function getVideosPaginated(
   campaignId?: string,
   userId?: string,

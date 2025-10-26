@@ -125,7 +125,7 @@ export default function ExpandedUserVideoData({
               </h3>
               <Link
                 className="font-normal text-sm underline"
-                to={`/u/profile/${userData.id}/videos`}
+                to={`/b/profile/${userData.id}/videos`}
                 viewTransition
               >
                 View Videos
@@ -167,7 +167,7 @@ export default function ExpandedUserVideoData({
                   </a>
                   <Link
                     className="flex-1 xl:hidden"
-                    to={`/u/profile/${userData.id}/videos`}
+                    to={`/b/profile/${userData.id}/videos`}
                     viewTransition
                   >
                     <GlowContainer>See All</GlowContainer>

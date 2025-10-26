@@ -1,32 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useFetcher } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 import VideoCard from "~/components/VideoCard";
-import { getVideosPaginated } from "~/services/campaign.server";
-import { db } from "~/services/db.server";
-import type { Route } from "./+types/campaigns.$id_.videos";
-
-export async function loader({ request, params }: Route.LoaderArgs) {
-  if (!params.id) {
-    throw new Response("Campaign ID is required", { status: 400 });
-  }
-  const campaign = await db.campaign.findUnique({
-    where: { id: params.id },
-  });
-  if (!campaign) {
-    throw new Response("Campaign not found", { status: 404 });
-  }
-  const url = new URL(request.url);
-  const page = Number.parseInt(url.searchParams.get("page") || "1", 10);
-  const pagination = await getVideosPaginated(params.id, undefined, page, 10);
-
-  return { ...pagination, campaign };
-}
-
-export default function CampaignVideos({
+import type { getVideosPaginated } from "~/services/campaign.server";
+export default function VideoLibraryPage({
   loaderData,
-  params,
-}: Route.ComponentProps) {
-  const fetcher = useFetcher<typeof loader>();
+  uri,
+  title,
+}: {
+  title: string;
+  uri: string;
+  loaderData: Awaited<ReturnType<typeof getVideosPaginated>>;
+}) {
+  const fetcher = useFetcher<Awaited<ReturnType<typeof getVideosPaginated>>>();
+  const navigate = useNavigate();
 
   // State management
   const [campaignVideos, setCampaignVideos] = useState(
@@ -51,8 +37,8 @@ export default function CampaignVideos({
     setIsLoadingMore(true);
     const nextPage = currentPage.current + 1;
 
-    fetcher.load(`/campaigns/${params.id}/videos?page=${nextPage}`);
-  }, [hasNextPage, isLoadingMore, fetcher, params.id]);
+    fetcher.load(`${uri}?page=${nextPage}`);
+  }, [hasNextPage, isLoadingMore, fetcher, uri]);
 
   // Handle fetcher data
   useEffect(() => {
@@ -101,25 +87,19 @@ export default function CampaignVideos({
   return (
     <>
       <div
-        className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover pl-10 md:pl-28"
+        className="flex min-h-32 w-full items-center gap-3 bg-center bg-cover pl-10 md:min-h-64 md:pl-28"
         style={{
           backgroundImage:
-            "radial-gradient(83.25% 83.25% at 50% 0%, #707070 0%, #523248 30%, #261727 60%, #0E0C12 87.69%, #0A0A0A 100%)",
+            "radial-gradient(99.91% 99.91% at 50% 0%, #707070 0%, #523248 30%, #261727 52.27%, #0E0C12 87.69%, #010101 100%)",
         }}
       >
         <div className="">
-          <div className="font-medium text-2xl text-white tracking-tight">
-            {loaderData.campaign.name} Videos
+          <div className="font-medium text-2xl text-white tracking-tight md:font-normal md:text-5xl">
+            {title}
           </div>
         </div>
       </div>
-      <div
-        className="container mx-auto min-h-screen md:px-18"
-        style={{
-          backgroundImage:
-            "linear-gradient(180deg, #000001 0%, #151411 30.78%, #241F1A 71.63%, #151512 100%)",
-        }}
-      >
+      <div className="container mx-auto min-h-screen md:px-18">
         <div className="mx-6 mb-7 flex items-center gap-1">
           <svg
             fill="none"
@@ -163,7 +143,7 @@ export default function CampaignVideos({
 
         {/* Campaign Cards */}
         {campaignVideos.length > 0 && (
-          <div className="@container w-full space-y-4">
+          <div className="@container flex flex-wrap gap-4 max-md:mx-3 max-xl:flex-col xl:justify-between">
             {campaignVideos.map((campaign) => (
               <VideoCard
                 creator={campaign.campaignUser.user.name}
@@ -196,15 +176,14 @@ export default function CampaignVideos({
           </div>
         )}
 
-        {/* Back to Campaign */}
         <div className="mt-12 text-center">
-          <Link
+          <button
             className="text-[#8080DA] text-sm transition-colors hover:text-white"
-            to={`/u/campaigns/${params.id}`}
-            viewTransition
+            onClick={() => navigate(-1)}
+            type="button"
           >
-            ← Back to Campaign
-          </Link>
+            ← Back
+          </button>
         </div>
       </div>
     </>

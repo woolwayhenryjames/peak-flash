@@ -1,100 +1,25 @@
+import type { Campaign } from ".prisma/main/client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useFetcher } from "react-router";
+import { useFetcher, useNavigate } from "react-router";
 import { formatNumber } from "~/lib/utils";
-import { getDbUser } from "~/services/auth.server";
-import {
-  getCampaignLeaderboard,
-  getCampaignsWithUserRanks,
-} from "~/services/campaign.server";
-import { db } from "~/services/db.server";
-import type { Route } from "./+types/_cleaderboard";
+import type { getCampaignLeaderboard } from "~/services/campaign.server";
 import bg from "./assets/bg.avif";
 
-export function meta({ data }: Route.MetaArgs) {
-  const campaign = data?.campaignWithRanks;
-  const currentPage = data?.pagination?.page || 1;
-  const totalParticipants = data?.pagination?.total || 0;
-
-  const campaignName = campaign?.name || "Campaign";
-  const poolSize = campaign?.poolSize || 0;
-  const isActive = campaign?.endDate
-    ? new Date(campaign.endDate) > new Date()
-    : false;
-  const status = isActive ? "Active" : "Ended";
-
-  return [
-    {
-      title: `${campaignName} Leaderboard - Peak AI ${currentPage > 1 ? `(Page ${currentPage})` : ""}`,
-    },
-    {
-      name: "description",
-      content: `View the leaderboard for ${campaignName} campaign on Peak AI. ${status} campaign with $${poolSize} prize pool and ${totalParticipants} participants competing for rewards.`,
-    },
-    {
-      name: "keywords",
-      content: `${campaignName} leaderboard, Peak AI campaign ranking, crypto campaign results, AI campaign winners, ${status.toLowerCase()} campaign`,
-    },
-    { name: "robots", content: "index, follow" },
-    { name: "author", content: "Peak AI" },
-
-    // Open Graph
-    { property: "og:title", content: `${campaignName} Leaderboard - Peak AI` },
-    {
-      property: "og:description",
-      content: `Check out who's leading in the ${campaignName} campaign! ${status} with $${poolSize} prize pool and ${totalParticipants} participants.`,
-    },
-    { property: "og:type", content: "website" },
-    { property: "og:site_name", content: "Peak AI" },
-    ...(campaign?.image
-      ? [{ property: "og:image", content: campaign.image }]
-      : []),
-
-    // Twitter Card
-    { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:title", content: `${campaignName} Leaderboard` },
-    {
-      name: "twitter:description",
-      content: `See who's winning the ${campaignName} campaign on Peak AI! $${poolSize} prize pool up for grabs.`,
-    },
-    ...(campaign?.image
-      ? [{ name: "twitter:image", content: campaign.image }]
-      : []),
-  ];
-}
-
-export async function loader({ request, params }: Route.LoaderArgs) {
-  const user = await getDbUser(request);
-  if (user.isErr()) {
-    throw new Response("Unauthorized", { status: 401 });
-  }
-  if (!params.id) {
-    throw new Response("Campaign ID is required", { status: 400 });
-  }
-  const campaign = await db.campaign.findUnique({
-    where: { id: params.id },
-  });
-  if (!campaign) {
-    throw new Response("Campaign not found", { status: 404 });
-  }
-  const url = new URL(request.url);
-  const page = Number.parseInt(url.searchParams.get("page") || "1", 10);
-  const [leaderboard, campaignWithRanks] = await Promise.all([
-    getCampaignLeaderboard(params.id, page, 10),
-    getCampaignsWithUserRanks([campaign], user.value),
-  ]);
-
-  return {
-    ...leaderboard,
-    user: user.value,
-    campaignWithRanks: campaignWithRanks[0],
-  };
-}
+type ILoaderData = Awaited<ReturnType<typeof getCampaignLeaderboard>> & {
+  campaign: Campaign;
+};
 
 export default function Leaderboard({
   loaderData,
-  params,
-}: Route.ComponentProps) {
-  const fetcher = useFetcher<typeof loader>();
+  uri,
+  children,
+}: {
+  loaderData: ILoaderData;
+  uri: string;
+  children?: React.ReactNode;
+}) {
+  const fetcher = useFetcher<ILoaderData>();
+  const navigate = useNavigate();
 
   // State management
   const [campaignUsers, setCampaignUsers] = useState(loaderData.campaignUsers);
@@ -117,8 +42,8 @@ export default function Leaderboard({
     setIsLoadingMore(true);
     const nextPage = currentPage.current + 1;
 
-    fetcher.load(`/u/campaigns/${params.id}/leaderboard?page=${nextPage}`);
-  }, [hasNextPage, isLoadingMore, fetcher, params.id]);
+    fetcher.load(`${uri}?page=${nextPage}`);
+  }, [hasNextPage, isLoadingMore, fetcher, uri]);
 
   // Handle fetcher data
   useEffect(() => {
@@ -165,63 +90,28 @@ export default function Leaderboard({
   }, [loadMore]);
 
   return (
-    <>
+    <div
+      style={{
+        backgroundImage:
+          "linear-gradient(180deg, #000001 0%, #151411 30.78%, #241F1A 71.63%, #151512 100%)",
+      }}
+    >
       <div
-        className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover pl-10 md:pl-28"
+        className="flex w-full items-center gap-3 bg-center bg-cover bg-no-repeat pl-10 max-md:aspect-390/131 md:h-62 md:bg-contain md:bg-right md:pl-28"
         style={{ backgroundImage: `url(${bg})` }}
       >
-        <div className="">
-          <div className="font-medium text-2xl text-white tracking-tight">
+        <div className="container mx-auto">
+          <div className="font-medium text-2xl text-white tracking-tight md:text-5xl">
             Spark Points
           </div>
-          <div className="font-normal text-[#d7d7d7] text-xs">
-            {loaderData.campaignWithRanks.name} Campaign
+          <div className="font-normal text-[#d7d7d7] text-xs md:text-2xl">
+            {loaderData.campaign.name} Campaign
           </div>
         </div>
       </div>
-      <div
-        className="container mx-auto min-h-screen md:px-18"
-        style={{
-          backgroundImage:
-            "linear-gradient(180deg, #000001 0%, #151411 30.78%, #241F1A 71.63%, #151512 100%)",
-        }}
-      >
+      <div className="container mx-auto min-h-screen md:px-18">
         <div className="mx-auto mb-6 h-px w-[80%] bg-[#6c6c6c]/50" />
-        {!loaderData.user.isBusiness && (
-          <div className="mx-6 flex items-center justify-between rounded-xl border border-[#2d3338] p-4">
-            <div className="flex items-center gap-4">
-              <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-600">
-                <img
-                  alt={
-                    loaderData.user?.name
-                      ? loaderData.user.name.substring(0, 4).toUpperCase()
-                      : "U"
-                  }
-                  className="h-full w-full object-cover"
-                  src={loaderData.user?.image || ""}
-                />
-              </div>
-
-              <div className="flex flex-col items-start gap-2">
-                <h3 className="font-medium text-white">
-                  @{loaderData.user?.email || "User"}
-                </h3>
-                {loaderData.campaignWithRanks.userRank && (
-                  <div className="rounded bg-linear-57 from-[#fdffa7] to-[#57ffd5] px-3 py-0.5 font-medium text-black text-xs">
-                    #{loaderData.campaignWithRanks.userRank}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="text-right">
-              <p className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-semibold text-2xl text-transparent">
-                {Math.round(loaderData.campaignWithRanks.userScore || 0)}
-              </p>
-              <p className="text-gray-400 text-xs">Spark Points</p>
-            </div>
-          </div>
-        )}
+        {children}
         <div className="mx-6 my-8 flex gap-3">
           <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
             <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
@@ -235,11 +125,11 @@ export default function Leaderboard({
           <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
             <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
               $&nbsp;
-              {formatNumber(loaderData.campaignWithRanks.poolSize)}
+              {formatNumber(loaderData.campaign.poolSize)}
               &nbsp;
-              {loaderData.campaignWithRanks.poolUnit && (
+              {loaderData.campaign.poolUnit && (
                 <span className="font-light text-xs">
-                  in {loaderData.campaignWithRanks.poolUnit}
+                  in {loaderData.campaign.poolUnit}
                 </span>
               )}
             </span>
@@ -279,7 +169,7 @@ export default function Leaderboard({
           </svg>
 
           <h3 className="font-semibold text-white text-xl">
-            {loaderData.campaignWithRanks.name} Leaders
+            {loaderData.campaign.name} Leaders
           </h3>
         </div>
         {/* Loading state for filter changes */}
@@ -347,15 +237,15 @@ export default function Leaderboard({
 
         {/* Back to Campaign */}
         <div className="mt-12 text-center">
-          <Link
+          <button
             className="text-[#8080DA] text-sm transition-colors hover:text-white"
-            to={`/u/campaigns/${params.id}`}
-            viewTransition
+            onClick={() => navigate(-1)}
+            type="button"
           >
-            ← Back to Campaign
-          </Link>
+            ← Back
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

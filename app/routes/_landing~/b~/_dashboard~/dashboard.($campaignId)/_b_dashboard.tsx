@@ -1,5 +1,5 @@
 import type { Campaign } from ".prisma/main/client";
-import { redirect } from "react-router";
+import { Link, redirect } from "react-router";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/_b_dashboard";
@@ -194,9 +194,12 @@ export default function Dashboard({
                 Spark Points Leaderboard
               </h4>
             </div>
-            <span className="cursor-not-allowed text-[#ACACAC] text-sm underline">
+            <Link
+              className="text-[#ACACAC] text-sm underline"
+              to={`/b/campaigns/${campaign.id}/spark`}
+            >
               View All
-            </span>
+            </Link>
           </div>
 
           <div className="grid grid-cols-3 gap-y-10">
@@ -248,9 +251,12 @@ export default function Dashboard({
                 KINDLE Score Leaderboard
               </h4>
             </div>
-            <span className="cursor-not-allowed text-[#ACACAC] text-sm underline">
+            <Link
+              className="text-[#ACACAC] text-sm underline"
+              to={`/b/campaigns/${campaign.id}/kindle`}
+            >
               View All
-            </span>
+            </Link>
           </div>
 
           <div className="grid grid-cols-3 gap-y-10">
