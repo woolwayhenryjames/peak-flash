@@ -1,7 +1,6 @@
 import type { Campaign } from ".prisma/main/client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFetcher, useNavigate } from "react-router";
-import { formatNumber } from "~/lib/utils";
 import type { getCampaignLeaderboard } from "~/services/campaign.server";
 import bg from "./assets/bg.avif";
 
@@ -110,34 +109,7 @@ export default function Leaderboard({
         </div>
       </div>
       <div className="container mx-auto min-h-screen md:px-18">
-        <div className="mx-auto mb-6 h-px w-[80%] bg-[#6c6c6c]/50" />
         {children}
-        <div className="mx-6 my-8 flex gap-3">
-          <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
-            <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
-              {loaderData.pagination.total || 0}
-            </span>
-            <span className="font-light text-[#A7A7A7] text-xs">
-              Participants
-            </span>
-          </div>
-
-          <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
-            <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
-              $&nbsp;
-              {formatNumber(loaderData.campaign.poolSize)}
-              &nbsp;
-              {loaderData.campaign.poolUnit && (
-                <span className="font-light text-xs">
-                  in {loaderData.campaign.poolUnit}
-                </span>
-              )}
-            </span>
-            <span className="font-light text-[#A7A7A7] text-xs">
-              Prize Pool
-            </span>
-          </div>
-        </div>
 
         <div className="mx-6 mb-7 flex items-center gap-1">
           <svg
@@ -188,10 +160,10 @@ export default function Leaderboard({
             <thead>
               <tr>
                 <th className="w-18" />
-                <th className="whitespace-nowrap py-3 text-left font-medium text-gray-500 text-xs tracking-wider">
+                <th className="whitespace-nowrap py-3 text-left font-medium text-gray-500 text-sm tracking-wider md:text-lg">
                   Name
                 </th>
-                <th className="w-28 whitespace-nowrap py-3 text-left font-medium text-gray-500 text-xs tracking-wider">
+                <th className="w-28 whitespace-nowrap py-3 text-left font-medium text-gray-500 text-sm tracking-wider md:text-lg">
                   Spark Points
                 </th>
               </tr>
@@ -199,13 +171,13 @@ export default function Leaderboard({
             <tbody className="divide-y divide-[#3c3c3d]">
               {campaignUsers.map((campaign, index) => (
                 <tr key={campaign.id}>
-                  <td className="whitespace-nowrap py-4 text-center">
+                  <td className="whitespace-nowrap py-4 text-center text-sm md:text-lg">
                     {index + 1}
                   </td>
-                  <td className="truncate whitespace-nowrap py-4">
+                  <td className="truncate whitespace-nowrap py-4 text-sm md:text-lg">
                     @{campaign.user.email}
                   </td>
-                  <td className="whitespace-nowrap py-4">
+                  <td className="whitespace-nowrap py-4 text-sm md:text-lg">
                     {Math.round(campaign.score)}
                   </td>
                 </tr>

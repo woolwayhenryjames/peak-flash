@@ -118,10 +118,10 @@ export default function KindleScoresPage({
           <thead>
             <tr>
               <th className="w-18" />
-              <th className="whitespace-nowrap py-3 text-left font-medium text-gray-500 text-xs tracking-wider">
+              <th className="whitespace-nowrap py-3 text-left font-medium text-gray-500 text-sm tracking-wider md:text-lg">
                 Name
               </th>
-              <th className="w-28 whitespace-nowrap py-3 text-left font-medium text-gray-500 text-xs tracking-wider">
+              <th className="w-28 whitespace-nowrap py-3 text-left font-medium text-gray-500 text-sm tracking-wider md:text-lg">
                 KINDLE Score
               </th>
             </tr>
@@ -130,13 +130,13 @@ export default function KindleScoresPage({
             {users.map((user, index) => (
               <Fragment key={user.id}>
                 <tr>
-                  <td className="whitespace-nowrap py-4 text-center">
+                  <td className="whitespace-nowrap py-4 text-center text-sm md:text-lg">
                     {index + 1}
                   </td>
-                  <td className="truncate whitespace-nowrap py-4">
+                  <td className="truncate whitespace-nowrap py-4 text-sm md:text-lg">
                     @{user.email}
                   </td>
-                  <td className="whitespace-nowrap py-4">
+                  <td className="whitespace-nowrap py-4 text-sm md:text-lg">
                     <div className="flex items-center justify-around gap-6">
                       {Math.round(user.kindleScore || 0)}
                       <button

@@ -1,4 +1,5 @@
 import SparkPointsPage from "~/components/SparkPointsPage";
+import { formatNumber } from "~/lib/utils";
 import { getDbUser } from "~/services/auth.server";
 import {
   getCampaignLeaderboard,
@@ -96,6 +97,7 @@ export default function Leaderboard({
       loaderData={{ ...loaderData, campaign: loaderData.campaignWithRanks }}
       uri={`/u/campaigns/${params.id}/leaderboard`}
     >
+      <div className="mx-auto mb-6 h-px w-[80%] bg-[#6c6c6c]/50" />
       {!loaderData.user.isBusiness && (
         <div className="mx-6 flex items-center justify-between rounded-xl border border-[#2d3338] p-4">
           <div className="flex items-center gap-4">
@@ -131,6 +133,30 @@ export default function Leaderboard({
           </div>
         </div>
       )}
+      <div className="mx-6 my-8 flex gap-3">
+        <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
+          <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
+            {loaderData.pagination.total || 0}
+          </span>
+          <span className="font-light text-[#A7A7A7] text-xs">
+            Participants
+          </span>
+        </div>
+
+        <div className="flex flex-1 flex-col gap-2 rounded-md border border-[#9c9c9c]/20 p-3">
+          <span className="bg-linear-57 from-[#fdffa7] to-[#57ffd5] bg-clip-text font-medium text-transparent text-xl">
+            $&nbsp;
+            {formatNumber(loaderData.campaignWithRanks.poolSize)}
+            &nbsp;
+            {loaderData.campaignWithRanks.poolUnit && (
+              <span className="font-light text-xs">
+                in {loaderData.campaignWithRanks.poolUnit}
+              </span>
+            )}
+          </span>
+          <span className="font-light text-[#A7A7A7] text-xs">Prize Pool</span>
+        </div>
+      </div>
     </SparkPointsPage>
   );
 }

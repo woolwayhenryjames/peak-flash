@@ -27,7 +27,9 @@ export default function RelatedVideos({
             />
           </svg>
 
-          <h4 className="font-medium text-white text-xl">Related Videos</h4>
+          <h4 className="font-medium text-base text-white md:text-xl">
+            Related Videos
+          </h4>
 
           <Link
             className="ml-auto text-[#ACACAC] text-sm underline"
