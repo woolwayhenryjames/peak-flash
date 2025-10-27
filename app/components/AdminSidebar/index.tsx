@@ -1,4 +1,4 @@
-import { Goal, Users } from "lucide-react";
+import { Goal, Users, Zap } from "lucide-react";
 import { NavLink } from "react-router";
 import { cn } from "~/lib/utils";
 
@@ -18,6 +18,11 @@ const sidebarItems: SidebarItem[] = [
     label: "Users",
     href: "/admin/users",
     icon: <Users aria-hidden="true" className="h-5 w-5" />,
+  },
+  {
+    label: "Flash",
+    href: "/admin/flash",
+    icon: <Zap aria-hidden="true" className="h-5 w-5" />,
   },
 ];
 

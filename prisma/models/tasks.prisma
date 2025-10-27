@@ -61,7 +61,6 @@ model Task {
   type                TaskType                 @default(CUSTOM)
   isRequired          Boolean                  @default(false)
   order               Int                      @default(0)
-  metadata            Json?                    @db.Json
   createdAt           DateTime                 @default(now())
   updatedAt           DateTime                 @default(now()) @updatedAt
   taskUsers           TaskUser[]
