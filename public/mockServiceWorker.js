@@ -12,18 +12,18 @@ const INTEGRITY_CHECKSUM = "4db4a41e972cec1b64cc569c66952d82";
 const IS_MOCKED_RESPONSE = Symbol("isMockedResponse");
 const activeClientIds = new Set();
 
-addEventListener("install", function () {
+addEventListener("install", () => {
   self.skipWaiting();
 });
 
-addEventListener("activate", function (event) {
+addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-addEventListener("message", async function (event) {
+addEventListener("message", async (event) => {
   const clientId = Reflect.get(event.source || {}, "id");
 
-  if (!clientId || !self.clients) {
+  if (!(clientId && self.clients)) {
     return;
   }
 
@@ -74,9 +74,9 @@ addEventListener("message", async function (event) {
     case "CLIENT_CLOSED": {
       activeClientIds.delete(clientId);
 
-      const remainingClients = allClients.filter((client) => {
-        return client.id !== clientId;
-      });
+      const remainingClients = allClients.filter(
+        (client) => client.id !== clientId
+      );
 
       // Unregister itself when there are no more clients
       if (remainingClients.length === 0) {
@@ -88,7 +88,7 @@ addEventListener("message", async function (event) {
   }
 });
 
-addEventListener("fetch", function (event) {
+addEventListener("fetch", (event) => {
   const requestInterceptedAt = Date.now();
 
   // Bypass navigation requests.

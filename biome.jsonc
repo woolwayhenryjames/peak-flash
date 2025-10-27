@@ -1,18 +1,24 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
-  "extends": ["ultracite"],
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite/core", "ultracite/react", "ultracite/remix"],
   "formatter": {
     "indentStyle": "space",
     "indentWidth": 2
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "files": {
+    "includes": ["!app/app.css"]
   },
   "linter": {
     "includes": ["app/**"],
     "rules": {
       // tailwind uses @apply which is not a valid at-rule
       "nursery": {
-        "useImageSize": "off",
-        "useSortedClasses": "warn",
-        "useConsistentTypeDefinitions": "off"
+        "useSortedClasses": "warn"
       },
       // vite strips the console.log statements anyway
       "suspicious": {
@@ -25,6 +31,7 @@
         "useNamingConvention": "off",
         "noMagicNumbers": "off",
         "noEnum": "off",
+        "useConsistentTypeDefinitions": "off",
         "useFilenamingConvention": {
           "level": "warn",
           "options": {
@@ -39,6 +46,9 @@
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn"
+      },
+      "correctness": {
+        "useImageSize": "warn"
       },
       "performance": {
         "noImgElement": "off"
