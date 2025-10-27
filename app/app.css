@@ -114,3 +114,22 @@ code {
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
+
+.border-radius-gradiant {
+  position: relative;
+  --border-radius: 16px;
+  --border: 1px;
+}
+
+.border-radius-gradiant::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--border-radius);
+  padding: var(--border);
+  background: var(--border-gradient);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}

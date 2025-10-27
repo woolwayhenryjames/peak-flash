@@ -154,7 +154,7 @@ export default function Invite({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24">
+    <div className="min-h-screen bg-linear-to-b from-[#02040d] via-31% via-[#1d131c] to-67% to-[#201819] pb-24">
       {/* Smart Reminder Header */}
       <div
         className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover"
@@ -167,7 +167,7 @@ export default function Invite({
 
       <div className="mt-4 space-y-6 px-5 md:px-18">
         {/* Invite & Earn Business Card */}
-        <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#2a2a2a]/40 to-[#1a1616]/40 p-10">
+        <div className="rounded-2xl border border-white/10 bg-linear-to-b from-[#2a2a2a]/40 to-[#1a1616]/40 p-10">
           <div className="space-y-12 text-center">
             {/* Header Section */}
             <div className="space-y-5">
@@ -263,11 +263,11 @@ export default function Invite({
                 </div>
               </div>
               <button
-                className="flex-shrink-0"
+                className="shrink-0"
                 onClick={handleCopyLink}
                 type="button"
               >
-                <GlowContainer className="rounded bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] px-3 py-2 text-sm">
+                <GlowContainer className="rounded bg-linear-to-b from-[#2a2a2a] to-[#1a1616] px-3 py-2 text-sm">
                   {copiedLink ? "Copied!" : "Copy"}
                 </GlowContainer>
               </button>
@@ -319,7 +319,7 @@ export default function Invite({
           {/* Records List */}
           <div className="space-y-6">
             {inviteRecords.length === 0 ? (
-              <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-8 text-center">
+              <div className="rounded-2xl border border-[#2d3338] bg-linear-to-b from-[#2a2a2a] to-[#1a1616] p-8 text-center">
                 <p className="text-[#979797] text-sm">
                   No invites yet. Share your link to start earning!
                 </p>
@@ -327,7 +327,7 @@ export default function Invite({
             ) : (
               inviteRecords.map((record) => (
                 <div key={record.id}>
-                  <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
+                  <div className="rounded-2xl border border-[#2d3338] bg-linear-to-b from-[#2a2a2a] to-[#1a1616] p-5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         {/* Avatar */}

@@ -1,4 +1,6 @@
 import { Link, useLocation } from "react-router";
+import flashIcon from "./assets/flash-icon.svg";
+import flashIconActive from "./assets/flash-icon-active.svg";
 import homeIcon from "./assets/home-icon.svg";
 import homeIconActive from "./assets/home-icon-active.svg";
 import rocketIcon from "./assets/rocket-icon.svg";
@@ -24,6 +26,12 @@ const navItems: NavItem[] = [
     label: "Ascent",
   },
   {
+    href: "/u/flash",
+    icon: flashIcon,
+    activeIcon: flashIconActive,
+    label: "Flash",
+  },
+  {
     href: "/u/invite",
     icon: usersIcon,
     activeIcon: usersIconActive,
@@ -44,7 +52,7 @@ export default function BottomNav() {
     <>
       {/* Bottom Navigation */}
       <div className="fixed right-0 bottom-0 left-0 border-white/10 border-t bg-black/20 backdrop-blur-sm">
-        <div className="grid grid-cols-4 py-3">
+        <div className="grid grid-cols-5 py-3">
           {navItems.map((item) => {
             const isActive = location.pathname === item.href;
 
