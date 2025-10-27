@@ -1,0 +1,82 @@
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  campaignUsers CampaignUser[]
+
+  name          String    @db.Text
+  email         String
+  emailVerified Boolean
+  image         String?   @db.Text
+  kindleScore   Float?
+  sessions      Session[]
+  accounts      Account[]
+
+  // Invitation relationships
+  inviterId String?
+  inviter   User?   @relation("UserInvitations", fields: [inviterId], references: [id], onDelete: SetNull)
+  invitees  User[]  @relation("UserInvitations")
+
+  walletAddress String? @db.Text
+  rank          Int?
+  isBusiness    Boolean @default(false)
+  isAdmin       Boolean @default(false)
+
+  // TikTok profile data
+  bio                String?    @db.Text
+  followerCount      Int?
+  followingCount     Int?
+  isStar             Boolean    @default(false)
+  visibleVideosCount Int?
+  likeCount          Int?
+  Campaign           Campaign[] @relation("CampaignOwner")
+  Flash              Flash[]    @relation("FlashOwner")
+  firstComerBadge    Boolean    @default(false)
+  TaskUser           TaskUser[]
+
+  @@unique([email])
+  @@index([id])
+  @@index([kindleScore])
+  @@index([inviterId])
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?  @db.Text
+  userAgent String?  @db.Text
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+}
+
+model Account {
+  id                    String    @id
+  accountId             String    @db.Text
+  providerId            String    @db.Text
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime
+  updatedAt             DateTime
+}
+
+model Verification {
+  id         String    @id
+  identifier String    @db.Text
+  value      String    @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+}

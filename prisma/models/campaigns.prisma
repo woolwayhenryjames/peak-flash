@@ -1,0 +1,74 @@
+model Campaign {
+  id              String   @id @default(uuid())
+  name            String
+  image           String?  @db.Text
+  poolSize        Int      @default(0)
+  poolUnit        String?  @db.VarChar(10)
+  poolDescription String?  @db.VarChar(50)
+  startDate       DateTime
+  endDate         DateTime
+  description     String?  @db.Text
+  joinRequirement Json?    @db.Json
+  shareUrls       Json     @default("\"[]\"") @db.Json
+  homepageUrl     String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+  order           Int      @default(0)
+  ownerId         String?
+  owner           User?    @relation("CampaignOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+
+  campaignUsers CampaignUser[]
+
+  @@index([id])
+  @@index([ownerId])
+}
+
+model CampaignUser {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  campaignId String
+  baseScore  Float    @default(0) // User's own earned score
+  bonusScore Float    @default(0) // 10% bonus from invited users
+  score      Float    @default(0) // Computed column
+  joinedAt   DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  videoCount Int      @default(0)
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaign   Campaign    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userVideos UserVideo[]
+  rank       Int?
+
+  @@unique([userId, campaignId])
+  @@index([userId])
+  @@index([campaignId])
+  @@index([campaignId, score])
+  @@index([campaignId, baseScore])
+}
+
+model UserVideo {
+  id               Int          @id @default(autoincrement())
+  videoId          String       @unique
+  videoUrl         String?      @db.Text // from ai_scores_json
+  coverUrl         String?      @db.Text // from ai_scores_json
+  createTime       DateTime? // from video_scores_json.create_time
+  description      String?      @db.Text // from video_scores_json.desc
+  viewCount        Int
+  likeCount        Int
+  commentCount     Int
+  shareCount       Int
+  collectCount     Int
+  keywordScore     Float? // from ai_scores_json
+  originalityScore Float?
+  clarityScore     Float?
+  spamScore        Float?
+  promotionScore   Float?
+  totalScore       Float?
+  campaignUserId   Int
+  campaignUser     CampaignUser @relation(fields: [campaignUserId], references: [id], onDelete: Cascade)
+  active           Boolean      @default(true) // mark inactive if missing in source
+
+  @@index([campaignUserId])
+  @@index([videoId])
+}

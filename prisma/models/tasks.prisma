@@ -1,0 +1,94 @@
+enum FlashStatus {
+  DRAFT
+  ACTIVE
+  ENDED
+  ARCHIVED
+}
+
+enum FlashTrackingMode {
+  TIME
+  PARTICIPANTS
+}
+
+enum TaskType {
+  CUSTOM
+  FOLLOW_X
+}
+
+enum TaskVerificationStatus {
+  NOT_REQUIRED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Flash {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.Text
+  message          String?            @db.Text
+  description      String?            @db.Text
+  status           FlashStatus        @default(DRAFT)
+  prizePool        Decimal?           @db.Decimal(18, 2)
+  prizeCurrency    String?            @db.VarChar(10)
+  perUserPrize     Decimal?           @db.Decimal(18, 2)
+  participantLimit Int?
+  startAt          DateTime           @default(now())
+  endAt            DateTime?
+  trackingMode     FlashTrackingMode  @default(TIME)
+  ownerId          String
+  owner            User               @relation("FlashOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  bannerImage      String?            @db.Text
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now()) @updatedAt
+  tasks            Task[]
+
+  @@index([id])
+  @@index([ownerId])
+  @@index([status])
+  @@index([startAt])
+  @@index([trackingMode])
+}
+
+model Task {
+  id                  Int                      @id @default(autoincrement())
+  flashId             Int
+  flash               Flash                    @relation(fields: [flashId], references: [id], onDelete: Cascade)
+  name                String                   @db.Text
+  description         String?                  @db.Text
+  iconUrl             String?                  @db.Text
+  actionLabel         String                   @default("GO") @db.Text
+  actionUrl           String?                  @db.Text
+  type                TaskType                 @default(CUSTOM)
+  isRequired          Boolean                  @default(false)
+  order               Int                      @default(0)
+  metadata            Json?                    @db.Json
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @default(now()) @updatedAt
+  taskUsers           TaskUser[]
+
+  @@index([id])
+  @@index([flashId])
+  @@index([type])
+  @@index([isRequired])
+}
+
+model TaskUser {
+  id                  Int                     @id @default(autoincrement())
+  taskId              Int
+  userId              String
+  completed           Boolean                 @default(false)
+  completedAt         DateTime?
+  verificationStatus  TaskVerificationStatus  @default(NOT_REQUIRED)
+  verificationData    Json?                   @db.Json
+  claimedReward       Boolean                 @default(false)
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @default(now()) @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+  @@index([taskId])
+  @@index([userId])
+  @@index([verificationStatus])
+}
