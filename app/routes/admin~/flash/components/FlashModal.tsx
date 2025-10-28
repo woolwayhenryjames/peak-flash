@@ -43,13 +43,14 @@ const trackingModeOptions: Array<{
   {
     label: "Time-based",
     value: "TIME",
-    description: "Task ends when the scheduled end date/time is reached.",
+    description:
+      "Task ends when the scheduled end date/time is reached. Prize pool is distributed based on actual participants.",
   },
   {
     label: "Participants-based",
     value: "PARTICIPANTS",
     description:
-      "Task ends when the participant limit for required tasks is reached.",
+      "Task ends when the participant limit for required tasks is reached. Requires setting either per-user prize or participant limit.",
   },
 ];
 
@@ -114,6 +115,9 @@ export function FlashModal({
   const isEdit = Boolean(flash);
   const [trackingMode, setTrackingMode] = useState<FlashTrackingMode>("TIME");
   const [tasks, setTasks] = useState<EditorTask[]>(() => [createEmptyTask(0)]);
+  const [prizePool, setPrizePool] = useState<string>("");
+  const [perUserPrize, setPerUserPrize] = useState<string>("");
+  const [participantLimit, setParticipantLimit] = useState<string>("");
 
   const submitButtonLabel = (() => {
     if (isSubmitting) {
@@ -128,6 +132,9 @@ export function FlashModal({
   useEffect(() => {
     if (flash) {
       setTrackingMode(flash.trackingMode);
+      setPrizePool(decimalToInputValue(flash.prizePool));
+      setPerUserPrize(decimalToInputValue(flash.perUserPrize));
+      setParticipantLimit(flash.participantLimit?.toString() ?? "");
       setTasks(
         flash.tasks.length
           ? flash.tasks.map((task) => ({
@@ -146,9 +153,51 @@ export function FlashModal({
       );
     } else {
       setTrackingMode("TIME");
+      setPrizePool("");
+      setPerUserPrize("");
+      setParticipantLimit("");
       setTasks([createEmptyTask(0)]);
     }
   }, [flash]);
+
+  const handlePrizePoolChange = (value: string) => {
+    setPrizePool(value);
+
+    // Auto-calculate perUserPrize if participantLimit is set
+    if (participantLimit && value) {
+      const pool = Number.parseFloat(value);
+      const limit = Number.parseInt(participantLimit, 10);
+      if (Number.isFinite(pool) && Number.isFinite(limit) && limit > 0) {
+        setPerUserPrize((pool / limit).toFixed(2));
+      }
+    }
+  };
+
+  const handlePerUserPrizeChange = (value: string) => {
+    setPerUserPrize(value);
+
+    // Auto-calculate participantLimit if prizePool is set
+    if (prizePool && value) {
+      const pool = Number.parseFloat(prizePool);
+      const prize = Number.parseFloat(value);
+      if (Number.isFinite(pool) && Number.isFinite(prize) && prize > 0) {
+        setParticipantLimit(Math.floor(pool / prize).toString());
+      }
+    }
+  };
+
+  const handleParticipantLimitChange = (value: string) => {
+    setParticipantLimit(value);
+
+    // Auto-calculate perUserPrize if prizePool is set
+    if (prizePool && value) {
+      const pool = Number.parseFloat(prizePool);
+      const limit = Number.parseInt(value, 10);
+      if (Number.isFinite(pool) && Number.isFinite(limit) && limit > 0) {
+        setPerUserPrize((pool / limit).toFixed(2));
+      }
+    }
+  };
 
   const serializedTasks = useMemo(
     () =>
@@ -340,63 +389,78 @@ export function FlashModal({
           </div>
         </section>
 
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <section
+          className={`grid grid-cols-1 gap-4 ${trackingMode === "TIME" ? "md:grid-cols-1" : "md:grid-cols-3"}`}
+        >
           <div className="form-control">
             <label className="label" htmlFor="prizePool">
               <span className="label-text font-semibold">Prize Pool</span>
             </label>
             <input
               className="input input-bordered focus:input-primary w-full"
-              defaultValue={decimalToInputValue(flash?.prizePool)}
               id="prizePool"
               name="prizePool"
+              onChange={(event) => handlePrizePoolChange(event.target.value)}
               placeholder="5000"
               step="0.01"
               type="number"
+              value={prizePool}
             />
             <span className="label-text-alt mt-1">
               Total rewards budget for this flash task.
             </span>
           </div>
 
-          <div className="form-control">
-            <label className="label" htmlFor="perUserPrize">
-              <span className="label-text font-semibold">Per-user Prize</span>
-            </label>
-            <input
-              className="input input-bordered focus:input-primary w-full"
-              defaultValue={decimalToInputValue(flash?.perUserPrize)}
-              id="perUserPrize"
-              name="perUserPrize"
-              placeholder="10"
-              step="0.01"
-              type="number"
-            />
-            <span className="label-text-alt mt-1">
-              Leave empty for post-event calculation mode.
-            </span>
-          </div>
+          {trackingMode === "PARTICIPANTS" && (
+            <>
+              <div className="form-control">
+                <label className="label" htmlFor="perUserPrize">
+                  <span className="label-text font-semibold">
+                    Per-user Prize
+                  </span>
+                </label>
+                <input
+                  className="input input-bordered focus:input-primary w-full"
+                  id="perUserPrize"
+                  name="perUserPrize"
+                  onChange={(event) =>
+                    handlePerUserPrizeChange(event.target.value)
+                  }
+                  placeholder="10"
+                  step="0.01"
+                  type="number"
+                  value={perUserPrize}
+                />
+                <span className="label-text-alt mt-1">
+                  Auto-calculated when participant limit is entered.
+                </span>
+              </div>
 
-          <div className="form-control">
-            <label className="label" htmlFor="participantLimit">
-              <span className="label-text font-semibold">
-                Participant Limit
-              </span>
-              <span className="label-text-alt">Optional</span>
-            </label>
-            <input
-              className="input input-bordered focus:input-primary w-full"
-              defaultValue={flash?.participantLimit ?? ""}
-              id="participantLimit"
-              min={0}
-              name="participantLimit"
-              placeholder="1000"
-              type="number"
-            />
-            <span className="label-text-alt mt-1">
-              Required for participants-based tracking.
-            </span>
-          </div>
+              <div className="form-control">
+                <label className="label" htmlFor="participantLimit">
+                  <span className="label-text font-semibold">
+                    Participant Limit
+                  </span>
+                </label>
+                <input
+                  className="input input-bordered focus:input-primary w-full"
+                  id="participantLimit"
+                  min={0}
+                  name="participantLimit"
+                  onChange={(event) =>
+                    handleParticipantLimitChange(event.target.value)
+                  }
+                  placeholder="1000"
+                  type="number"
+                  value={participantLimit}
+                />
+                <span className="label-text-alt mt-1">
+                  Required for participants-based tracking. Auto-calculated when
+                  per-user prize is entered.
+                </span>
+              </div>
+            </>
+          )}
         </section>
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -481,7 +545,6 @@ export function FlashModal({
             defaultValue={flash?.bannerImage ?? ""}
             name="bannerImageUrl"
             placeholder="https://example.com/flash-banner.png"
-            type="url"
           />
         </div>
 
@@ -733,7 +796,6 @@ function TaskCard({
               onUpdate(task.clientId, { iconUrl: event.target.value })
             }
             placeholder="https://example.com/icon.png"
-            type="url"
             value={task.iconUrl ?? ""}
           />
         </div>

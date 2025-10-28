@@ -224,10 +224,7 @@ function TaskItem({
   const content = (
     <div
       className={cn(
-        "flex items-center gap-1 rounded-lg border px-4 py-5 transition-colors",
-        isCompleted
-          ? "border-[#636365] bg-linear-to-br from-[#2D3835]/10 to-[#7F9E90]/24"
-          : "border-[#212125]"
+        "flex items-center gap-1 rounded-lg border border-[#212125] from-[#2D3835]/10 to-[#7F9E90]/24 px-4 py-5 transition-colors hover:border-[#636365] hover:bg-linear-to-br"
       )}
       style={{
         backdropFilter: "blur(10px)",

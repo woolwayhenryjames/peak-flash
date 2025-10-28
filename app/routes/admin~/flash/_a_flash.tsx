@@ -210,9 +210,6 @@ export default function AdminFlash({
                 Flash
               </th>
               <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
-                Owner
-              </th>
-              <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
                 Prize Pool
               </th>
               <th className="px-6 py-3 text-left font-medium text-gray-300 text-xs uppercase tracking-wide">
@@ -283,48 +280,34 @@ export default function AdminFlash({
               return (
                 <tr className="hover:bg-gray-800" key={flash.id}>
                   <td className="px-6 py-4">
-                    <div className="space-y-1">
-                      <div className="font-semibold text-sm text-white">
-                        {flash.name}
-                      </div>
-                      {flash.message && (
-                        <div className="text-gray-400 text-xs">
-                          {flash.message}
-                        </div>
+                    <div className="flex items-center">
+                      {flash.bannerImage && (
+                        <img
+                          alt={flash.name}
+                          className="mr-3 h-8 w-8 rounded-full object-cover"
+                          src={flash.bannerImage}
+                        />
                       )}
-                      <div className="text-gray-500 text-xs">
-                        Start: {formatDateDisplay(flash.startAt)}
-                        {flash.endAt && (
-                          <>
-                            <br />
-                            End: {formatDateDisplay(flash.endAt)}
-                          </>
+                      <div className="space-y-1">
+                        <div className="font-semibold text-sm text-white">
+                          {flash.name}
+                        </div>
+                        {flash.message && (
+                          <div className="text-gray-400 text-xs">
+                            {flash.message}
+                          </div>
                         )}
+                        <div className="text-gray-500 text-xs">
+                          Start: {formatDateDisplay(flash.startAt)}
+                          {flash.endAt && (
+                            <>
+                              <br />
+                              End: {formatDateDisplay(flash.endAt)}
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    {flash.owner ? (
-                      <div className="flex items-center">
-                        {flash.owner.image && (
-                          <img
-                            alt={flash.owner.name ?? flash.owner.email}
-                            className="mr-3 h-8 w-8 rounded-full object-cover"
-                            src={flash.owner.image}
-                          />
-                        )}
-                        <div>
-                          <div className="text-sm text-white">
-                            {flash.owner.name || flash.owner.email}
-                          </div>
-                          <div className="text-gray-400 text-xs">
-                            {flash.owner.email}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <span className="text-gray-500 text-xs">No owner</span>
-                    )}
                   </td>
                   <td className="px-6 py-4 text-sm text-white">
                     <div>{prizePoolDisplay}</div>
