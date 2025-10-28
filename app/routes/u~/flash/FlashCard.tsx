@@ -3,11 +3,7 @@ import { cn, formatNumber } from "~/lib/utils";
 import type { Route } from "./+types/_flash";
 
 export default function FlashCard({
-  flash,
-}: {
-  flash: Route.ComponentProps["loaderData"][number];
-}) {
-  const {
+  flash: {
     name,
     description,
     prizePool,
@@ -15,8 +11,10 @@ export default function FlashCard({
     participantLimit,
     tasks,
     bannerImage,
-  } = flash;
-
+  },
+}: {
+  flash: Route.ComponentProps["loaderData"][number];
+}) {
   // Calculate remaining prizes (simplified - you may need to adjust logic)
   const remainingPrizes = participantLimit
     ? participantLimit -

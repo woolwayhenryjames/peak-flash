@@ -39,7 +39,11 @@ export async function loader() {
   const usersResult = await getAllBusinessUsers();
 
   return {
-    flashes,
+    flashes: flashes.map((f) => ({
+      ...f,
+      perUserPrize: f.perUserPrize?.toNumber() ?? null,
+      prizePool: f.prizePool?.toNumber() ?? null,
+    })),
     users: usersResult.isOk() ? usersResult.value : [],
   };
 }
@@ -150,9 +154,9 @@ export default function AdminFlash({
   const navigation = useNavigation();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [editingFlash, setEditingFlash] = useState<FlashWithMetrics | null>(
-    null
-  );
+  const [editingFlash, setEditingFlash] = useState<
+    (typeof flashes)[number] | null
+  >(null);
 
   const isSubmitting = navigation.state === "submitting";
 

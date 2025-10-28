@@ -35,7 +35,11 @@ export async function loader({ request }: Route.LoaderArgs) {
       startAt: "desc",
     },
   });
-  return flash;
+  return flash.map((f) => ({
+    ...f,
+    perUserPrize: f.perUserPrize?.toNumber() ?? null,
+    prizePool: f.prizePool?.toNumber() ?? null,
+  }));
 }
 
 export default function Flash({ loaderData: flash }: Route.ComponentProps) {

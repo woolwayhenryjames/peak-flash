@@ -2,13 +2,11 @@ import type { FlashTrackingMode, TaskType, User } from ".prisma/main/client";
 import { useEffect, useMemo, useState } from "react";
 import { Form, useActionData } from "react-router";
 import DialogWithCloseButton from "~/components/Dialogs/DialogWithCloseButton";
-import type { FlashWithMetrics } from "~/services/flash.server";
+import type { Route } from "../+types/_a_flash";
 
 type ActionData =
   | { success: true; message: string }
   | { success: false; error: string };
-
-type ModalFlash = FlashWithMetrics;
 
 type OwnerOption = Pick<User, "id" | "name" | "email" | "image">;
 
@@ -106,7 +104,7 @@ export function FlashModal({
   onClose,
   isSubmitting,
 }: {
-  flash: ModalFlash | null;
+  flash: Route.ComponentProps["loaderData"]["flashes"][number] | null;
   users: OwnerOption[];
   isOpen: boolean;
   onClose: () => void;
