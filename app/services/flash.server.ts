@@ -368,3 +368,80 @@ export async function deleteFlash(id: number) {
     throw error;
   }
 }
+
+export async function getQualifiedParticipants(flashId: number) {
+  const flash = await db.flash.findUnique({
+    where: { id: flashId },
+    include: {
+      tasks: {
+        where: { isRequired: true },
+        include: {
+          taskUsers: {
+            where: {
+              completed: true,
+              verificationStatus: "APPROVED",
+            },
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  walletAddress: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!flash) {
+    return [];
+  }
+
+  // Get all required tasks
+  const requiredTasks = flash.tasks;
+  if (requiredTasks.length === 0) {
+    return [];
+  }
+
+  // Track which users completed all required tasks
+  const userCompletionMap = new Map<
+    string,
+    {
+      userId: string;
+      name: string;
+      email: string;
+      walletAddress: string | null;
+      completedTasks: number;
+    }
+  >();
+
+  for (const task of requiredTasks) {
+    for (const taskUser of task.taskUsers) {
+      const userId = taskUser.user.id;
+      const existing = userCompletionMap.get(userId);
+
+      if (existing) {
+        existing.completedTasks += 1;
+      } else {
+        userCompletionMap.set(userId, {
+          userId: taskUser.user.id,
+          name: taskUser.user.name,
+          email: taskUser.user.email,
+          walletAddress: taskUser.user.walletAddress,
+          completedTasks: 1,
+        });
+      }
+    }
+  }
+
+  // Filter users who completed all required tasks
+  const qualifiedParticipants = Array.from(userCompletionMap.values()).filter(
+    (user) => user.completedTasks === requiredTasks.length
+  );
+
+  return qualifiedParticipants;
+}
