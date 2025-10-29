@@ -58,9 +58,16 @@ export default function FlashCard({
       {/* Card with gradient border */}
       <div
         className={cn(
-          "rounded-t-2xl border-radius-gradiant p-6 transition-opacity [--border-gradient:linear-gradient(0deg,rgba(26,26,26,1)_63%,rgba(104,255,167,1)_100%)]",
+          "rounded-t-2xl border-radius-gradiant p-6 transition-opacity",
           isEnded && "opacity-60"
         )}
+        style={
+          {
+            "--border-gradient": isEnded
+              ? "linear-gradient(#999)"
+              : "linear-gradient(0deg,rgba(26,26,26,1) 63%,rgba(104,255,167,1) 100%)",
+          } as React.CSSProperties
+        }
       >
         {/* Header Section */}
         <div className="flex items-center justify-between gap-10">
@@ -90,17 +97,12 @@ export default function FlashCard({
 
           {/* Right: Participants Badge */}
           <div className="flex flex-col items-end gap-2">
-            {isEnded && (
-              <span className="rounded-full bg-[#1c1c1f] px-2 py-0.5 font-semibold text-[#ff9d9d] text-[10px] uppercase tracking-wide">
-                Task Ended
-              </span>
-            )}
             <div
-              className="flex flex-col gap-1 rounded-md px-2 py-2"
+              className="flex min-w-21 flex-col gap-1 rounded-md px-2 py-2"
               style={{
-                background:
-                  "linear-gradient(180deg, rgba(104, 255, 167, 1) 0%, rgba(216, 255, 125, 1) 100%)",
-                minWidth: "5.3rem",
+                background: isEnded
+                  ? "#999"
+                  : "linear-gradient(180deg, rgba(104, 255, 167, 1) 0%, rgba(216, 255, 125, 1) 100%)",
               }}
             >
               <div className="text-center font-normal text-[#000000] text-sm leading-tight">
@@ -226,14 +228,20 @@ export default function FlashCard({
 
         {/* Tasks List */}
         <div className="mt-7 flex flex-col gap-3">
-          {tasks.map((task) => (
-            <TaskItem
-              isEnded={isEnded}
-              key={task.id}
-              task={task}
-              twitterAccountId={twitterAccountId}
-            />
-          ))}
+          {isEnded ? (
+            <div className="flex items-center justify-center border border-[#a4a4a4] border-dashed px-10 py-5 font-light text-[#a6a6a6] text-base">
+              The task has ended.
+            </div>
+          ) : (
+            tasks.map((task) => (
+              <TaskItem
+                isEnded={isEnded}
+                key={task.id}
+                task={task}
+                twitterAccountId={twitterAccountId}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -15,11 +15,6 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   const flash = await db.flash.findMany({
-    where: {
-      status: "ACTIVE",
-      startAt: { lte: new Date() },
-      OR: [{ endAt: null }, { endAt: { gte: new Date() } }],
-    },
     include: {
       tasks: {
         include: {
