@@ -2,6 +2,7 @@ import { Link, redirect } from "react-router";
 import CampaignList from "~/components/CampaignList";
 import FirstGetScoreDialog from "~/components/Dialogs/FirstGetScoreDialog";
 import FirstOpenHomeDialog from "~/components/Dialogs/FirstOpenHomeDialog";
+import FlashList from "~/components/FlashList";
 import FollowUs from "~/components/FollowUs";
 import { HomeSeparator } from "~/components/HomeSeperator";
 import KindleScoreCard from "~/components/KindleScoreCard";
@@ -9,6 +10,7 @@ import QuickActions from "~/components/QuickActions";
 import StartEarningSection from "~/components/StartEarningSection";
 import { getDbUser } from "~/services/auth.server";
 import { getCampaignsForUser } from "~/services/campaign.server";
+import { db } from "~/services/db.server";
 import type { Route } from "./+types/_index";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -67,14 +69,30 @@ export async function loader({ request }: Route.LoaderArgs) {
     3
   );
 
+  const flashs = await db.flash.findMany({
+    where: {
+      status: "ACTIVE",
+      startAt: { lte: new Date() },
+      OR: [{ endAt: null }, { endAt: { gte: new Date() } }],
+    },
+    orderBy: {
+      startAt: "desc",
+    },
+  });
+
   return {
     user: user.value,
     campaigns: campaigns.campaigns,
+    flashs: flashs.map((f) => ({
+      ...f,
+      perUserPrize: f.perUserPrize?.toNumber() ?? null,
+      prizePool: f.prizePool?.toNumber() ?? null,
+    })),
   };
 }
 
 export default function Hub({
-  loaderData: { user, campaigns },
+  loaderData: { user, campaigns, flashs },
 }: Route.ComponentProps) {
   const userScore =
     user.kindleScore != null ? Math.round(user.kindleScore) : null;
@@ -85,7 +103,7 @@ export default function Hub({
         <StartEarningSection />
       </div>
       <HomeSeparator />
-      <div className="space-y-6 from-[#090917] to-black px-6 max-md:bg-gradient-to-b md:mx-auto md:mt-6 md:px-18">
+      <div className="space-y-6 from-[#090917] to-black px-6 max-md:bg-linear-to-b md:mx-auto md:mt-6 md:px-18">
         <div className="mb-10 flex items-center justify-between md:px-6">
           <div className="flex items-center gap-1">
             <svg
@@ -129,6 +147,46 @@ export default function Hub({
           </Link>
         </div>
         <CampaignList campaigns={campaigns} />
+        <div className="mb-10 flex items-center justify-between md:px-6">
+          <div className="flex items-center gap-1">
+            <svg
+              fill="none"
+              height="23"
+              viewBox="0 0 23 23"
+              width="23"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>settings gear</title>
+              <path
+                d="M6.62388 0.94812H16.0864V2.84432H19.8714V11.3772H17.9789V4.74053H16.0864V6.63673H6.62388V4.74053H4.73137V19.9102H11.3551V21.8064H2.83887V2.84432H6.62388V0.94812ZM8.51639 4.74053H14.1939V2.84432H8.51639V4.74053ZM18.9252 13.0364V14.341C19.6017 14.5155 20.2045 14.8719 20.6795 15.3574L21.8084 14.7041L22.7547 16.3462L21.6267 16.9985C21.8106 17.6629 21.8106 18.365 21.6267 19.0294L22.7547 19.6817L21.8084 21.3238L20.6795 20.6705C20.2045 21.155 19.6008 21.5124 18.9252 21.6869V22.9915H17.0327V21.6869C16.3665 21.5144 15.7599 21.1629 15.2783 20.6705L14.1494 21.3238L13.2032 19.6817L14.3311 19.0294C14.147 18.365 14.147 17.6629 14.3311 16.9985L13.2032 16.3462L14.1494 14.7041L15.2783 15.3574C15.7599 14.865 16.3665 14.5135 17.0327 14.341V13.0364H18.9252ZM16.322 17.0971C16.1667 17.3776 16.0853 17.6932 16.0855 18.014C16.0855 18.3458 16.1716 18.6587 16.322 18.9308L16.3561 18.9905C16.5241 19.2715 16.7618 19.5041 17.0463 19.6656C17.3307 19.8271 17.652 19.912 17.9789 19.912C18.3058 19.912 18.6272 19.8271 18.9116 19.6656C19.196 19.5041 19.4338 19.2715 19.6017 18.9905L19.6358 18.9308C19.7863 18.6587 19.8714 18.3458 19.8714 18.014C19.8714 17.6821 19.7863 17.3692 19.6358 17.0971L19.6017 17.0374C19.4338 16.7564 19.196 16.5238 18.9116 16.3623C18.6272 16.2008 18.3058 16.1159 17.9789 16.1159C17.652 16.1159 17.3307 16.2008 17.0463 16.3623C16.7618 16.5238 16.5241 16.7564 16.3561 17.0374L16.322 17.0971Z"
+                fill="url(#paint0_linear_1297_5513)"
+              />
+              <defs>
+                <linearGradient
+                  gradientUnits="userSpaceOnUse"
+                  id="paint0_linear_1297_5513"
+                  x1="-0.931599"
+                  x2="34.9845"
+                  y1="11.9698"
+                  y2="11.9698"
+                >
+                  <stop stop-color="#6D7077" />
+                  <stop offset="0.363695" stop-color="#FEFEFE" />
+                  <stop offset="1" stop-color="#3C4041" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <h3 className="font-medium text-white text-xl">Flash Tasks</h3>
+          </div>
+          <Link
+            className="border-[#505050] border-b pb-0.5 text-[#AEAEAE] text-xs hover:text-white"
+            to="/u/flash"
+          >
+            View All
+          </Link>
+        </div>
+        <FlashList flashs={flashs} />
         <QuickActions />
         <div className="mt-18 w-full">
           <div className="mb-7 flex items-center gap-1">

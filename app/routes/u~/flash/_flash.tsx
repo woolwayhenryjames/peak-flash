@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { redirect } from "react-router";
+import { authClient } from "~/lib/auth-client";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import type { Route } from "./+types/_flash";
@@ -43,6 +45,22 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Flash({ loaderData: flash }: Route.ComponentProps) {
+  const [twitterAccountId, setTwitterAccountId] = useState<string>();
+
+  useEffect(() => {
+    const checkAccount = async () => {
+      const accounts = await authClient.listAccounts();
+      if (accounts.data) {
+        const twitterAccount = accounts.data.find(
+          (account) => account.providerId === "twitter"
+        );
+        if (twitterAccount) {
+          setTwitterAccountId(twitterAccount.accountId);
+        }
+      }
+    };
+    checkAccount();
+  }, []);
   return (
     <div
       className="min-h-screen pb-24"
@@ -70,7 +88,11 @@ export default function Flash({ loaderData: flash }: Route.ComponentProps) {
       <div className="mt-4 space-y-6 px-5 md:px-18">
         {/* Flash list will go here */}
         {flash.map((item) => (
-          <FlashCard flash={item} key={item.id} />
+          <FlashCard
+            flash={item}
+            key={item.id}
+            twitterAccountId={twitterAccountId}
+          />
         ))}
       </div>
     </div>

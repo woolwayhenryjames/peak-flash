@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Link } from "react-router";
 import GlowContainer from "~/components/GlowContainer";
 import { cn, formatNumber } from "~/lib/utils";
 import type { Route } from "./+types/_flash";
@@ -12,8 +14,10 @@ export default function FlashCard({
     tasks,
     bannerImage,
   },
+  twitterAccountId,
 }: {
   flash: Route.ComponentProps["loaderData"][number];
+  twitterAccountId: string | undefined;
 }) {
   // Calculate remaining prizes (simplified - you may need to adjust logic)
   const remainingPrizes = participantLimit
@@ -187,7 +191,11 @@ export default function FlashCard({
         {/* Tasks List */}
         <div className="mt-7 flex flex-col gap-3">
           {tasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
+            <TaskItem
+              key={task.id}
+              task={task}
+              twitterAccountId={twitterAccountId}
+            />
           ))}
         </div>
       </div>
@@ -196,22 +204,72 @@ export default function FlashCard({
 }
 
 function TaskItem({
-  task: { id, name, iconUrl, actionLabel, actionUrl, taskUsers },
+  task: { id, name, iconUrl, actionLabel, actionUrl, taskUsers, type },
+  twitterAccountId,
 }: {
   task: Route.ComponentProps["loaderData"][number]["tasks"][number];
+  twitterAccountId: string | undefined;
 }) {
-  const isCompleted = taskUsers.some((tu) => tu.completed);
+  const [isCompleted, setIsCompleted] = useState(
+    taskUsers.some((tu) => tu.completed)
+  );
 
-  const checkComplete = () => {
-    fetch("/api/task", {
+  const checkComplete = async () => {
+    if (type === "FOLLOW_X" && !twitterAccountId) {
+      return;
+    }
+    const response = await fetch("/api/task", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ taskId: id }),
     });
+    if (response.ok) {
+      setIsCompleted(true);
+    }
   };
-  const content = (
+
+  const actionButton = () => {
+    if (type === "FOLLOW_X" && !twitterAccountId) {
+      return (
+        <Link to="/u/profile">
+          <GlowContainer className="text-xs">Bind Twitter</GlowContainer>
+        </Link>
+      );
+    }
+    if (isCompleted) {
+      return (
+        <svg
+          fill="none"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>Completed</title>
+          <path
+            d="M6.71184 10.7794L9.966 17.0842C9.966 17.0842 15.2542 4.27104 23.5932 0C23.3902 3.0504 22.5766 5.69496 24 8.94912C20.3388 9.76176 12.8136 18.9144 10.373 23.3887C6.91536 19.1179 2.8476 15.8638 0 14.8462L6.71184 10.7794Z"
+            fill="#54C18E"
+          />
+        </svg>
+      );
+    }
+    if (actionUrl) {
+      return (
+        <a
+          href={actionUrl}
+          onClick={checkComplete}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <GlowContainer>{actionLabel}</GlowContainer>
+        </a>
+      );
+    }
+    return <GlowContainer>{actionLabel}</GlowContainer>;
+  };
+  return (
     <div
       className={cn(
         "flex items-center gap-1 rounded-lg border border-[#212125] from-[#2D3835]/10 to-[#7F9E90]/24 px-4 py-5 transition-colors hover:border-[#636365] hover:bg-linear-to-br"
@@ -234,24 +292,7 @@ function TaskItem({
       </div>
 
       {/* Action Button */}
-      <button disabled={isCompleted} type="button">
-        <GlowContainer>{isCompleted ? "✓" : actionLabel}</GlowContainer>
-      </button>
+      <div>{actionButton()}</div>
     </div>
   );
-
-  if (actionUrl && !isCompleted) {
-    return (
-      <a
-        href={actionUrl}
-        onClick={checkComplete}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return content;
 }
