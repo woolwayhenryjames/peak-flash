@@ -4,6 +4,7 @@ import xIcon from "./assets/x.svg";
 
 export default function BindTwitter() {
   const [twitterHandle, setTwitterHandle] = useState<string>();
+  const [twitterAccountId, setTwitterAccountId] = useState<string>();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -15,6 +16,7 @@ export default function BindTwitter() {
             (account) => account.providerId === "twitter"
           );
           if (twitterAccount) {
+            setTwitterAccountId(twitterAccount.accountId);
             const info = await authClient.accountInfo({
               accountId: twitterAccount.accountId,
             });
@@ -29,11 +31,32 @@ export default function BindTwitter() {
     };
     checkAccount();
   }, []);
-  const handleClick = async () =>
-    await authClient.linkSocial({
-      provider: "twitter",
-      callbackURL: "/u/profile",
-    });
+
+  const handleClick = async () => {
+    if (isLoading) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      if (twitterHandle && twitterAccountId) {
+        // Disconnect
+        await authClient.unlinkAccount({
+          providerId: "twitter",
+          accountId: twitterAccountId,
+        });
+        setTwitterHandle(undefined);
+      } else {
+        // Connect
+        await authClient.linkSocial({
+          provider: "twitter",
+          callbackURL: "/u/profile",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="my-6 flex items-center gap-4 border border-[#9c9c9c]/20 p-2 font-light max-md:bg-[#161616] md:p-5">
       <img alt="x" src={xIcon} />
