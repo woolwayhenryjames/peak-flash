@@ -10,30 +10,58 @@ export default function FlashCard({
     description,
     prizePool,
     prizeCurrency,
-    participantLimit,
+    trackingMode,
+    endAt,
     tasks,
     bannerImage,
+    metrics,
   },
   twitterAccountId,
 }: {
   flash: Route.ComponentProps["loaderData"][number];
   twitterAccountId: string | undefined;
 }) {
-  // Calculate remaining prizes (simplified - you may need to adjust logic)
-  const remainingPrizes = participantLimit
-    ? participantLimit -
-      tasks.reduce((acc, task) => acc + task.taskUsers.length, 0)
-    : null;
+  const participantsCount = metrics.participantCount;
+  const remainingPrizes = metrics.remainingPrizes;
+  const showRemainingPrizes = remainingPrizes !== null;
+  const isEnded = metrics.isEnded;
 
-  // Calculate actual participants (unique users across tasks)
-  const participantsCount = new Set(
-    tasks.flatMap((task) => task.taskUsers.map((tu) => tu.userId))
-  ).size;
+  const now = new Date();
+  const endAtDate = endAt ? new Date(endAt) : null;
+
+  const isParticipantsBased = trackingMode === "PARTICIPANTS";
+
+  const periodLabel = isParticipantsBased ? "Participants Left" : "days left";
+
+  const periodNumber = (() => {
+    if (isParticipantsBased) {
+      if (metrics.participantsLeft !== null) {
+        return formatNumber(metrics.participantsLeft);
+      }
+      return "No limit";
+    }
+
+    if (endAtDate) {
+      const diffMs = endAtDate.getTime() - now.getTime();
+      if (diffMs > 0) {
+        const daysLeft = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+        return formatNumber(daysLeft);
+      }
+      return "0";
+    }
+
+    return "Ongoing";
+  })();
 
   return (
     <div className="w-full">
       {/* Card with gradient border */}
-      <div className="rounded-t-2xl border-radius-gradiant p-6 [--border-gradient:linear-gradient(0deg,rgba(26,26,26,1)_63%,rgba(104,255,167,1)_100%)]">
+      <div
+        className={cn(
+          "rounded-t-2xl border-radius-gradiant p-6 transition-opacity [--border-gradient:linear-gradient(0deg,rgba(26,26,26,1)_63%,rgba(104,255,167,1)_100%)]",
+          isEnded && "opacity-60"
+        )}
+      >
         {/* Header Section */}
         <div className="flex items-center justify-between gap-10">
           {/* Left: Flash Info */}
@@ -61,25 +89,32 @@ export default function FlashCard({
           </div>
 
           {/* Right: Participants Badge */}
-          <div
-            className="flex flex-col gap-1 rounded-md px-2 py-2"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(104, 255, 167, 1) 0%, rgba(216, 255, 125, 1) 100%)",
-              minWidth: "5.3rem",
-            }}
-          >
-            <div className="text-center font-normal text-[#000000] text-sm leading-tight">
-              {formatNumber(participantsCount)}
-            </div>
-            <div className="text-center font-normal text-[#3B3B3B] text-xs leading-tight">
-              Participants
+          <div className="flex flex-col items-end gap-2">
+            {isEnded && (
+              <span className="rounded-full bg-[#1c1c1f] px-2 py-0.5 font-semibold text-[#ff9d9d] text-[10px] uppercase tracking-wide">
+                Task Ended
+              </span>
+            )}
+            <div
+              className="flex flex-col gap-1 rounded-md px-2 py-2"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(104, 255, 167, 1) 0%, rgba(216, 255, 125, 1) 100%)",
+                minWidth: "5.3rem",
+              }}
+            >
+              <div className="text-center font-normal text-[#000000] text-sm leading-tight">
+                {formatNumber(participantsCount)}
+              </div>
+              <div className="text-center font-normal text-[#3B3B3B] text-xs leading-tight">
+                Participants
+              </div>
             </div>
           </div>
         </div>
 
         {/* Remaining Prizes */}
-        {remainingPrizes !== null && remainingPrizes > 0 && (
+        {showRemainingPrizes && (
           <div className="mt-7 flex items-center justify-end gap-2">
             <svg
               className="size-2.5"
@@ -91,7 +126,8 @@ export default function FlashCard({
               <path d="M5 0L10 8H0L5 0ZM5 16L0 8H10L5 16Z" />
             </svg>
             <span className="font-normal text-[#68FFA7] text-xs leading-relaxed">
-              Remaining Prizes: {formatNumber(remainingPrizes)}
+              Remaining Prizes:{" "}
+              {formatNumber(Math.max(remainingPrizes ?? 0, 0))}
             </span>
           </div>
         )}
@@ -172,7 +208,7 @@ export default function FlashCard({
           />
 
           {/* Task Period */}
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-col items-end gap-1 text-right">
             <span
               className="bg-clip-text font-medium text-transparent text-xl leading-tight"
               style={{
@@ -180,10 +216,10 @@ export default function FlashCard({
                   "linear-gradient(116deg, rgba(109, 254, 116, 1) 0%, rgba(105, 215, 255, 1) 46%)",
               }}
             >
-              {tasks.length}
+              {periodNumber}
             </span>
             <div className="font-light text-[#A7A7A7] text-xs leading-tight">
-              Task Period
+              {periodLabel}
             </div>
           </div>
         </div>
@@ -192,6 +228,7 @@ export default function FlashCard({
         <div className="mt-7 flex flex-col gap-3">
           {tasks.map((task) => (
             <TaskItem
+              isEnded={isEnded}
               key={task.id}
               task={task}
               twitterAccountId={twitterAccountId}
@@ -204,17 +241,23 @@ export default function FlashCard({
 }
 
 function TaskItem({
-  task: { id, name, iconUrl, actionLabel, actionUrl, taskUsers, type },
+  task,
   twitterAccountId,
+  isEnded,
 }: {
   task: Route.ComponentProps["loaderData"][number]["tasks"][number];
   twitterAccountId: string | undefined;
+  isEnded: boolean;
 }) {
+  const { id, name, iconUrl, actionLabel, actionUrl, taskUsers, type } = task;
   const [isCompleted, setIsCompleted] = useState(
     taskUsers.some((tu) => tu.completed)
   );
 
   const checkComplete = async () => {
+    if (isEnded || isCompleted) {
+      return;
+    }
     if (type === "FOLLOW_X" && !twitterAccountId) {
       return;
     }
@@ -231,6 +274,14 @@ function TaskItem({
   };
 
   const actionButton = () => {
+    if (isEnded && !isCompleted) {
+      return (
+        <GlowContainer className="pointer-events-none opacity-60" noShimmer>
+          Task Ended
+        </GlowContainer>
+      );
+    }
+
     if (type === "FOLLOW_X" && !twitterAccountId) {
       return (
         <Link to="/u/profile">
@@ -238,6 +289,7 @@ function TaskItem({
         </Link>
       );
     }
+
     if (isCompleted) {
       return (
         <svg

@@ -3,6 +3,7 @@ import { redirect } from "react-router";
 import { authClient } from "~/lib/auth-client";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
+import { computeFlashMetrics } from "~/services/flash.server";
 import type { Route } from "./+types/_flash";
 import bg from "./assets/bg.svg";
 import FlashCard from "./FlashCard";
@@ -23,8 +24,11 @@ export async function loader({ request }: Route.LoaderArgs) {
       tasks: {
         include: {
           taskUsers: {
-            where: {
-              userId: user.value.id,
+            select: {
+              userId: true,
+              completed: true,
+              completedAt: true,
+              verificationStatus: true,
             },
           },
         },
@@ -37,11 +41,19 @@ export async function loader({ request }: Route.LoaderArgs) {
       startAt: "desc",
     },
   });
-  return flash.map((f) => ({
-    ...f,
-    perUserPrize: f.perUserPrize?.toNumber() ?? null,
-    prizePool: f.prizePool?.toNumber() ?? null,
-  }));
+  return flash.map((f) => {
+    const metrics = computeFlashMetrics(f);
+    return {
+      ...f,
+      perUserPrize: f.perUserPrize?.toNumber() ?? null,
+      prizePool: f.prizePool?.toNumber() ?? null,
+      metrics,
+      tasks: f.tasks.map((task) => ({
+        ...task,
+        taskUsers: task.taskUsers.filter((tu) => tu.userId === user.value.id),
+      })),
+    };
+  });
 }
 
 export default function Flash({ loaderData: flash }: Route.ComponentProps) {

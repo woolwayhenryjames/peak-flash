@@ -9,14 +9,6 @@ import { db } from "./db.server";
 
 export type FlashWithTasks = Prisma.FlashGetPayload<{
   include: {
-    owner: {
-      select: {
-        id: true;
-        name: true;
-        email: true;
-        image: true;
-      };
-    };
     tasks: {
       include: {
         taskUsers: {
@@ -131,7 +123,7 @@ const normalizeTaskInput = (task: FlashTaskInput) => {
   };
 };
 
-const computeMetrics = (flash: FlashWithTasks): FlashMetrics => {
+export const computeFlashMetrics = (flash: FlashWithTasks): FlashMetrics => {
   const participants = new Set<string>();
   const requiredTaskIds = flash.tasks.filter((task) => task.isRequired);
   const requiredTaskIdSet = new Set(requiredTaskIds.map((task) => task.id));
@@ -261,7 +253,7 @@ export async function getAllFlashWithMetrics(): Promise<FlashWithMetrics[]> {
 
   return flashes.map((flash) => ({
     ...flash,
-    metrics: computeMetrics(flash),
+    metrics: computeFlashMetrics(flash),
   }));
 }
 
@@ -369,7 +361,7 @@ export async function deleteFlash(id: number) {
   }
 }
 
-export async function getQualifiedParticipants(flashId: number) {
+export async function getAllParticipants(flashId: number) {
   const flash = await db.flash.findUnique({
     where: { id: flashId },
     include: {
@@ -398,13 +390,13 @@ export async function getQualifiedParticipants(flashId: number) {
   });
 
   if (!flash) {
-    return [];
+    return { participants: [], tasks: [] };
   }
 
   // Get all required tasks
   const requiredTasks = flash.tasks;
   if (requiredTasks.length === 0) {
-    return [];
+    return { participants: [], tasks: [] };
   }
 
   // Track which users completed all required tasks
@@ -438,10 +430,31 @@ export async function getQualifiedParticipants(flashId: number) {
     }
   }
 
-  // Filter users who completed all required tasks
-  const qualifiedParticipants = Array.from(userCompletionMap.values()).filter(
-    (user) => user.completedTasks === requiredTasks.length
-  );
+  return {
+    participants: Array.from(userCompletionMap.values()),
+    tasks: requiredTasks,
+  };
+}
 
-  return qualifiedParticipants;
+export async function getQualifiedParticipants(flashId: number) {
+  const { participants, tasks } = await getAllParticipants(flashId);
+  // Filter users who completed all required tasks
+  return participants.filter((user) => user.completedTasks === tasks.length);
+}
+
+export default async function checkFlashEnded(flash: {
+  id: number;
+  endAt: Date | null;
+  participantLimit: number | null;
+}): Promise<boolean> {
+  if (flash.endAt && new Date(flash.endAt) < new Date()) {
+    return true;
+  }
+  if (flash.participantLimit) {
+    const participants = await getQualifiedParticipants(flash.id);
+    if (participants.length >= flash.participantLimit) {
+      return true;
+    }
+  }
+  return false;
 }

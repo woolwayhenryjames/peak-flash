@@ -7,7 +7,7 @@ import {
   deleteFlash,
   type FlashWithMetrics,
   getAllFlashWithMetrics,
-  getQualifiedParticipants,
+  getAllParticipants,
   updateFlashWithTasks,
 } from "~/services/flash.server";
 import { logger } from "~/services/logger.server";
@@ -62,7 +62,7 @@ export async function action({ request }: Route.ActionArgs) {
         return { success: false, error: "Missing flash ID" };
       }
 
-      const participants = await getQualifiedParticipants(Number(id));
+      const { participants } = await getAllParticipants(Number(id));
 
       // Generate CSV content
       const csvHeader = "Name,Email,Wallet Address\n";
