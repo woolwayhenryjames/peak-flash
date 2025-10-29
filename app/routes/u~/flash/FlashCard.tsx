@@ -186,41 +186,31 @@ export default function FlashCard({
 
         {/* Tasks List */}
         <div className="mt-7 flex flex-col gap-3">
-          {tasks.map((task) => {
-            const isCompleted = task.taskUsers.some((tu) => tu.completed);
-
-            return (
-              <TaskItem
-                actionLabel={task.actionLabel}
-                actionUrl={task.actionUrl}
-                iconUrl={task.iconUrl}
-                isCompleted={isCompleted}
-                key={task.id}
-                name={task.name}
-              />
-            );
-          })}
+          {tasks.map((task) => (
+            <TaskItem key={task.id} task={task} />
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-interface TaskItemProps {
-  name: string;
-  iconUrl?: string | null;
-  actionLabel: string;
-  actionUrl?: string | null;
-  isCompleted: boolean;
-}
-
 function TaskItem({
-  name,
-  iconUrl,
-  actionLabel,
-  actionUrl,
-  isCompleted,
-}: TaskItemProps) {
+  task: { id, name, iconUrl, actionLabel, actionUrl, taskUsers },
+}: {
+  task: Route.ComponentProps["loaderData"][number]["tasks"][number];
+}) {
+  const isCompleted = taskUsers.some((tu) => tu.completed);
+
+  const checkComplete = () => {
+    fetch("/api/task", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ taskId: id }),
+    });
+  };
   const content = (
     <div
       className={cn(
@@ -252,7 +242,12 @@ function TaskItem({
 
   if (actionUrl && !isCompleted) {
     return (
-      <a href={actionUrl} rel="noopener noreferrer" target="_blank">
+      <a
+        href={actionUrl}
+        onClick={checkComplete}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         {content}
       </a>
     );
