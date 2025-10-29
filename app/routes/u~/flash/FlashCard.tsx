@@ -143,47 +143,17 @@ export default function FlashCard({
         />
 
         {/* Stats Section */}
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-evenly gap-6">
           {/* Prize Pool */}
           <div className="flex flex-col gap-2">
-            <div className="flex items-end gap-0.5">
-              <svg
-                className="mb-0.5 w-2.5"
-                fill="url(#prizeGradient)"
-                viewBox="0 0 10 18"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Prize pool icon</title>
-                <defs>
-                  <linearGradient
-                    gradientUnits="userSpaceOnUse"
-                    id="prizeGradient"
-                    x1="0%"
-                    x2="100%"
-                    y1="0%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="#6DFE74" />
-                    <stop offset="46%" stopColor="#69D7FF" />
-                  </linearGradient>
-                </defs>
-                <path d="M8.5 6.5C8.5 7.88 7.88 9.13 6.88 10L5 12.25L3.13 10C2.13 9.13 1.5 7.88 1.5 6.5C1.5 4.29 3.29 2.5 5.5 2.5H5C7.21 2.5 9 4.29 9 6.5H8.5ZM5 0C2.24 0 0 2.24 0 5C0 8.5 5 15 5 15C5 15 10 8.5 10 5C10 2.24 7.76 0 5 0Z" />
-              </svg>
-              <span
-                className="bg-clip-text font-medium text-transparent text-xl leading-tight"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(116deg, rgba(109, 254, 116, 1) 0%, rgba(105, 215, 255, 1) 46%)",
-                }}
-              >
-                {prizePool
-                  ? formatNumber(
-                      typeof prizePool === "string"
-                        ? Number.parseFloat(prizePool)
-                        : Number(prizePool)
-                    )
-                  : "TBD"}
-              </span>
+            <div
+              className="bg-clip-text font-medium text-transparent text-xl leading-tight"
+              style={{
+                backgroundImage:
+                  "linear-gradient(116deg, rgba(109, 254, 116, 1) 0%, rgba(105, 215, 255, 1) 46%)",
+              }}
+            >
+              {prizePool ? `$${formatNumber(prizePool)}` : "TBD"}
             </div>
             {prizeCurrency && (
               <div
