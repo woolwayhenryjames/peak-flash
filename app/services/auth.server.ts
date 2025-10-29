@@ -20,8 +20,9 @@ export const auth = betterAuth({
     updateAccountOnSignIn: true,
     accountLinking: {
       enabled: true,
-      trustedProviders: ["tiktok"],
+      trustedProviders: ["tiktok", "twitter"],
       updateUserInfoOnLink: true,
+      allowDifferentEmails: true,
     },
   },
   emailAndPassword: {
@@ -33,6 +34,10 @@ export const auth = betterAuth({
       clientKey: process.env.TIKTOK_CLIENT_KEY as string,
       scope: ["user.info.basic", "user.info.profile", "user.info.stats"],
       overrideUserInfoOnSignIn: true,
+    },
+    twitter: {
+      clientId: process.env.TWITTER_CLIENT_ID as string,
+      clientSecret: process.env.TWITTER_CLIENT_SECRET as string,
     },
   },
   hooks: {

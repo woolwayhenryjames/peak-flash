@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { redirect } from "react-router";
+import BindTwitter from "~/components/BindTwitter";
+import xIcon from "~/components/BindTwitter/assets/x.svg";
 import CampaignList from "~/components/CampaignList";
 import ConnectWallet from "~/components/ConnectWallet";
 import { getDbUser } from "~/services/auth.server";
@@ -214,6 +216,18 @@ export default function Profile({
           </div>
         </div>
         <ConnectWallet userWalletAddress={user.walletAddress} />
+      </div>
+
+      <div className="mx-auto mt-8 h-px w-75 bg-gray-600/50" />
+
+      <div className="flex flex-col gap-7">
+        <div className="flex gap-1">
+          <img alt="x icon" className="h-6 w-6" src={xIcon} />
+          <div className="space-y-4">
+            <h2 className="font-semibold text-white text-xl">Bind Twitter</h2>
+          </div>
+        </div>
+        <BindTwitter />
       </div>
 
       <div className="mx-auto mb-8 h-px w-75 bg-gray-600/50" />
