@@ -64,8 +64,12 @@ export default function SubmitVideoDialog({
         value={videoUrl}
       />
       {error && (
-        <div className="font-normal text-[#ff6060] text-[10px]">{error}</div>
+        <div className="px] font-normal text-[#ff6060] text-[10">{error}</div>
       )}
+      <div className="font-light text-[#fdff8e] text-[10px]">
+        * Reminder: Only submit your link manually if your video hasn’t been
+        detected after 48 hours.
+      </div>
       <div className="flex flex-col">
         <button
           className="self-end"
