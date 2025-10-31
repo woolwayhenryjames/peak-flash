@@ -20,16 +20,16 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: "/u", icon: homeIcon, activeIcon: homeIconActive, label: "Hub" },
   {
-    href: "/u/ascent",
-    icon: rocketIcon,
-    activeIcon: rocketIconActive,
-    label: "Ascent",
-  },
-  {
     href: "/u/flash",
     icon: flashIcon,
     activeIcon: flashIconActive,
     label: "Flash",
+  },
+  {
+    href: "/u/ascent",
+    icon: rocketIcon,
+    activeIcon: rocketIconActive,
+    label: "Ascent",
   },
   {
     href: "/u/invite",

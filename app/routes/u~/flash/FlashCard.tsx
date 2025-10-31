@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import GlowContainer from "~/components/GlowContainer";
+import { authClient } from "~/lib/auth-client";
 import { cn, formatNumber } from "~/lib/utils";
 import type { Route } from "./+types/_flash";
 
@@ -251,6 +251,13 @@ function TaskItem({
     }
   };
 
+  const bindX = async () => {
+    await authClient.linkSocial({
+      provider: "twitter",
+      callbackURL: "/u/flash",
+    });
+  };
+
   const actionButton = () => {
     if (isEnded && !isCompleted) {
       return (
@@ -262,9 +269,9 @@ function TaskItem({
 
     if (type === "FOLLOW_X" && !twitterAccountId) {
       return (
-        <Link to="/u/profile">
+        <button onClick={bindX} type="button">
           <GlowContainer className="text-xs">Bind Twitter</GlowContainer>
-        </Link>
+        </button>
       );
     }
 
