@@ -25,7 +25,7 @@ export default function GlowContainer({
       {/* Shimmer effect */}
       {!noShimmer && (
         <div
-          className="-skew-x-12 absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"
+          className="-skew-x-12 absolute inset-0 animate-shimmer bg-linear-to-r from-transparent via-white/20 to-transparent"
           style={{ filter: "blur(4px)" }}
         />
       )}

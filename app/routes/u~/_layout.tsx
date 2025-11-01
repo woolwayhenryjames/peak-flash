@@ -54,8 +54,8 @@ export default function Layout({ loaderData }: Route.ComponentProps) {
   return (
     <div className="mx-auto min-h-screen max-w-[720px] bg-black pb-4">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-radial from-[#12121e] to-[#0f1012] px-4 py-3 shadow-sm">
-        <div className="mx-auto flex max-w-screen-xl items-center justify-between">
+      <header className="sticky top-0 z-50 bg-radial from-[#12121e] to-[#0f1012] px-4 py-3 shadow-sm md:px-18 md:py-6">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-3">
             {showBackButton ? (
               <button

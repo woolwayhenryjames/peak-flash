@@ -78,13 +78,19 @@ export default function Flash({ loaderData: flash }: Route.ComponentProps) {
     >
       {/* Smart Reminder Header */}
       <div
-        className="flex aspect-390/131 w-full flex-col justify-center gap-3 bg-center bg-cover px-8"
+        className="flex aspect-390/131 w-full flex-col justify-center gap-3 bg-center bg-cover px-8 md:px-18"
         style={{ backgroundImage: `url(${bg})` }}
       >
         <div className="font-normal text-2xl text-white">
-          <span className="text-[#68ffa7] [text-shadow:0px_0px_1px_rgb(54_94_71/1.00)]">
+          <span
+            className="text-[#68ffa7]"
+            style={{
+              textShadow:
+                "0 0 50.98px #365E47, 0 0 29.131px #365E47, 0 0 16.993px #365E47, 0 0 8.497px #365E47, 0 0 2.428px #365E47, 0 0 1.214px #365E47",
+            }}
+          >
             FLASH
-          </span>
+          </span>{" "}
           <span>Tasks</span>
         </div>
         <div className="font-normal text-[#c1c1c1] text-base">
@@ -92,7 +98,7 @@ export default function Flash({ loaderData: flash }: Route.ComponentProps) {
         </div>
       </div>
 
-      <div className="mt-4 space-y-6 px-5 md:px-18">
+      <div className="mt-8 space-y-12 px-5 md:px-18">
         {/* Flash list will go here */}
         {flash.map((item) => (
           <FlashCard
