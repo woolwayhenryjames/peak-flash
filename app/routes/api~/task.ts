@@ -1,7 +1,6 @@
 import type { ActionFunctionArgs } from "react-router";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
-import checkFlashEnded from "~/services/flash.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   // Get the authenticated user
@@ -31,12 +30,5 @@ export async function action({ request }: ActionFunctionArgs) {
   const updatedTask = await db.taskUser.create({
     data: { taskId, userId: user.id, completed: true, completedAt: new Date() },
   });
-  if (await checkFlashEnded(task.flash)) {
-    await db.flash.update({
-      where: { id: task.flash.id },
-      data: { status: "ENDED" },
-    });
-    return new Response("Task has already ended", { status: 400 });
-  }
   return Response.json(updatedTask);
 }

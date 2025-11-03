@@ -4,7 +4,10 @@ import type {
   Prisma,
   TaskType,
 } from ".prisma/main/client";
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import {
+  type Decimal,
+  PrismaClientKnownRequestError,
+} from "@prisma/client/runtime/library";
 import { db } from "./db.server";
 
 export type FlashWithTasks = Prisma.FlashGetPayload<{
@@ -221,8 +224,13 @@ export const computeFlashMetrics = (flash: FlashWithTasks): FlashMetrics => {
   };
 };
 
-export async function getAllFlashWithMetrics(): Promise<FlashWithMetrics[]> {
+export async function getFlashWithMetrics(
+  where?: Prisma.FlashWhereInput,
+  take?: number
+): Promise<FlashWithMetrics[]> {
   const flashes = await db.flash.findMany({
+    where,
+    take,
     orderBy: [{ status: "asc" }, { startAt: "desc" }, { createdAt: "desc" }],
     include: {
       owner: {
@@ -255,6 +263,16 @@ export async function getAllFlashWithMetrics(): Promise<FlashWithMetrics[]> {
     ...flash,
     metrics: computeFlashMetrics(flash),
   }));
+}
+
+export function normalizeFlashForOutput<
+  T extends { prizePool?: Decimal | null; perUserPrize?: Decimal | null },
+>(flash: T) {
+  return {
+    ...flash,
+    prizePool: flash.prizePool?.toNumber() ?? null,
+    perUserPrize: flash.perUserPrize?.toNumber() ?? null,
+  };
 }
 
 export function createFlashWithTasks(input: FlashMutationInput) {
@@ -434,27 +452,4 @@ export async function getAllParticipants(flashId: number) {
     participants: Array.from(userCompletionMap.values()),
     tasks: requiredTasks,
   };
-}
-
-export async function getQualifiedParticipants(flashId: number) {
-  const { participants, tasks } = await getAllParticipants(flashId);
-  // Filter users who completed all required tasks
-  return participants.filter((user) => user.completedTasks === tasks.length);
-}
-
-export default async function checkFlashEnded(flash: {
-  id: number;
-  endAt: Date | null;
-  participantLimit: number | null;
-}): Promise<boolean> {
-  if (flash.endAt && new Date(flash.endAt) < new Date()) {
-    return true;
-  }
-  if (flash.participantLimit) {
-    const participants = await getQualifiedParticipants(flash.id);
-    if (participants.length >= flash.participantLimit) {
-      return true;
-    }
-  }
-  return false;
 }

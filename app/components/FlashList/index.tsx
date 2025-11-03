@@ -5,6 +5,7 @@ import { formatNumber } from "~/lib/utils";
 type FlashNormalized = Omit<Flash, "prizePool" | "perUserPrize"> & {
   prizePool: number | null;
   perUserPrize: number | null;
+  metrics: { isEnded: boolean };
 };
 
 export default function FlashList({
@@ -22,7 +23,7 @@ export default function FlashList({
         </div>
       ) : (
         flashs.map((flash) => {
-          const status = getStatusDisplay(flash);
+          const status = getStatusDisplay(flash.metrics.isEnded);
 
           return (
             <Link
@@ -71,9 +72,8 @@ export default function FlashList({
   );
 }
 
-function getStatusDisplay(flash: FlashNormalized) {
-  const expired = flash.startAt && new Date(flash.startAt) > new Date();
-  if (flash.status !== "ACTIVE" || expired) {
+function getStatusDisplay(isEnded: boolean) {
+  if (isEnded) {
     return {
       text: "Ended",
       gradient: "from-[#878788] to-[#575655]",

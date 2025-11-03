@@ -1,7 +1,9 @@
 import { redirect } from "react-router";
 import { getDbUser } from "~/services/auth.server";
-import { db } from "~/services/db.server";
-import { computeFlashMetrics } from "~/services/flash.server";
+import {
+  getFlashWithMetrics,
+  normalizeFlashForOutput,
+} from "~/services/flash.server";
 import type { Route } from "./+types/_flash";
 import bg from "./assets/bg.svg";
 import FlashCard from "./FlashCard";
@@ -12,41 +14,14 @@ export async function loader({ request }: Route.LoaderArgs) {
     throw redirect("/");
   }
 
-  const flash = await db.flash.findMany({
-    include: {
-      tasks: {
-        include: {
-          taskUsers: {
-            select: {
-              userId: true,
-              completed: true,
-              completedAt: true,
-              verificationStatus: true,
-            },
-          },
-        },
-        orderBy: {
-          order: "asc",
-        },
-      },
-    },
-    orderBy: {
-      startAt: "desc",
-    },
-  });
-  return flash.map((f) => {
-    const metrics = computeFlashMetrics(f);
-    return {
-      ...f,
-      perUserPrize: f.perUserPrize?.toNumber() ?? null,
-      prizePool: f.prizePool?.toNumber() ?? null,
-      metrics,
-      tasks: f.tasks.map((task) => ({
-        ...task,
-        taskUsers: task.taskUsers.filter((tu) => tu.userId === user.value.id),
-      })),
-    };
-  });
+  const flash = await getFlashWithMetrics();
+  return flash.map(normalizeFlashForOutput).map((f) => ({
+    ...f,
+    tasks: f.tasks.map((task) => ({
+      ...task,
+      taskUsers: task.taskUsers.filter((tu) => tu.userId === user.value.id),
+    })),
+  }));
 }
 
 export default function Flash({ loaderData: flash }: Route.ComponentProps) {

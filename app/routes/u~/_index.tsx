@@ -10,7 +10,10 @@ import QuickActions from "~/components/QuickActions";
 import StartEarningSection from "~/components/StartEarningSection";
 import { getDbUser } from "~/services/auth.server";
 import { getCampaignsForUser } from "~/services/campaign.server";
-import { db } from "~/services/db.server";
+import {
+  getFlashWithMetrics,
+  normalizeFlashForOutput,
+} from "~/services/flash.server";
 import type { Route } from "./+types/_index";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -69,25 +72,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     3
   );
 
-  const flashs = await db.flash.findMany({
-    where: {
-      status: "ACTIVE",
-      startAt: { lte: new Date() },
-      OR: [{ endAt: null }, { endAt: { gte: new Date() } }],
-    },
-    orderBy: {
-      startAt: "desc",
-    },
-  });
+  const flashs = await getFlashWithMetrics({ status: "ACTIVE" }, 3);
 
   return {
     user: user.value,
     campaigns: campaigns.campaigns,
-    flashs: flashs.map((f) => ({
-      ...f,
-      perUserPrize: f.perUserPrize?.toNumber() ?? null,
-      prizePool: f.prizePool?.toNumber() ?? null,
-    })),
+    flashs: flashs.map(normalizeFlashForOutput),
   };
 }
 
@@ -104,7 +94,7 @@ export default function Hub({
       </div>
       <HomeSeparator />
       <div className="space-y-6 from-[#090917] to-black px-6 max-md:bg-linear-to-b md:mx-auto md:mt-6 md:px-18">
-        <div className="mb-10 flex items-center justify-between md:px-6">
+        <div className="mb-10 flex items-center justify-between">
           <div className="flex items-center gap-1">
             <svg
               fill="none"
@@ -147,7 +137,7 @@ export default function Hub({
           </Link>
         </div>
         <CampaignList campaigns={campaigns} />
-        <div className="mb-10 flex items-center justify-between md:px-6">
+        <div className="mt-18 mb-10 flex items-center justify-between">
           <div className="flex items-center gap-1">
             <svg
               fill="none"

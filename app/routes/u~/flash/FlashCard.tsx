@@ -113,13 +113,17 @@ export default function FlashCard({
       {showRemainingPrizes && (
         <div className="mt-7 flex items-center justify-end gap-2">
           <svg
-            className="size-2.5"
-            fill="#68FFA7"
+            fill="none"
+            height="16"
             viewBox="0 0 10 16"
+            width="10"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <title>Prize icon</title>
-            <path d="M5 0L10 8H0L5 0ZM5 16L0 8H10L5 16Z" />
+            <title>lighting</title>
+            <path
+              d="M9.60756 7.32339H6.93669C6.69601 7.32339 6.51209 7.08721 6.55122 6.82976L7.50217 0.495542C7.56478 0.080637 7.09322 -0.170434 6.82907 0.135958L0.105891 7.95957C-0.126955 8.23192 0.0491465 8.67661 0.391567 8.67661H3.06245C3.30312 8.67661 3.48705 8.91279 3.44791 9.17025L2.49696 15.5045C2.43435 15.9194 2.90591 16.1704 3.17006 15.864L9.89324 8.04043C10.128 7.76808 9.94999 7.32339 9.60756 7.32339Z"
+              fill="#68FFA7"
+            />
           </svg>
           <span className="font-normal text-[#68FFA7] text-xs leading-relaxed">
             Remaining Prizes: {formatNumber(Math.max(remainingPrizes ?? 0, 0))}
@@ -250,19 +254,21 @@ function TaskItem({
 
     if (isCompleted) {
       return (
-        <svg
-          fill="none"
-          height="24"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <title>Completed</title>
-          <path
-            d="M6.71184 10.7794L9.966 17.0842C9.966 17.0842 15.2542 4.27104 23.5932 0C23.3902 3.0504 22.5766 5.69496 24 8.94912C20.3388 9.76176 12.8136 18.9144 10.373 23.3887C6.91536 19.1179 2.8476 15.8638 0 14.8462L6.71184 10.7794Z"
-            fill="#54C18E"
-          />
-        </svg>
+        <div className="grid min-w-16 place-items-center py-[7px] md:min-w-24">
+          <svg
+            fill="none"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <title>Completed</title>
+            <path
+              d="M6.71184 10.7794L9.966 17.0842C9.966 17.0842 15.2542 4.27104 23.5932 0C23.3902 3.0504 22.5766 5.69496 24 8.94912C20.3388 9.76176 12.8136 18.9144 10.373 23.3887C6.91536 19.1179 2.8476 15.8638 0 14.8462L6.71184 10.7794Z"
+              fill="#54C18E"
+            />
+          </svg>
+        </div>
       );
     }
 

@@ -6,8 +6,8 @@ import {
   createFlashWithTasks,
   deleteFlash,
   type FlashWithMetrics,
-  getAllFlashWithMetrics,
   getAllParticipants,
+  getFlashWithMetrics,
   updateFlashWithTasks,
 } from "~/services/flash.server";
 import { logger } from "~/services/logger.server";
@@ -36,7 +36,7 @@ export function meta() {
 }
 
 export async function loader() {
-  const flashes = await getAllFlashWithMetrics();
+  const flashes = await getFlashWithMetrics();
   const usersResult = await getAllBusinessUsers();
 
   return {
