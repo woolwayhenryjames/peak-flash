@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import { redirect } from "react-router";
-import { authClient } from "~/lib/auth-client";
+import { useTwitterAccount } from "~/lib/useTwitterAccount";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import { computeFlashMetrics } from "~/services/flash.server";
@@ -52,22 +51,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Flash({ loaderData: flash }: Route.ComponentProps) {
-  const [twitterAccountId, setTwitterAccountId] = useState<string>();
+  const { twitterAccountId } = useTwitterAccount();
 
-  useEffect(() => {
-    const checkAccount = async () => {
-      const accounts = await authClient.listAccounts();
-      if (accounts.data) {
-        const twitterAccount = accounts.data.find(
-          (account) => account.providerId === "twitter"
-        );
-        if (twitterAccount) {
-          setTwitterAccountId(twitterAccount.accountId);
-        }
-      }
-    };
-    checkAccount();
-  }, []);
   return (
     <div
       className="min-h-screen pb-24"

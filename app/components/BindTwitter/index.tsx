@@ -1,60 +1,21 @@
-import { useEffect, useState } from "react";
-import { authClient } from "~/lib/auth-client";
+import { useTwitterAccount } from "~/lib/useTwitterAccount";
 import xIcon from "./assets/x.svg";
 
 export default function BindTwitter() {
-  const [twitterHandle, setTwitterHandle] = useState<string>();
-  const [twitterAccountId, setTwitterAccountId] = useState<string>();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAccount = async () => {
-      try {
-        const accounts = await authClient.listAccounts();
-        if (accounts.data) {
-          const twitterAccount = accounts.data.find(
-            (account) => account.providerId === "twitter"
-          );
-          if (twitterAccount) {
-            setTwitterAccountId(twitterAccount.accountId);
-            const info = await authClient.accountInfo({
-              accountId: twitterAccount.accountId,
-            });
-            setTwitterHandle(
-              info.data?.data.data.username ?? info.data?.user.name
-            );
-          }
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    checkAccount();
-  }, []);
+  const { twitterHandle, isLoading, unlinkTwitterAccount, linkTwitterAccount } =
+    useTwitterAccount();
 
   const handleClick = async () => {
     if (isLoading) {
       return;
     }
 
-    setIsLoading(true);
-    try {
-      if (twitterHandle && twitterAccountId) {
-        // Disconnect
-        await authClient.unlinkAccount({
-          providerId: "twitter",
-          accountId: twitterAccountId,
-        });
-        setTwitterHandle(undefined);
-      } else {
-        // Connect
-        await authClient.linkSocial({
-          provider: "twitter",
-          callbackURL: "/u/profile",
-        });
-      }
-    } finally {
-      setIsLoading(false);
+    if (twitterHandle) {
+      // Disconnect
+      await unlinkTwitterAccount();
+    } else {
+      // Connect
+      await linkTwitterAccount("/u/profile");
     }
   };
   return (
