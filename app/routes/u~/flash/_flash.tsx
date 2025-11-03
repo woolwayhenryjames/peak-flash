@@ -1,5 +1,4 @@
 import { redirect } from "react-router";
-import { useTwitterAccount } from "~/lib/useTwitterAccount";
 import { getDbUser } from "~/services/auth.server";
 import { db } from "~/services/db.server";
 import { computeFlashMetrics } from "~/services/flash.server";
@@ -51,8 +50,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Flash({ loaderData: flash }: Route.ComponentProps) {
-  const { twitterAccountId } = useTwitterAccount();
-
   return (
     <div
       className="min-h-screen pb-24"
@@ -86,11 +83,7 @@ export default function Flash({ loaderData: flash }: Route.ComponentProps) {
       <div className="mt-8 space-y-12 px-5 md:px-18">
         {/* Flash list will go here */}
         {flash.map((item) => (
-          <FlashCard
-            flash={item}
-            key={item.id}
-            twitterAccountId={twitterAccountId}
-          />
+          <FlashCard flash={item} key={item.id} />
         ))}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import GlowContainer from "~/components/GlowContainer";
-import { authClient } from "~/lib/auth-client";
+import { useTwitterAccount } from "~/lib/useTwitterAccount";
 import { cn, formatNumber } from "~/lib/utils";
 import type { Route } from "./+types/_flash";
 
@@ -16,10 +16,8 @@ export default function FlashCard({
     bannerImage,
     metrics,
   },
-  twitterAccountId,
 }: {
   flash: Route.ComponentProps["loaderData"][number];
-  twitterAccountId: string | undefined;
 }) {
   const participantsCount = metrics.participantCount;
   const remainingPrizes = metrics.remainingPrizes;
@@ -194,12 +192,7 @@ export default function FlashCard({
           </div>
         ) : (
           tasks.map((task) => (
-            <TaskItem
-              isEnded={isEnded}
-              key={task.id}
-              task={task}
-              twitterAccountId={twitterAccountId}
-            />
+            <TaskItem isEnded={isEnded} key={task.id} task={task} />
           ))
         )}
       </div>
@@ -209,14 +202,13 @@ export default function FlashCard({
 
 function TaskItem({
   task,
-  twitterAccountId,
   isEnded,
 }: {
   task: Route.ComponentProps["loaderData"][number]["tasks"][number];
-  twitterAccountId: string | undefined;
   isEnded: boolean;
 }) {
   const { id, name, iconUrl, actionLabel, actionUrl, taskUsers, type } = task;
+  const { twitterAccountId, linkTwitterAccount } = useTwitterAccount();
   const [isCompleted, setIsCompleted] = useState(
     taskUsers.some((tu) => tu.completed)
   );
@@ -241,10 +233,7 @@ function TaskItem({
   };
 
   const bindX = async () => {
-    await authClient.linkSocial({
-      provider: "twitter",
-      callbackURL: "/u/flash",
-    });
+    await linkTwitterAccount("/u/flash");
   };
 
   const actionButton = () => {
