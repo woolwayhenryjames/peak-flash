@@ -5,7 +5,7 @@ import {
   normalizeFlashForOutput,
 } from "~/services/flash.server";
 import type { Route } from "./+types/_flash";
-import bg from "./assets/bg.svg";
+import bg from "./assets/bg.avif";
 import FlashCard from "./FlashCard";
 
 export async function loader({ request }: Route.LoaderArgs) {
