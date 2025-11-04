@@ -19,6 +19,7 @@ model User {
   invitees  User[]  @relation("UserInvitations")
 
   walletAddress String? @db.Text
+  twitterHandle String? @db.Text
   rank          Int?
   isBusiness    Boolean @default(false)
   isAdmin       Boolean @default(false)

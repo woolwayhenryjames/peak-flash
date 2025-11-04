@@ -7,6 +7,7 @@ import {
   checkUserCampaignAlgo,
   updateUserPoints,
 } from "~/services/score-algo-api";
+import { saveTwitterHandle } from "~/services/twitter.server";
 import { updateUserInfo } from "~/services/updateUserInfo";
 import { persistUserImage } from "~/services/user.server";
 import { walletPlugin } from "~/services/walletPlugin.auth.server";
@@ -42,7 +43,7 @@ export const auth = betterAuth({
     },
   },
   hooks: {
-    after: createAuthMiddleware((ctx) => {
+    after: createAuthMiddleware(async (ctx) => {
       const newSession = ctx.context.newSession;
       logger.debug("New session created:", newSession);
       if (newSession) {
@@ -51,6 +52,28 @@ export const auth = betterAuth({
         updateUserInfo({ user: newSession.user });
         setTimeout(() => updateUserPoints(), 10_000);
       }
+
+      // Handle Twitter account linking
+      const returned = ctx.context.returned;
+
+      if (
+        returned &&
+        typeof returned === "object" &&
+        "data" in returned &&
+        returned.data &&
+        typeof returned.data === "object" &&
+        "data" in returned.data &&
+        returned.data.data &&
+        typeof returned.data.data === "object" &&
+        "username" in returned.data.data &&
+        "id" in returned.data.data
+      ) {
+        await saveTwitterHandle({
+          accountId: String(returned.data.data.id),
+          twitterHandle: String(returned.data.data.username),
+        });
+      }
+
       return Promise.resolve();
     }),
   },
