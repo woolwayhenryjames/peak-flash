@@ -190,7 +190,7 @@ export const computeFlashMetrics = (flash: FlashWithTasks): FlashMetrics => {
   }
 
   const now = new Date();
-  const manuallyEnded = flash.status === "ENDED" || flash.status === "ARCHIVED";
+  const manuallyEnded = flash.status === "ENDED";
   const timeEnded = flash.endAt
     ? flash.endAt.getTime() <= now.getTime()
     : false;
@@ -201,16 +201,12 @@ export const computeFlashMetrics = (flash: FlashWithTasks): FlashMetrics => {
     manuallyEnded || timeEnded || participantEnded || prizeDepleted;
 
   let statusLabel: FlashMetrics["statusLabel"] = "draft";
-  if (flash.status === "ARCHIVED") {
-    statusLabel = "archived";
-  } else if (isEnded) {
+  if (isEnded) {
     statusLabel = "ended";
   } else if (flash.status === "ACTIVE") {
     statusLabel = "active";
   } else if (flash.startAt > now) {
     statusLabel = "upcoming";
-  } else if (flash.status === "DRAFT") {
-    statusLabel = "active";
   }
 
   return {

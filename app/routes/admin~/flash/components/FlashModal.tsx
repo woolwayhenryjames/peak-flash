@@ -1,7 +1,23 @@
 import type { FlashTrackingMode, TaskType, User } from ".prisma/main/client";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Form, useActionData } from "react-router";
 import DialogWithCloseButton from "~/components/Dialogs/DialogWithCloseButton";
+import { Button } from "~/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "~/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "~/components/ui/popover";
+import { cn } from "~/lib/utils";
 import type { Route } from "../+types/_a_flash";
 
 type ActionData =
@@ -118,6 +134,8 @@ export function FlashModal({
   const [prizePool, setPrizePool] = useState<string>("");
   const [perUserPrize, setPerUserPrize] = useState<string>("");
   const [participantLimit, setParticipantLimit] = useState<string>("");
+  const [selectedOwnerId, setSelectedOwnerId] = useState<string>("");
+  const [ownerSearchOpen, setOwnerSearchOpen] = useState(false);
 
   const submitButtonLabel = (() => {
     if (isSubmitting) {
@@ -135,6 +153,7 @@ export function FlashModal({
       setPrizePool(decimalToInputValue(flash.prizePool));
       setPerUserPrize(decimalToInputValue(flash.perUserPrize));
       setParticipantLimit(flash.participantLimit?.toString() ?? "");
+      setSelectedOwnerId(flash.ownerId ?? "");
       setTasks(
         flash.tasks.length
           ? flash.tasks.map((task) => ({
@@ -156,6 +175,7 @@ export function FlashModal({
       setPrizePool("");
       setPerUserPrize("");
       setParticipantLimit("");
+      setSelectedOwnerId("");
       setTasks([createEmptyTask(0)]);
     }
   }, [flash]);
@@ -290,20 +310,64 @@ export function FlashModal({
             <label className="label" htmlFor="ownerId">
               <span className="label-text font-semibold">Flash Owner</span>
             </label>
-            <select
-              className="select select-bordered focus:select-primary w-full"
-              defaultValue={flash?.ownerId ?? ""}
-              id="ownerId"
+            <input
               name="ownerId"
               required
-            >
-              <option value="">Select owner</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name || user.email} ({user.email})
-                </option>
-              ))}
-            </select>
+              type="hidden"
+              value={selectedOwnerId}
+            />
+            <Popover onOpenChange={setOwnerSearchOpen} open={ownerSearchOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  aria-expanded={ownerSearchOpen}
+                  className="w-full justify-between font-normal"
+                  role="combobox"
+                  variant="outline"
+                >
+                  {selectedOwnerId
+                    ? (() => {
+                        const selectedUser = users.find(
+                          (user) => user.id === selectedOwnerId
+                        );
+                        return selectedUser
+                          ? `${selectedUser.name || selectedUser.email} (${selectedUser.email})`
+                          : "Select owner";
+                      })()
+                    : "Select owner"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[400px] p-0">
+                <Command>
+                  <CommandInput placeholder="Search users..." />
+                  <CommandList>
+                    <CommandEmpty>No user found.</CommandEmpty>
+                    <CommandGroup>
+                      {users.map((user) => (
+                        <CommandItem
+                          key={user.id}
+                          onSelect={() => {
+                            setSelectedOwnerId(user.id);
+                            setOwnerSearchOpen(false);
+                          }}
+                          value={`${user.name || user.email} ${user.email}`}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedOwnerId === user.id
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          {user.name || user.email} ({user.email})
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             <span className="label-text-alt mt-1">
               Owner will receive detailed reporting for this flash task.
             </span>
