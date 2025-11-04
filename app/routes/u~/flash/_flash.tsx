@@ -15,13 +15,32 @@ export async function loader({ request }: Route.LoaderArgs) {
   }
 
   const flash = await getFlashWithMetrics();
-  return flash.map(normalizeFlashForOutput).map((f) => ({
-    ...f,
-    tasks: f.tasks.map((task) => ({
-      ...task,
-      taskUsers: task.taskUsers.filter((tu) => tu.userId === user.value.id),
-    })),
-  }));
+  return flash
+    .map(normalizeFlashForOutput)
+    .map((f) => ({
+      ...f,
+      tasks: f.tasks.map((task) => ({
+        ...task,
+        taskUsers: task.taskUsers.filter((tu) => tu.userId === user.value.id),
+      })),
+    }))
+    .sort((a, b) => {
+      // Primary sort: isEnded (false/active first, true/ended last)
+      if (a.metrics.isEnded !== b.metrics.isEnded) {
+        return a.metrics.isEnded ? 1 : -1;
+      }
+
+      // Secondary sort: preserve date ordering (startAt desc, then createdAt desc)
+      const aStartAt = a.startAt?.getTime() ?? 0;
+      const bStartAt = b.startAt?.getTime() ?? 0;
+      if (aStartAt !== bStartAt) {
+        return bStartAt - aStartAt; // desc
+      }
+
+      const aCreatedAt = a.createdAt?.getTime() ?? 0;
+      const bCreatedAt = b.createdAt?.getTime() ?? 0;
+      return bCreatedAt - aCreatedAt; // desc
+    });
 }
 
 export default function Flash({ loaderData: flash }: Route.ComponentProps) {
