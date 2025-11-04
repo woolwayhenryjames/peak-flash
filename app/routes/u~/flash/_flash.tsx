@@ -76,9 +76,13 @@ export default function Flash({ loaderData: flash }: Route.ComponentProps) {
 
       <div className="mt-8 space-y-12 px-5 md:px-18">
         {/* Flash list will go here */}
-        {flash.map((item) => (
-          <FlashCard flash={item} key={item.id} />
-        ))}
+        {flash.length === 0 ? (
+          <div className="text-center font-normal text-[#c1c1c1] text-lg">
+            There is no task yet. Stay tuned!
+          </div>
+        ) : (
+          flash.map((item) => <FlashCard flash={item} key={item.id} />)
+        )}
       </div>
     </div>
   );
