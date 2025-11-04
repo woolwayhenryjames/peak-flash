@@ -50,7 +50,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
           sideOffset={12}
         >
           {/* Username Section */}
-          <div className="flex items-center gap-[10px] px-7 py-4 text-center font-normal text-white text-xs leading-[1.5]">
+          <div className="flex items-center gap-2.5 px-7 py-4 text-center font-normal text-white text-xs leading-normal">
             @{hideMiddleOfString(user.email || "user")}
           </div>
 
@@ -59,7 +59,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
 
           {/* Profile Section */}
           <Link
-            className="flex items-center gap-[10px] px-7 py-4 hover:bg-white/7"
+            className="flex items-center gap-2.5 px-7 py-4 hover:bg-white/7"
             onClick={() => setPopoverOpen(false)}
             to="/u/profile"
           >
@@ -71,7 +71,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
 
           {/* Help Center Section */}
           <Link
-            className="flex items-center gap-[10px] px-7 py-4 hover:bg-white/7"
+            className="flex items-center gap-2.5 px-7 py-4 hover:bg-white/7"
             onClick={() => setPopoverOpen(false)}
             to="/u/help-center"
           >
@@ -81,18 +81,18 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
               className="size-3"
               src={helpCenterIcon}
             />
-            <span className="font-normal text-white text-xs leading-[1.5]">
+            <span className="font-normal text-white text-xs leading-normal">
               Help Center
             </span>
           </Link>
 
           <Link
-            className="flex items-center gap-[10px] px-7 py-4 hover:bg-white/7"
+            className="flex items-center gap-2.5 px-7 py-4 hover:bg-white/7"
             onClick={() => setPopoverOpen(false)}
             to="/"
           >
             <HomeIcon className="size-3 text-white" />
-            <span className="font-normal text-white text-xs leading-[1.5]">
+            <span className="font-normal text-white text-xs leading-normal">
               Homepage
             </span>
           </Link>
@@ -102,7 +102,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
 
           {/* Sign Out Section */}
           <button
-            className="flex w-full gap-[10px] px-7 py-4 hover:bg-white/7"
+            className="flex w-full gap-2.5 px-7 py-4 hover:bg-white/7 focus:outline-none"
             onClick={() => setShowConfirmSignOut(true)}
             type="button"
           >
@@ -112,7 +112,7 @@ export default function ProfileDetails({ user }: ProfileDetailsProps) {
               className="size-3"
               src={signOutIcon}
             />
-            <span className="font-normal text-[#E06868] text-xs leading-[1.5]">
+            <span className="font-normal text-[#E06868] text-xs leading-normal">
               Sign Out
             </span>
           </button>
