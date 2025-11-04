@@ -6,7 +6,6 @@ import {
   createFlashWithTasks,
   deleteFlash,
   type FlashWithMetrics,
-  getAllParticipants,
   getFlashWithMetrics,
   updateFlashWithTasks,
 } from "~/services/flash.server";
@@ -57,30 +56,6 @@ export async function action({ request }: Route.ActionArgs) {
   const { intent, id, data } = await transformFormData(request);
 
   try {
-    if (intent === "download") {
-      if (!id) {
-        return { success: false, error: "Missing flash ID" };
-      }
-
-      const { participants } = await getAllParticipants(Number(id));
-
-      // Generate CSV content
-      const csvHeader = "Name,Email,Wallet Address\n";
-      const csvRows = participants
-        .map((p) => `"${p.name}","${p.email}","${p.walletAddress}"`)
-        .join("\n");
-      const csvContent = csvHeader + csvRows;
-
-      // Return CSV as a downloadable response
-      return new Response(csvContent, {
-        status: 200,
-        headers: {
-          "Content-Type": "text/csv",
-          "Content-Disposition": `attachment; filename="flash-participants-${id}.csv"`,
-        },
-      });
-    }
-
     if (intent === "delete") {
       if (!id) {
         return { success: false, error: "Missing flash ID" };
@@ -370,9 +345,10 @@ export default function AdminFlash({
                   </td>
                   <td className="px-6 py-4 text-right font-medium text-sm">
                     <div className="flex items-center justify-end gap-3">
-                      <Form method="post">
-                        <input name="intent" type="hidden" value="download" />
-                        <input name="id" type="hidden" value={flash.id} />
+                      <form
+                        action={`/api/downloadTaskInfo/${flash.id}`}
+                        method="get"
+                      >
                         <button
                           className="text-green-400 hover:text-green-300 disabled:opacity-60"
                           disabled={
@@ -388,7 +364,7 @@ export default function AdminFlash({
                         >
                           Download
                         </button>
-                      </Form>
+                      </form>
                       <button
                         className="text-indigo-400 hover:text-indigo-300"
                         onClick={() => setEditingFlash(flash)}

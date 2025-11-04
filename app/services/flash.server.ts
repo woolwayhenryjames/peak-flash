@@ -384,13 +384,8 @@ export async function getAllParticipants(flashId: number) {
     where: { id: flashId },
     include: {
       tasks: {
-        where: { isRequired: true },
         include: {
           taskUsers: {
-            where: {
-              completed: true,
-              verificationStatus: "APPROVED",
-            },
             include: {
               user: {
                 select: {
@@ -398,6 +393,7 @@ export async function getAllParticipants(flashId: number) {
                   name: true,
                   email: true,
                   walletAddress: true,
+                  twitterHandle: true,
                 },
               },
             },
@@ -408,16 +404,16 @@ export async function getAllParticipants(flashId: number) {
   });
 
   if (!flash) {
-    return { participants: [], tasks: [] };
+    return { flash, participants: [], tasks: [] };
   }
 
   // Get all required tasks
   const requiredTasks = flash.tasks;
   if (requiredTasks.length === 0) {
-    return { participants: [], tasks: [] };
+    return { flash, participants: [], tasks: [] };
   }
 
-  // Track which users completed all required tasks
+  // Track which users completed which tasks
   const userCompletionMap = new Map<
     string,
     {
@@ -425,7 +421,14 @@ export async function getAllParticipants(flashId: number) {
       name: string;
       email: string;
       walletAddress: string | null;
-      completedTasks: number;
+      twitterHandle: string | null;
+      completedTasks: Array<{
+        taskId: number;
+        taskName: string;
+        completed: boolean;
+        completedAt: Date | null;
+        verificationStatus: string;
+      }>;
     }
   >();
 
@@ -434,21 +437,31 @@ export async function getAllParticipants(flashId: number) {
       const userId = taskUser.user.id;
       const existing = userCompletionMap.get(userId);
 
+      const taskCompletion = {
+        taskId: task.id,
+        taskName: task.name,
+        completed: taskUser.completed,
+        completedAt: taskUser.completedAt,
+        verificationStatus: taskUser.verificationStatus,
+      };
+
       if (existing) {
-        existing.completedTasks += 1;
+        existing.completedTasks.push(taskCompletion);
       } else {
         userCompletionMap.set(userId, {
           userId: taskUser.user.id,
           name: taskUser.user.name,
           email: taskUser.user.email,
           walletAddress: taskUser.user.walletAddress,
-          completedTasks: 1,
+          twitterHandle: taskUser.user.twitterHandle,
+          completedTasks: [taskCompletion],
         });
       }
     }
   }
 
   return {
+    flash,
     participants: Array.from(userCompletionMap.values()),
     tasks: requiredTasks,
   };
