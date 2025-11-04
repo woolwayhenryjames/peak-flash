@@ -1,8 +1,6 @@
 enum FlashStatus {
-  DRAFT
   ACTIVE
   ENDED
-  ARCHIVED
 }
 
 enum FlashTrackingMode {
@@ -27,7 +25,7 @@ model Flash {
   name             String             @db.Text
   message          String?            @db.Text
   description      String?            @db.Text
-  status           FlashStatus        @default(DRAFT)
+  status           FlashStatus        @default(ACTIVE)
   prizePool        Decimal?           @db.Decimal(18, 2)
   prizeCurrency    String?            @db.VarChar(10)
   perUserPrize     Decimal?           @db.Decimal(18, 2)

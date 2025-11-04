@@ -232,7 +232,7 @@ function TaskItem({
       body: JSON.stringify({ taskId: id }),
     });
     if (response.ok) {
-      setIsCompleted(true);
+      setTimeout(() => setIsCompleted(true), 3000);
     }
   };
 

@@ -349,14 +349,12 @@ export function FlashModal({
             </label>
             <select
               className="select select-bordered focus:select-primary w-full"
-              defaultValue={flash?.status ?? "DRAFT"}
+              defaultValue={flash?.status ?? "ACTIVE"}
               id="status"
               name="status"
             >
-              <option value="DRAFT">Draft</option>
               <option value="ACTIVE">Active</option>
               <option value="ENDED">Ended</option>
-              <option value="ARCHIVED">Archived</option>
             </select>
           </div>
 
