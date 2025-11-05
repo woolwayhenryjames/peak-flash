@@ -174,7 +174,24 @@ function InviteRecordItem({
   };
   isExpanded: boolean;
   onToggle: () => void;
-  inviterUser: { id: string; name: string; email: string };
+  inviterUser: {
+    id: string;
+    name: string;
+    email: string;
+    campaignUsers: Array<{
+      id: number;
+      createdAt: Date;
+      updatedAt: Date;
+      rank: number | null;
+      campaignId: string;
+      userId: string;
+      baseScore: number;
+      bonusScore: number;
+      score: number;
+      joinedAt: Date;
+      videoCount: number;
+    }>;
+  };
 }) {
   return (
     <div>
