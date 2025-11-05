@@ -25,16 +25,17 @@ model User {
   isAdmin       Boolean @default(false)
 
   // TikTok profile data
-  bio                String?    @db.Text
+  bio                String?      @db.Text
   followerCount      Int?
   followingCount     Int?
-  isStar             Boolean    @default(false)
+  isStar             Boolean      @default(false)
   visibleVideosCount Int?
   likeCount          Int?
-  Campaign           Campaign[] @relation("CampaignOwner")
-  Flash              Flash[]    @relation("FlashOwner")
-  firstComerBadge    Boolean    @default(false)
+  Campaign           Campaign[]   @relation("CampaignOwner")
+  Flash              Flash[]      @relation("FlashOwner")
+  firstComerBadge    Boolean      @default(false)
   TaskUser           TaskUser[]
+  TreasureBox        TreasureBox?
 
   @@unique([email])
   @@index([id])

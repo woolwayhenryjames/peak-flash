@@ -1,4 +1,5 @@
-import { useState } from "react";
+/** biome-ignore-all lint/style/noNestedTernary: not written by dev team */
+import { useEffect, useState } from "react";
 import { redirect } from "react-router";
 import ConnectWallet from "~/components/ConnectWallet";
 import GlowContainer from "~/components/GlowContainer";
@@ -6,221 +7,302 @@ import InviteeCampaigns from "~/components/inviteeCampaigns";
 import { cn } from "~/lib/utils";
 import { getDbUser } from "~/services/auth.server";
 import { logger } from "~/services/logger.server";
+import {
+  getOrCreatePool,
+  getOrCreateTreasureBox,
+  getWeekStartDate,
+  updateTreasureBoxProgress,
+} from "~/services/treasurebox.server";
 import { getUserInviteRecords } from "~/services/user.server";
 import fb from "../invite/assets/fb.svg";
 import ins from "../invite/assets/ins.png";
-import starsIcon from "../invite/assets/stars.svg";
 import tg from "../invite/assets/tg.svg";
 import tiktok from "../invite/assets/tiktok.svg";
 import whatsapp from "../invite/assets/whatsapp.png";
 import x from "../invite/assets/x.svg";
-import leaderboardBg from "../leaderboard/assets/bg.avif";
 import type { Route } from "./+types/_lucky";
 
-// API 接口类型定义
-interface LuckyApiResponse {
-  success: boolean;
-  user_id: string;
-  usdt: number;
-  reward: number;
-  claim: boolean;
+// Helper component for Progress Bar
+function ProgressBar({
+  totalProgress,
+  tier1Reached,
+  tier2Reached,
+  tier3Reached,
+}: {
+  totalProgress: number;
+  tier1Reached: boolean;
+  tier2Reached: boolean;
+  tier3Reached: boolean;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <span className="font-semibold text-sm text-white">
+          Current Progress
+        </span>
+        <span className="font-bold text-2xl text-white">
+          {totalProgress.toFixed(1)}%
+        </span>
+      </div>
+
+      <div className="relative pt-10">
+        <div className="relative h-12 overflow-hidden rounded-full border-2 border-[#6CFBD3]/40 bg-gradient-to-r from-[#1a1a2e] via-[#16213e] to-[#0f3460] shadow-[0_0_30px_rgba(108,251,211,0.3)]">
+          <div
+            className="absolute h-full bg-gradient-to-r from-[#00d4aa] via-[#00e4c3] to-[#00f2dc] shadow-[0_0_25px_rgba(0,228,195,0.6)] transition-all duration-700 ease-out"
+            style={{ width: `${totalProgress}%` }}
+          >
+            <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.5),transparent)]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/30 to-transparent" />
+            <div className="absolute top-0 right-0 left-0 h-1/3 bg-gradient-to-b from-white/40 to-transparent" />
+          </div>
+
+          <div className="absolute inset-0 flex items-center">
+            {[
+              { pos: 80, reached: tier1Reached },
+              { pos: 90, reached: tier2Reached },
+              { pos: 100, reached: tier3Reached },
+            ].map((tier) => (
+              <div
+                className="-translate-x-1/2 absolute z-10"
+                key={tier.pos}
+                style={{ left: `${tier.pos}%` }}
+              >
+                <div
+                  className={cn(
+                    "-top-9 -translate-x-1/2 absolute left-1/2 whitespace-nowrap rounded-lg px-3 py-1.5 font-bold text-sm shadow-lg transition-all duration-300",
+                    tier.reached
+                      ? "border-2 border-green-400/60 bg-gradient-to-b from-green-900/90 to-green-950/90 text-green-300 shadow-[0_0_15px_rgba(34,197,94,0.4)]"
+                      : "border-2 border-[#6CFBD3]/50 bg-gradient-to-b from-gray-900/90 to-black/90 text-[#6CFBD3] shadow-[0_0_10px_rgba(108,251,211,0.3)]"
+                  )}
+                >
+                  {tier.pos}%
+                </div>
+                <div
+                  className={cn(
+                    "h-12 w-1 rounded-full transition-all duration-300",
+                    tier.reached
+                      ? "bg-gradient-to-b from-green-300 to-green-500 shadow-[0_0_15px_rgba(34,197,94,1)]"
+                      : "bg-gradient-to-b from-[#6CFBD3] to-[#4DB8A3] shadow-[0_0_10px_rgba(108,251,211,0.6)]"
+                  )}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
-// Early Bird Bonus API 接口类型定义
-interface EarlyBirdBonusApiResponse {
-  success: boolean;
-  user_id: string;
-  bonus_amount: number;
-  score: number;
-  is_distributed: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-// 调用Lucky API获取用户数据
-async function fetchUserLuckyData(
-  userId: string
-): Promise<LuckyApiResponse | null> {
-  try {
-    console.log("[Lucky API] ===== 开始API调用 =====");
-    const apiUrl = `https://api.distant.fun/api/user/${userId}`;
-    console.log(`[Lucky API] API URL: ${apiUrl}`);
-    console.log("[Lucky API] 用户ID类型:", typeof userId, "值:", userId);
-    console.log("[Lucky API] 用户ID长度:", userId.length);
-    logger.info(
-      `[Lucky API] Fetching user data for ID: ${userId} from: ${apiUrl}`
+// Helper component for Status Message
+function StatusMessage({
+  tier1Reached,
+  tier2Reached,
+  tier3Reached,
+  totalProgress,
+}: {
+  tier1Reached: boolean;
+  tier2Reached: boolean;
+  tier3Reached: boolean;
+  totalProgress: number;
+}) {
+  if (tier3Reached) {
+    return (
+      <div className="rounded-xl border border-green-500/50 bg-green-900/20 p-4 text-center">
+        <p className="font-bold text-green-300 text-lg">
+          🎉 Congratulations! 100% Unlocked!
+        </p>
+        <p className="mt-2 text-green-400 text-sm">
+          You'll receive{" "}
+          <span className="font-bold text-[#6CFBD3]">10 USDT</span> after the
+          event ends
+        </p>
+      </div>
     );
-
-    console.log("[Lucky API] 发送请求中...");
-    const startTime = Date.now();
-
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache", // 确保每次都获取最新数据
-      },
-    });
-
-    const endTime = Date.now();
-    console.log(`[Lucky API] 请求完成，耗时: ${endTime - startTime}ms`);
-    console.log(
-      `[Lucky API] 响应状态: ${response.status} ${response.statusText}`
-    );
-    logger.info(`[Lucky API] Response status: ${response.status}`);
-
-    if (!response.ok) {
-      console.log(
-        `[Lucky API] ❌ 请求失败: ${response.status} ${response.statusText}`
-      );
-      logger.warn(
-        `[Lucky API] Request failed: ${response.status} ${response.statusText}`
-      );
-      return null;
-    }
-
-    console.log("[Lucky API] 解析响应数据...");
-    const data = (await response.json()) as LuckyApiResponse;
-    console.log("[Lucky API] 原始响应数据:", data);
-    logger.info(`[Lucky API] Raw response for user ${userId}:`, data);
-
-    // 检查响应格式
-    console.log("[Lucky API] 验证响应格式...");
-    if (data && typeof data === "object" && "success" in data) {
-      console.log("[Lucky API] 响应格式正确");
-      if (data.success) {
-        console.log("[Lucky API] ✅ API调用成功！");
-        console.log(
-          `[Lucky API] 用户 ${userId} 数据: USDT=${data.usdt}, Reward=${data.reward}`
-        );
-        logger.info(
-          `[Lucky API] User ${userId} has USDT: ${data.usdt}, Reward: ${data.reward}`
-        );
-        return data;
-      }
-      console.log("[Lucky API] ❌ API返回 success: false");
-      logger.warn(`[Lucky API] User ${userId} - API returned success: false`);
-      return null;
-    }
-    console.log("[Lucky API] ❌ 响应格式无效:", data);
-    logger.warn(`[Lucky API] User ${userId} - Invalid response format:`, data);
-    return null;
-  } catch (error) {
-    console.log("[Lucky API] ❌ 请求异常:", error);
-    console.log("[Lucky API] 错误类型:", typeof error);
-    console.log(
-      "[Lucky API] 错误信息:",
-      error instanceof Error ? error.message : "Unknown error"
-    );
-    logger.error(`[Lucky API] Failed to fetch data for user ${userId}:`, {
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-    return null;
-  } finally {
-    console.log("[Lucky API] ===== API调用结束 =====");
   }
+
+  if (tier2Reached) {
+    return (
+      <div className="rounded-xl border border-green-500/50 bg-green-900/20 p-4 text-center">
+        <p className="font-bold text-green-300 text-lg">🎉 90% Unlocked!</p>
+        <p className="mt-2 text-green-400 text-sm">
+          You'll receive{" "}
+          <span className="font-bold text-[#6CFBD3]">5 USDT</span>! Keep
+          inviting to get 10 USDT!
+        </p>
+      </div>
+    );
+  }
+
+  if (tier1Reached) {
+    return (
+      <div className="rounded-xl border border-green-500/50 bg-green-900/20 p-4 text-center">
+        <p className="font-bold text-green-300 text-lg">🎉 80% Unlocked!</p>
+        <p className="mt-2 text-green-400 text-sm">
+          You'll receive{" "}
+          <span className="font-bold text-[#6CFBD3]">1 USDT</span>! Keep
+          inviting to earn more!
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-white/20 bg-black/30 p-4 text-center">
+      <p className="font-semibold text-lg text-white">Keep Going!</p>
+      <p className="mt-2 text-[#C0C0C0] text-sm">
+        {(80 - totalProgress).toFixed(1)}% more to unlock{" "}
+        <span className="font-bold text-[#6CFBD3]">1 USDT</span> reward
+      </p>
+    </div>
+  );
 }
 
-// 调用Early Bird Bonus API获取用户数据
-async function fetchEarlyBirdBonusData(
-  userId: string
-): Promise<EarlyBirdBonusApiResponse | null> {
-  try {
-    console.log("[Early Bird Bonus API] ===== 开始API调用 =====");
-    const apiUrl = `https://api.distant.fun/api/bonus/${userId}`;
-    console.log(`[Early Bird Bonus API] API URL: ${apiUrl}`);
-    console.log(
-      "[Early Bird Bonus API] 用户ID类型:",
-      typeof userId,
-      "值:",
-      userId
-    );
-    console.log("[Early Bird Bonus API] 用户ID长度:", userId.length);
-    logger.info(
-      `[Early Bird Bonus API] Fetching bonus data for ID: ${userId} from: ${apiUrl}`
-    );
+// Helper component for Invite Record Item
+function InviteRecordItem({
+  record,
+  isExpanded,
+  onToggle,
+  inviterUser,
+}: {
+  record: {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string;
+    timeAgo: string;
+  };
+  isExpanded: boolean;
+  onToggle: () => void;
+  inviterUser: {
+    id: string;
+    name: string;
+    email: string;
+    campaignUsers: Array<{
+      id: number;
+      createdAt: Date;
+      updatedAt: Date;
+      rank: number | null;
+      campaignId: string;
+      userId: string;
+      baseScore: number;
+      bonusScore: number;
+      score: number;
+      joinedAt: Date;
+      videoCount: number;
+    }>;
+  };
+}) {
+  return (
+    <div>
+      <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 p-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-gray-700">
+              <img
+                alt={`${record.name} avatar`}
+                className="h-full w-full object-cover"
+                height={44}
+                src={record.avatar}
+                width={44}
+              />
+            </div>
 
-    console.log("[Early Bird Bonus API] 发送请求中...");
-    const startTime = Date.now();
+            <div className="space-y-1">
+              <div className="font-medium text-base text-white leading-tight">
+                {record.name}
+              </div>
+              <div className="text-[#A7A7A7] text-xs">@{record.email}</div>
+            </div>
+          </div>
 
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache", // 确保每次都获取最新数据
-      },
-    });
+          <div className="flex flex-col items-center gap-2">
+            <div className="text-[#A7A7A7] text-[10px] leading-relaxed">
+              {record.timeAgo}
+            </div>
+            <button onClick={onToggle} type="button">
+              <GlowContainer className="rounded-sm px-2 py-2">
+                <svg
+                  className={cn(
+                    "h-4 w-4 transition-transform",
+                    isExpanded ? "rotate-180" : ""
+                  )}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <title>Chevron down</title>
+                  <path
+                    d="M6 9l6 6 6-6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                  />
+                </svg>
+              </GlowContainer>
+            </button>
+          </div>
+        </div>
+      </div>
+      {isExpanded && (
+        <InviteeCampaigns inviter={inviterUser} userId={record.id} />
+      )}
+    </div>
+  );
+}
 
-    const endTime = Date.now();
-    console.log(
-      `[Early Bird Bonus API] 请求完成，耗时: ${endTime - startTime}ms`
-    );
-    console.log(
-      `[Early Bird Bonus API] 响应状态: ${response.status} ${response.statusText}`
-    );
-    logger.info(`[Early Bird Bonus API] Response status: ${response.status}`);
+// Helper component for Social Share Buttons
+function SocialShareButtons({
+  onShare,
+  copiedTikTok,
+  copiedInstagram,
+}: {
+  onShare: (platform: string) => void;
+  copiedTikTok: boolean;
+  copiedInstagram: boolean;
+}) {
+  const socialPlatforms = [
+    { name: "Twitter", icon: x },
+    { name: "TikTok", icon: tiktok },
+    { name: "Telegram", icon: tg },
+    { name: "WhatsApp", icon: whatsapp },
+    { name: "Facebook", icon: fb },
+    { name: "Instagram", icon: ins },
+  ];
 
-    if (!response.ok) {
-      console.log(
-        `[Early Bird Bonus API] ❌ 请求失败: ${response.status} ${response.statusText}`
-      );
-      logger.warn(
-        `[Early Bird Bonus API] Request failed: ${response.status} ${response.statusText}`
-      );
-      return null;
-    }
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      {socialPlatforms.map((platform) => {
+        const isCopied =
+          (platform.name === "TikTok" && copiedTikTok) ||
+          (platform.name === "Instagram" && copiedInstagram);
 
-    console.log("[Early Bird Bonus API] 解析响应数据...");
-    const data = (await response.json()) as EarlyBirdBonusApiResponse;
-    console.log("[Early Bird Bonus API] 原始响应数据:", data);
-    logger.info(
-      `[Early Bird Bonus API] Raw response for user ${userId}:`,
-      data
-    );
-
-    // 检查响应格式
-    console.log("[Early Bird Bonus API] 验证响应格式...");
-    if (data && typeof data === "object" && "success" in data) {
-      console.log("[Early Bird Bonus API] 响应格式正确");
-      if (data.success) {
-        console.log("[Early Bird Bonus API] ✅ API调用成功！");
-        console.log(
-          `[Early Bird Bonus API] 用户 ${userId} 数据: bonus_amount=${data.bonus_amount}, score=${data.score}`
+        return (
+          <button
+            key={platform.name}
+            onClick={() => onShare(platform.name)}
+            type="button"
+          >
+            <GlowContainer
+              className="flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/5 py-3"
+              noShimmer
+            >
+              <img
+                alt={`${platform.name} icon`}
+                className="size-6"
+                height={24}
+                src={platform.icon}
+                width={24}
+              />
+              <span className="font-normal text-sm text-white">
+                {isCopied ? "Copied!" : platform.name}
+              </span>
+            </GlowContainer>
+          </button>
         );
-        logger.info(
-          `[Early Bird Bonus API] User ${userId} has bonus_amount: ${data.bonus_amount}, score: ${data.score}`
-        );
-        return data;
-      }
-      console.log("[Early Bird Bonus API] ❌ API返回 success: false");
-      logger.warn(
-        `[Early Bird Bonus API] User ${userId} - API returned success: false`
-      );
-      return null;
-    }
-    console.log("[Early Bird Bonus API] ❌ 响应格式无效:", data);
-    logger.warn(
-      `[Early Bird Bonus API] User ${userId} - Invalid response format:`,
-      data
-    );
-    return null;
-  } catch (error) {
-    console.log("[Early Bird Bonus API] ❌ 请求异常:", error);
-    console.log("[Early Bird Bonus API] 错误类型:", typeof error);
-    console.log(
-      "[Early Bird Bonus API] 错误信息:",
-      error instanceof Error ? error.message : "Unknown error"
-    );
-    logger.error(
-      `[Early Bird Bonus API] Failed to fetch data for user ${userId}:`,
-      {
-        error: error instanceof Error ? error.message : "Unknown error",
-      }
-    );
-    return null;
-  } finally {
-    console.log("[Early Bird Bonus API] ===== API调用结束 =====");
-  }
+      })}
+    </div>
+  );
 }
 
 export function meta() {
@@ -235,36 +317,9 @@ export function meta() {
   ];
 }
 
-const socialPlatforms = [
-  { name: "Twitter", icon: x },
-  { name: "TikTok", icon: tiktok },
-  { name: "Telegram", icon: tg },
-  { name: "WhatsApp", icon: whatsapp },
-  { name: "Facebook", icon: fb },
-  { name: "Instagram", icon: ins },
-];
-
-function calculateWelcomeGift(score: number | null | undefined) {
-  if (score == null) {
-    return null;
-  }
-
-  // 110分是获得奖励的门槛
-  if (score >= 120) {
-    return 3; // 120分及以上: 3u
-  }
-  if (score >= 110) {
-    return 2; // 110-119.9分: 2u
-  }
-
-  return null; // 低于110分无奖励
-}
-
 export async function loader({ request }: Route.LoaderArgs) {
   console.log("[Lucky Page] ===== 开始加载页面 =====");
-  logger.info(
-    "[Lucky Page] Starting loader - fetching user data and API rewards"
-  );
+  logger.info("[Lucky Page] Starting loader - fetching user data");
 
   console.log("[Lucky Page] 步骤1: 检查用户认证状态");
   const userResult = await getDbUser(request);
@@ -275,170 +330,210 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = userResult.value;
   console.log("[Lucky Page] ✅ 用户认证成功");
   console.log(`[Lucky Page] 用户ID: ${user.id}`);
-  console.log("[Lucky Page] 用户详细信息:", {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    kindleScore: user.kindleScore,
+
+  console.log("[Lucky Page] 步骤2: 获取邀请记录...");
+  const inviteRecords = await getUserInviteRecords(user.id);
+
+  // 计算本周邀请数量
+  const weekStartDate = getWeekStartDate();
+  const weeklyInviteRecords = inviteRecords.filter((record) => {
+    if (record.createdAt) {
+      const recordDate = new Date(record.createdAt);
+      return recordDate >= weekStartDate;
+    }
+    return false;
   });
-  logger.info(
-    `[Lucky Page] User authenticated: ${user.id}, calling API for rewards data`
+
+  console.log("[Lucky Page] 步骤3: 获取或创建TreasureBox...");
+  // 判断用户是否有SPARK Points
+  const hasSparkPoints =
+    user?.campaignUsers &&
+    user.campaignUsers.length > 0 &&
+    user.campaignUsers.some((cu) => cu.score > 0);
+
+  // 获取或创建用户的TreasureBox
+  const treasureBox = await getOrCreateTreasureBox(
+    user.id,
+    user.kindleScore,
+    hasSparkPoints,
+    weeklyInviteRecords.length
   );
 
-  // 无论是否认证成功，都要调用API获取USDT和reward数据
-  console.log("[Lucky Page] 步骤2: 开始调用API获取USDT和reward数据...");
-  console.log(
-    `[Lucky Page] 即将调用的API: https://api.distant.fun/api/user/${user.id}`
-  );
-
-  // 并行调用API和获取其他数据
-  const [inviteRecords, luckyApiData, earlyBirdBonusData] = await Promise.all([
-    getUserInviteRecords(user.id),
-    fetchUserLuckyData(user.id), // 始终调用API获取真实数据
-    fetchEarlyBirdBonusData(user.id), // 调用Early Bird Bonus API
-  ]);
-
-  console.log("[Lucky Page] 步骤3: 所有API调用完成");
-  console.log("[Lucky Page] 邀请记录数量:", inviteRecords.length);
-  console.log("[Lucky Page] API数据结果:", luckyApiData);
-  console.log("[Lucky Page] Early Bird Bonus数据结果:", earlyBirdBonusData);
-
-  // 使用API返回的真实数据
-  const finalApiData = luckyApiData;
-
-  // 记录API调用结果
-  console.log("[Lucky Page] 步骤4: 分析API调用结果");
-  if (luckyApiData) {
-    console.log("[Lucky Page] ✅ API调用成功！");
-    console.log("[Lucky Page] API返回数据:", {
-      success: luckyApiData.success,
-      user_id: luckyApiData.user_id,
-      usdt: luckyApiData.usdt,
-      reward: luckyApiData.reward,
-    });
-    logger.info(
-      `[Lucky Page] API data received for user ${user.id}: USDT=${luckyApiData.usdt}, Reward=${luckyApiData.reward}`
-    );
-  } else {
-    console.log("[Lucky Page] ❌ API调用失败或返回null");
-    console.log(
-      "[Lucky Page] 可能的原因: 网络错误、API服务不可用、用户ID不存在等"
-    );
-    logger.warn(
-      `[Lucky Page] No API data received for user ${user.id}, API call may have failed`
-    );
+  // 如果邀请数量有变化，更新进度
+  if (treasureBox.weeklyInviteCount !== weeklyInviteRecords.length) {
+    console.log("[Lucky Page] 邀请数量有变化，更新进度...");
+    await updateTreasureBoxProgress(user.id, weeklyInviteRecords.length);
   }
 
-  // 调试：检查最终返回的数据
-  const finalData = {
-    user,
-    inviteRecords,
-    apiData: finalApiData,
-    earlyBirdBonusData,
-  };
+  console.log("[Lucky Page] 步骤4: 获取奖池信息...");
+  const pool = await getOrCreatePool();
 
   console.log("[Lucky Page] 步骤5: 最终返回数据");
-  console.log("[Lucky Page] 最终数据:", {
-    userId: finalData.user.id,
-    hasApiData: !!finalData.apiData,
-    apiUsdt: finalData.apiData?.usdt,
-    apiReward: finalData.apiData?.reward,
-    hasEarlyBirdBonusData: !!finalData.earlyBirdBonusData,
-    earlyBirdBonusAmount: finalData.earlyBirdBonusData?.bonus_amount,
-    kindleScore: finalData.user.kindleScore,
+  console.log("[Lucky Page] TreasureBox数据:", {
+    isOpened: treasureBox.isOpened,
+    currentProgress: treasureBox.currentProgress,
+    rewardTier: treasureBox.rewardTier,
+    rewardAmount: treasureBox.rewardAmount,
+  });
+  console.log("[Lucky Page] 奖池数据:", {
+    totalPool: pool.totalPool,
+    remainingPool: pool.remainingPool,
+    isClosed: pool.isClosed,
   });
 
   logger.info("[Lucky Page] Final data being returned:", {
-    userId: finalData.user.id,
-    hasApiData: !!finalData.apiData,
-    apiUsdt: finalData.apiData?.usdt,
-    apiReward: finalData.apiData?.reward,
-    hasEarlyBirdBonusData: !!finalData.earlyBirdBonusData,
-    earlyBirdBonusAmount: finalData.earlyBirdBonusData?.bonus_amount,
-    kindleScore: finalData.user.kindleScore,
+    userId: user.id,
+    inviteRecordsCount: inviteRecords.length,
+    weeklyInviteRecordsCount: weeklyInviteRecords.length,
+    treasureBoxProgress: treasureBox.currentProgress,
+    poolRemaining: pool.remainingPool,
   });
 
   console.log("[Lucky Page] ===== 页面加载完成 =====");
   return {
     user,
     inviteRecords,
-    apiData: finalApiData || undefined,
-    earlyBirdBonusData: earlyBirdBonusData || undefined,
+    weeklyInviteRecords,
+    treasureBox,
+    pool,
   };
 }
 
 export default function Lucky({
-  loaderData: { user, inviteRecords, apiData, earlyBirdBonusData },
+  loaderData: { user, inviteRecords, weeklyInviteRecords, treasureBox, pool },
 }: Route.ComponentProps) {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedTikTok, setCopiedTikTok] = useState(false);
   const [copiedInstagram, setCopiedInstagram] = useState(false);
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
+  const [eventRulesExpanded, setEventRulesExpanded] = useState(false);
 
-  // 调试信息
-  console.log("[Lucky Component] ===== 组件渲染开始 =====");
-  console.log("[Lucky Component] 接收到的API数据:", apiData);
-  console.log("[Lucky Component] 接收到的用户数据:", user);
-  console.log("[Lucky Component] API数据是否存在:", !!apiData);
-  console.log("[Lucky Component] API Success状态:", apiData?.success);
-  console.log("[Lucky Component] API USDT值:", apiData?.usdt);
-  console.log("[Lucky Component] API Reward值:", apiData?.reward);
-  console.log("[Lucky Component] 用户Kindle Score:", user?.kindleScore);
+  // 打开宝箱时调用API更新数据库，然后刷新页面
+  const handleOpenTreasureBox = async () => {
+    try {
+      // 调用API更新数据库
+      const response = await fetch("/api/treasurebox/open", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user?.id }),
+      });
+
+      if (response.ok) {
+        // 刷新页面以获取最新数据
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Failed to update treasure box status:", error);
+    }
+  };
+
+  // 判断用户是否有SPARK Points - 参考_campaign.tsx的实现
+  // 检查用户是否参与过任何campaign并获得了score
+  const hasSparkPoints =
+    user?.campaignUsers &&
+    user.campaignUsers.length > 0 &&
+    user.campaignUsers.some((cu) => cu.score > 0);
+
+  // 计算用户总的SPARK Points
+  const totalSparkPoints =
+    user?.campaignUsers?.reduce((total, cu) => total + (cu.score || 0), 0) || 0;
+
+  // 使用数据库中的进度数据
+  const totalProgress = treasureBox.currentProgress;
+
+  // 判断达成的档位
+  const tier1Reached = totalProgress >= 80;
+  const tier2Reached = totalProgress >= 90;
+  const tier3Reached = totalProgress >= 100;
+
+  // 调试信息 - 只在开发环境且首次加载时输出
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Debug logging only, intentionally run once on mount
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log("[Lucky Component] ===== 组件初次加载 =====");
+      console.log("[Lucky Component] 接收到的用户数据:", user);
+      console.log("[Lucky Component] 用户Kindle Score:", user?.kindleScore);
+      console.log("[Lucky Component] 用户是否有SPARK Points:", hasSparkPoints);
+      console.log("[Lucky Component] 用户总SPARK Points:", totalSparkPoints);
+
+      // TreasureBox 数据
+      console.log("\n[TreasureBox Data] ===== 宝箱数据 =====");
+      console.log("[TreasureBox Data] 宝箱ID:", treasureBox.id);
+      console.log("[TreasureBox Data] 是否已打开:", treasureBox.isOpened);
+      console.log(
+        "[TreasureBox Data] 初始进度:",
+        `${treasureBox.initialProgress}%`
+      );
+      console.log(
+        "[TreasureBox Data] 邀请加成:",
+        `${treasureBox.inviteProgress}%`
+      );
+      console.log(
+        "[TreasureBox Data] 总进度:",
+        `${treasureBox.currentProgress}%`
+      );
+      console.log("[TreasureBox Data] 奖励档位:", treasureBox.rewardTier);
+      console.log(
+        "[TreasureBox Data] 奖励金额:",
+        `${treasureBox.rewardAmount} USDT`
+      );
+      console.log(
+        "[TreasureBox Data] 本周邀请数:",
+        treasureBox.weeklyInviteCount
+      );
+
+      // 奖池数据
+      console.log("\n[Pool Data] ===== 奖池数据 =====");
+      console.log("[Pool Data] 总奖池:", `${pool.totalPool} USDT`);
+      console.log("[Pool Data] 剩余奖池:", `${pool.remainingPool} USDT`);
+      console.log("[Pool Data] 已分配:", `${pool.distributedAmount} USDT`);
+      console.log("[Pool Data] 80%档位领取人数:", pool.tier1Count);
+      console.log("[Pool Data] 90%档位领取人数:", pool.tier2Count);
+      console.log("[Pool Data] 100%档位领取人数:", pool.tier3Count);
+      console.log("[Pool Data] 是否关闭:", pool.isClosed);
+
+      // Progress Details - 详细进度信息
+      console.log("\n[Progress Details] ===== 进度详情 =====");
+      console.log("[Progress Details] Base Progress: 45%");
+
+      if (hasSparkPoints) {
+        console.log("[Progress Details] SPARK Points Bonus: +5%");
+        user?.campaignUsers
+          ?.filter((cu) => cu.score > 0)
+          .forEach((cu, index) => {
+            console.log(
+              `[Progress Details]   • Campaign ${index + 1}: ${Math.round(cu.score)} points`
+            );
+          });
+      }
+
+      if (user?.kindleScore && user.kindleScore > 0) {
+        const kindleBonus = ((user.kindleScore / 100) * 15).toFixed(1);
+        console.log(`[Progress Details] Kindle Score Bonus: +${kindleBonus}%`);
+      }
+
+      console.log(
+        `[Progress Details] Referral Bonus: +${treasureBox.inviteProgress.toFixed(1)}% (${weeklyInviteRecords.length} users)`
+      );
+
+      console.log("\n[Progress Summary] ===== 进度汇总 =====");
+      console.log("[Progress Summary] 总邀请记录数:", inviteRecords.length);
+      console.log(
+        "[Progress Summary] 本周邀请记录数:",
+        weeklyInviteRecords.length
+      );
+      console.log(
+        "[Progress Summary] 达成档位: 80%=" +
+          tier1Reached +
+          ", 90%=" +
+          tier2Reached +
+          ", 100%=" +
+          tier3Reached
+      );
+    }
+  }, []); // 空依赖数组 = 只在组件挂载时执行一次
 
   const inviteLink = `${import.meta.env.VITE_ORIGIN || "http://localhost:5173"}invite/${user?.id}`;
-
-  // 根据API数据或Kindle Score计算奖励金额
-  let giftAmount = 0;
-  let isEligibleForGift = false;
-  let isClaimed = false; // 新增：标记奖励是否已发放
-
-  console.log("[Lucky Component] 开始计算奖励金额...");
-  if (apiData?.success) {
-    // 使用API数据
-    isClaimed = apiData.claim;
-    console.log("[Lucky Component] ✅ 使用API数据");
-    console.log(
-      "[Lucky Component] API USDT:",
-      apiData.usdt,
-      "API Reward:",
-      apiData.reward,
-      "API Claim:",
-      apiData.claim
-    );
-    giftAmount = apiData.usdt;
-    isEligibleForGift = apiData.usdt > 0 || apiData.reward > 0;
-    console.log(
-      "[Lucky Component] 计算结果 - giftAmount:",
-      giftAmount,
-      "isEligibleForGift:",
-      isEligibleForGift,
-      "isClaimed:",
-      isClaimed
-    );
-  } else {
-    // API没有数据时，使用Kindle Score计算USDT奖励
-    isClaimed = false;
-    console.log("[Lucky Component] ❌ API无数据，使用Kindle Score计算USDT奖励");
-    console.log("[Lucky Component] Kindle Score:", user?.kindleScore);
-    const calculatedGift = calculateWelcomeGift(user?.kindleScore);
-    console.log("[Lucky Component] 计算的礼物金额:", calculatedGift);
-    giftAmount = calculatedGift || 0;
-    isEligibleForGift = calculatedGift != null && calculatedGift > 0;
-    console.log(
-      "[Lucky Component] 计算结果 - giftAmount:",
-      giftAmount,
-      "isEligibleForGift:",
-      isEligibleForGift,
-      "isClaimed:",
-      isClaimed
-    );
-  }
-
-  // 调试：显示最终计算结果
-  console.log("[Lucky Component] ===== 最终计算结果 =====");
-  console.log("[Lucky Component] 最终giftAmount:", giftAmount);
-  console.log("[Lucky Component] 最终isEligibleForGift:", isEligibleForGift);
-  console.log("[Lucky Component] 将显示在页面上的USDT金额:", giftAmount);
 
   const handleCopyLink = async () => {
     try {
@@ -492,254 +587,277 @@ export default function Lucky({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#02040d] via-[#1d131c] via-[31%] to-[#201819] to-[67%] pb-24">
-      <div
-        className="flex aspect-390/131 w-full items-center gap-3 bg-center bg-cover pl-10"
-        style={{ backgroundImage: `url(${leaderboardBg})` }}
-      >
-        <div>
-          <div className="font-medium text-2xl text-white tracking-tight">
-            Lucky Center
-          </div>
-          <div className="font-normal text-[#d7d7d7] text-xs">
-            Track your Kindle Score and invite bonuses
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-4 space-y-6 px-5 md:px-18">
-        <div className="flex items-center justify-between rounded-xl border border-gray-700 p-4">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 overflow-hidden rounded-full bg-gray-600">
-              <img
-                alt={user?.name ? user.name.substring(0, 4).toUpperCase() : "U"}
-                className="h-full w-full object-cover"
-                src={user?.image || ""}
-              />
-            </div>
-
-            <div className="flex flex-col items-start gap-2">
-              <h3 className="font-medium text-white">
-                @{user?.email || "User"}
-              </h3>
-              {user?.kindleScore != null && (
-                <div className="rounded bg-linear-26 from-[#7364ff] to-[#37bcff] px-3 py-0.5 font-medium text-black text-xs">
-                  #{user?.rank || 0}
+    <div className="flex flex-col gap-6 p-4 md:px-18">
+      {/* Header Profile Info */}
+      <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4">
+          {/* Avatar */}
+          <div className="relative h-22 w-22">
+            <div className="h-full w-full overflow-hidden rounded-full bg-gray-700">
+              {user?.image ? (
+                <img
+                  alt={user?.name || "User"}
+                  className="h-full w-full object-cover"
+                  height={88}
+                  src={user.image}
+                  width={88}
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-r from-[#8080DA] to-[#9595FF] font-bold text-2xl text-white">
+                  {user?.name?.charAt(0).toUpperCase() || "U"}
                 </div>
               )}
             </div>
           </div>
 
-          {user?.kindleScore != null ? (
-            <div className="text-right">
-              <p className="bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-semibold text-2xl text-transparent">
-                {Math.round(user?.kindleScore || 0)}
+          {/* User Info */}
+          <div className="flex flex-col items-center gap-1">
+            <h1 className="font-bold text-lg text-white">
+              {user?.name || "User"}
+            </h1>
+            <p className="font-normal text-sm text-white/80">
+              @{user?.email || "user"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Card */}
+      <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 px-3 py-4 pt-1">
+        {/* Logo placeholder */}
+        <svg
+          className="h-8 w-12"
+          fill="none"
+          viewBox="0 0 48 30"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <title>master card</title>
+          <circle cx="25.0001" cy="15" fill="#681BF7" r="11.25" />
+          <circle cx="11.25" cy="15" fill="#00EBC4" opacity="0.75" r="11.25" />
+        </svg>
+
+        {/* Score Stats */}
+        <div className="mb-5 flex items-center justify-around">
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-2xl text-white">
+              {user?.kindleScore != null
+                ? Math.round(user.kindleScore)
+                : "Grading"}
+            </span>
+            <span className="font-light text-[#C0C0C0] text-xs">
+              KINDLE Score
+            </span>
+          </div>
+
+          <div className="h-14 w-px bg-[#5D5D5D]" />
+
+          <div className="flex flex-col items-center gap-1">
+            <span className="font-semibold text-2xl text-white">
+              {user?.kindleScore != null ? `#${user?.rank || 0}` : "N/A"}
+            </span>
+            <span className="font-light text-[#C0C0C0] text-xs">
+              Global Rank
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-4 h-px w-75 bg-gray-600/50" />
+
+      {/* PeakAI TreasureBox Event */}
+      <div className="flex flex-col gap-7">
+        <div className="flex gap-1">
+          <h2 className="font-semibold text-white text-xl">
+            🎁 PeakAI TreasureBox
+          </h2>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 p-6">
+          <div className="space-y-6 text-white">
+            {/* Event Info */}
+            <div className="space-y-3 text-center">
+              <p className="text-[#C0C0C0] text-sm">
+                Progressive Treasure Box Reward Event
               </p>
-              <p className="text-gray-400 text-xs">KINDLE Score</p>
-            </div>
-          ) : (
-            <div className="bg-linear-114 from-[#7465ff] from-[12.87%] to-[#38bdff] to-[51.12%] bg-clip-text font-semibold text-transparent text-xs">
-              Grading
-            </div>
-          )}
-        </div>
-
-        {/* Connect Wallet Section - 对所有用户显示 */}
-        <ConnectWallet userWalletAddress={user?.walletAddress} />
-
-        {/* Campaign Main Title */}
-        <div className="text-center">
-          <h1 className="mb-2 bg-linear-137 from-amber-400 to-blue-400 bg-clip-text font-bold text-3xl text-transparent">
-            NEWCOMER GIFT ROUND 2
-          </h1>
-          <p className="text-[#8c96c7] text-sm uppercase tracking-[0.3em]">
-            Campaign Participants Only
-          </p>
-        </div>
-
-        {/* Early Bird Bonus Section */}
-        <div className="space-y-6 rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-8 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
-          <div className="space-y-4 text-white">
-            <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
-              <span>Early Bird Bonus</span>
             </div>
 
-            <div className="space-y-4">
-              {/* Early Bird Bonus 内容 */}
-              {(() => {
-                // 判断三种情况
-                if (!earlyBirdBonusData?.success) {
-                  // 第一种情况：接口没返回用户数据
-                  return (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <p className="font-semibold text-lg text-white">
-                          Thank you for your support! Newcomer Gift Round 2 has
-                          now{" "}
-                          <span className="font-semibold text-yellow-400">
-                            concluded
-                          </span>
-                          .
-                        </p>
-                        <p className="font-semibold text-lg text-white">
-                          We have{" "}
-                          <span className="font-semibold text-yellow-400">
-                            more reward activities
-                          </span>{" "}
-                          coming up ahead. Stay active and engaged!
-                        </p>
-                      </div>
-                      <div className="space-y-3 text-[#cdd6f8] text-sm">
-                        <p>
-                          <em>
-                            *This campaign runs independently from Ascent
-                            activities - you can earn rewards from both!
-                          </em>
-                        </p>
-                      </div>
-                    </div>
-                  );
-                }
-                if (earlyBirdBonusData.bonus_amount === 0) {
-                  // 第二种情况：有数据但bonus_amount为0
-                  return (
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <p className="font-semibold text-lg text-white">
-                          Thank you for your support! Newcomer Gift Round 2 has
-                          now{" "}
-                          <span className="font-semibold text-yellow-400">
-                            concluded
-                          </span>
-                          .
-                        </p>
-                        <p className="font-semibold text-lg text-white">
-                          We have{" "}
-                          <span className="font-semibold text-yellow-400">
-                            more reward activities
-                          </span>{" "}
-                          coming up ahead. Stay active and engaged!
-                        </p>
-                      </div>
-                      <div className="space-y-3 text-[#cdd6f8] text-sm">
-                        <p>
-                          <em>
-                            *This campaign runs independently from Ascent
-                            activities - you can earn rewards from both!
-                          </em>
-                        </p>
-                      </div>
-                    </div>
-                  );
-                }
-                // 第三种情况：有数据且bonus_amount不为0
-                return (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <p className="font-semibold text-lg text-white">
-                        Congratulations!
+            {/* Event Info */}
+            <div className="rounded-xl border border-white/20 bg-black/30 p-4">
+              <div className="space-y-3 text-center">
+                <p className="font-bold text-sm text-white">
+                  Invite new users to register and increase your treasure box
+                  progress
+                </p>
+
+                {/* Rewards Info - No Border */}
+                <div className="space-y-2 py-2">
+                  <p className="font-semibold text-[#6CFBD3] text-xs uppercase tracking-wider">
+                    Rewards
+                  </p>
+                  <div className="flex justify-center gap-4 text-xs">
+                    <span className="text-white">
+                      80% ={" "}
+                      <span className="font-bold text-[#6CFBD3]">1 USDT</span>
+                    </span>
+                    <span className="text-white">
+                      90% ={" "}
+                      <span className="font-bold text-[#6CFBD3]">5 USDT</span>
+                    </span>
+                    <span className="text-white">
+                      100% ={" "}
+                      <span className="font-bold text-[#6CFBD3]">10 USDT</span>
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-[#A7A7A7] text-xs">
+                  Event Period: Nov 3, 2025 - Nov 9, 2025 (UTC)
+                </p>
+                <p className="text-[#A7A7A7] text-xs">
+                  Draw Date: November 10, 2025 (UTC)
+                </p>
+
+                {/* Prize Pool Info */}
+                <div className="mt-4 border-white/10 border-t pt-3">
+                  <p className="mb-2 text-sm text-white">
+                    💰 Total Prize Pool:{" "}
+                    <span className="font-bold text-[#6CFBD3] text-lg">
+                      {pool.remainingPool.toFixed(0)}
+                    </span>{" "}
+                    /{" "}
+                    <span className="text-white/60">{pool.totalPool} USDT</span>
+                  </p>
+                  {pool.isClosed ? (
+                    <p className="font-medium text-red-400 text-xs">
+                      🔒 Pool has been depleted - Event closed
+                    </p>
+                  ) : (
+                    <p className="font-medium text-xs text-yellow-400">
+                      ⚠️ Pool closes once depleted - Join now!
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Treasure Box Display */}
+            <div className="relative">
+              {treasureBox.isOpened ? (
+                <div className="space-y-6">
+                  <ProgressBar
+                    tier1Reached={tier1Reached}
+                    tier2Reached={tier2Reached}
+                    tier3Reached={tier3Reached}
+                    totalProgress={totalProgress}
+                  />
+                  <StatusMessage
+                    tier1Reached={tier1Reached}
+                    tier2Reached={tier2Reached}
+                    tier3Reached={tier3Reached}
+                    totalProgress={totalProgress}
+                  />
+                </div>
+              ) : (
+                <button
+                  className="w-full"
+                  onClick={handleOpenTreasureBox}
+                  type="button"
+                >
+                  <div className="group relative rounded-xl border border-white/20 bg-white/5 p-8 transition hover:border-white/30 hover:bg-white/10">
+                    <div className="space-y-4 text-center">
+                      <div className="text-6xl">🎁</div>
+                      <p className="font-bold text-lg text-white">
+                        Open Your Exclusive Treasure Box
                       </p>
-                    </div>
-                    <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                          Bonus Amount
-                        </span>
-                        <div className="flex items-center gap-3">
-                          <span className="whitespace-nowrap font-semibold text-white text-xl">
-                            {earlyBirdBonusData.bonus_amount} USDT
-                          </span>
-                          {earlyBirdBonusData.is_distributed && (
-                            <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
-                              ✓ Claimed
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-3 text-[#cdd6f8] text-sm">
-                      <p>
-                        Thank you for supporting PeakAI! Your reward has been
-                        sent to your{" "}
-                        <span className="font-semibold text-yellow-400">
-                          connected wallet
-                        </span>{" "}
-                        address—please check it out!
-                      </p>
-                      <p>
-                        <span className="font-semibold text-yellow-400">
-                          More rewards are on the way
-                        </span>
-                        , so stay active and keep it up!
-                      </p>
-                      <p>
-                        <em>
-                          *This campaign runs independently from Ascent
-                          activities - you can earn rewards from both!
-                        </em>
+                      <p className="text-[#C0C0C0] text-sm">
+                        Unlock your reward progress
                       </p>
                     </div>
                   </div>
-                );
-              })()}
+                </button>
+              )}
+            </div>
 
-              {/* Start Button */}
-              <div className="mt-6">
-                <a className="inline-block w-full" href="/u/ascent">
-                  <GlowContainer className="flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/5 px-8 py-4 font-semibold text-[#dbe4ff] text-base transition hover:bg-white/10">
-                    <span>Start</span>
+            {/* Event Rules */}
+            <div className="space-y-3">
+              <button
+                className="w-full rounded-xl border border-white/20 bg-black/30 p-4 transition hover:border-white/30 hover:bg-black/40"
+                onClick={() => setEventRulesExpanded(!eventRulesExpanded)}
+                type="button"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-left font-semibold text-white">
+                    Event Rules
+                  </p>
+                  <GlowContainer className="rounded-sm px-2 py-2">
                     <svg
-                      className="h-5 w-5"
+                      className={cn(
+                        "h-4 w-4 transition-transform",
+                        eventRulesExpanded ? "rotate-180" : ""
+                      )}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <title>Arrow Right</title>
+                      <title>Chevron down</title>
                       <path
-                        d="M9 5l7 7-7 7"
+                        d="M6 9l6 6 6-6"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
                       />
                     </svg>
                   </GlowContainer>
-                </a>
-              </div>
+                </div>
+              </button>
+
+              {eventRulesExpanded && (
+                <div className="rounded-xl border border-white/20 bg-black/30 p-4 text-[#A7A7A7] text-sm">
+                  <ul className="list-inside list-disc space-y-2">
+                    <li>
+                      Each user has an exclusive treasure box with a base
+                      progress of 45%
+                    </li>
+                    <li>
+                      If you've participated in Campaigns and earned SPARK
+                      Points, you get an additional 5% bonus
+                    </li>
+                    <li>
+                      Kindle Score Bonus: Get up to 15% bonus based on your
+                      Kindle Score (progress gained from Kindle Score capped at
+                      10.5%)
+                    </li>
+                    <li>
+                      After the event ends, USDT rewards will be automatically
+                      distributed to your connected wallet
+                    </li>
+                    <li>
+                      Limited pool of 200 USDT - First come, first served until
+                      depleted
+                    </li>
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Referral Rewards Section */}
-        <div className="space-y-8 rounded-2xl border border-white/10 bg-[rgba(14,16,24,0.85)] p-8 shadow-[0_30px_80px_rgba(4,9,20,0.55)] backdrop-blur">
-          <div className="space-y-3 text-white">
-            <h2 className="text-[#8c96c7] text-sm uppercase tracking-[0.3em]">
-              Referral Rewards
-            </h2>
-            <div className="space-y-3 text-[#cdd6f8] text-sm">
-              <p>
-                *{" "}
-                <span className="font-semibold text-yellow-400">
-                  Newcomer Gift Round 2
-                </span>{" "}
-                has ended!
-              </p>
-              <p>
-                * More reward activities are currently in the works. Keep
-                building your{" "}
-                <span className="font-semibold text-yellow-400">
-                  referral record
-                </span>
-                —it will benefit you in future reward programs. Stay active!
-              </p>
-            </div>
-          </div>
+      <div className="mx-auto my-4 h-px w-75 bg-gray-600/50" />
 
+      {/* Referral Section */}
+      <div className="flex flex-col gap-7">
+        <div className="flex gap-1">
+          <h2 className="font-semibold text-white text-xl">Referral Link</h2>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 p-6">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3 text-white">
-              <span className="text-[#8c96c7] text-xs uppercase tracking-[0.28em]">
+              <span className="text-[#A7A7A7] text-xs uppercase tracking-[0.28em]">
                 Your Referral Link
               </span>
-              <div className="overflow-hidden break-all rounded-2xl border border-white/15 bg-black/25 p-4 text-[#dde4ff] text-sm">
+              <div className="overflow-hidden break-all rounded-xl border border-white/15 bg-black/25 p-4 text-[#dde4ff] text-sm">
                 {inviteLink}
               </div>
               <button
@@ -747,235 +865,69 @@ export default function Lucky({
                 onClick={handleCopyLink}
                 type="button"
               >
-                <GlowContainer className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 font-semibold text-[#dbe4ff] text-sm transition hover:bg-white/10">
+                <GlowContainer className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 font-semibold text-sm text-white transition hover:bg-white/10">
                   <span>{copiedLink ? "Copied" : "Copy Link"}</span>
                 </GlowContainer>
               </button>
             </div>
+
+            <SocialShareButtons
+              copiedInstagram={copiedInstagram}
+              copiedTikTok={copiedTikTok}
+              onShare={handleSocialShare}
+            />
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            {socialPlatforms.map((platform) => {
-              const isCopied =
-                (platform.name === "TikTok" && copiedTikTok) ||
-                (platform.name === "Instagram" && copiedInstagram);
+      <div className="mx-auto my-4 h-px w-75 bg-gray-600/50" />
 
-              return (
-                <button
-                  key={platform.name}
-                  onClick={() => handleSocialShare(platform.name)}
-                  type="button"
-                >
-                  <GlowContainer
-                    className="flex items-center justify-center gap-3 rounded-xl py-3"
-                    noShimmer
-                  >
-                    <img
-                      alt={`${platform.name} icon`}
-                      className="size-6"
-                      src={platform.icon}
-                    />
-                    <span className="font-normal text-sm text-white">
-                      {isCopied ? "Copied!" : platform.name}
-                    </span>
-                  </GlowContainer>
-                </button>
-              );
-            })}
+      {/* Invite Records Section */}
+      <div className="flex flex-col gap-7">
+        <div className="flex items-center justify-between">
+          <div className="flex gap-1">
+            <h2 className="font-semibold text-white text-xl">
+              Invite Records (This Week)
+            </h2>
+          </div>
+          <div className="text-[#A7A7A7] text-sm">
+            {weeklyInviteRecords.length} / {inviteRecords.length} users
           </div>
         </div>
 
-        {/* Invite Records Section */}
-        <div className="space-y-7">
-          <div className="flex items-center gap-1">
-            <img alt="Stars icon" className="h-6 w-6" src={starsIcon} />
-            <h3 className="font-semibold text-white text-xl">Invite Records</h3>
-          </div>
-
-          <div className="space-y-6">
-            {inviteRecords.length === 0 ? (
-              <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-8 text-center">
-                <p className="text-[#979797] text-sm">
-                  No invites yet. Share your link to start earning!
-                </p>
-              </div>
-            ) : (
-              inviteRecords.map((record: any) => (
-                <div key={record.id}>
-                  <div className="rounded-2xl border border-[#2d3338] bg-gradient-to-b from-[#2a2a2a] to-[#1a1616] p-5">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full bg-[#f9f9fb] text-lg">
-                          <img
-                            alt={`${record.name} avatar`}
-                            className="h-full w-full object-cover"
-                            src={record.avatar}
-                          />
-                        </div>
-
-                        <div className="space-y-1">
-                          <div className="font-medium text-base text-white leading-tight">
-                            {record.name}
-                          </div>
-                          <div className="text-[#979797] text-xs">
-                            @{record.email}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="text-[#979797] text-[10px] leading-relaxed">
-                          {record.timeAgo}
-                        </div>
-                        <button
-                          onClick={() =>
-                            setExpandedUserId(
-                              expandedUserId === record.id ? null : record.id
-                            )
-                          }
-                          type="button"
-                        >
-                          <GlowContainer className="rounded-sm px-2 py-2">
-                            <svg
-                              className={cn(
-                                "h-4 w-4 transition-transform",
-                                expandedUserId === record.id ? "rotate-180" : ""
-                              )}
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <title>Chevron down</title>
-                              <path
-                                d="M6 9l6 6 6-6"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                              />
-                            </svg>
-                          </GlowContainer>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  {expandedUserId === record.id && (
-                    <InviteeCampaigns inviter={user} userId={record.id} />
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Welcome Bonus Section - 只在有奖励的情况下显示 */}
-        {isEligibleForGift &&
-          (giftAmount > 0 || (apiData?.success && apiData.reward > 0)) && (
-            <div className="rounded-2xl border border-[#9ab2ff]/40 bg-gradient-to-br from-[#131d33] via-[#0f1525] to-[#080a12] p-10 shadow-[0_40px_110px_rgba(18,35,80,0.65)] backdrop-blur">
-              <div className="space-y-4 text-white">
-                <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 font-semibold text-[#b8caff] text-xs uppercase tracking-[0.35em]">
-                  <span>NEWCOMER GIFT ROUND 1</span>
-                </div>
-                {isClaimed ? (
-                  // 已发放
-                  <>
-                    <div className="space-y-2">
-                      <p className="text-[#cdd6f8] text-sm">
-                        * Bonus amount/ Referral rewards from the registration
-                        welcome bonus have been fully distributed. Please check
-                        your connected wallet for transaction details.
-                      </p>
-                    </div>
-                    <div className="mt-6 space-y-4">
-                      {/* Bonus Amount Section - 只在有gift奖励的情况下显示 */}
-                      {giftAmount > 0 && (
-                        <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                          <div className="flex flex-wrap items-center justify-between gap-3">
-                            <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                              Bonus Amount
-                            </span>
-                            <div className="flex items-center gap-3">
-                              <span className="whitespace-nowrap font-semibold text-white text-xl">
-                                {giftAmount} USDT
-                              </span>
-                              <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
-                                ✓ Claimed
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* API Rewards Section - 只在有API奖励的情况下显示 */}
-                      {apiData?.success && apiData.reward > 0 && (
-                        <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                          <div className="flex flex-wrap items-center justify-between gap-3">
-                            <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                              REFERRAL REWARDS
-                            </span>
-                            <div className="flex items-center gap-3">
-                              <span className="whitespace-nowrap font-semibold text-white text-xl">
-                                {apiData.reward} USDT
-                              </span>
-                              <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
-                                ✓ Claimed
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  // 未发放
-                  <>
-                    <div className="space-y-2">
-                      <p className="text-[#cdd6f8] text-sm">
-                        * Bonus amount/ Referral rewards from the registration
-                        welcome bonus have been fully distributed. Please check
-                        your connected wallet for transaction details.
-                      </p>
-                    </div>
-                    <div className="mt-6 space-y-4">
-                      {/* Bonus Amount Section - 只在有gift奖励的情况下显示 */}
-                      {giftAmount > 0 && (
-                        <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                          <div className="flex flex-wrap items-center justify-between gap-3">
-                            <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                              Bonus Amount
-                            </span>
-                            <div className="flex items-center gap-3">
-                              <span className="whitespace-nowrap font-semibold text-white text-xl">
-                                {giftAmount} USDT
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* API Rewards Section - 只在有API奖励的情况下显示 */}
-                      {apiData?.success && apiData.reward > 0 && (
-                        <div className="rounded-2xl border border-[#a6b9ff]/40 bg-white/10 px-6 py-4 text-[#dbe4ff] text-sm">
-                          <div className="flex flex-wrap items-center justify-between gap-3">
-                            <span className="text-[#afc0ff] text-xs uppercase tracking-[0.28em]">
-                              REFERRAL REWARDS
-                            </span>
-                            <div className="flex items-center gap-3">
-                              <span className="whitespace-nowrap font-semibold text-white text-xl">
-                                {apiData.reward} USDT
-                              </span>
-                              <span className="rounded-full bg-green-500/20 px-2 py-1 font-medium text-green-400 text-xs">
-                                ✓ Claimed
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
+        <div className="space-y-4">
+          {weeklyInviteRecords.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 p-8 text-center">
+              <p className="text-[#A7A7A7] text-sm">
+                No invites this week. Share your link to start inviting!
+              </p>
             </div>
+          ) : (
+            weeklyInviteRecords.map((record) => (
+              <InviteRecordItem
+                inviterUser={user}
+                isExpanded={expandedUserId === record.id}
+                key={record.id}
+                onToggle={() =>
+                  setExpandedUserId(
+                    expandedUserId === record.id ? null : record.id
+                  )
+                }
+                record={record}
+              />
+            ))
           )}
+        </div>
+      </div>
+
+      <div className="mx-auto my-4 h-px w-75 bg-gray-600/50" />
+
+      {/* Connect Wallet Section - Moved to Bottom */}
+      <div className="flex flex-col gap-7">
+        <div className="flex gap-1">
+          <h2 className="font-semibold text-white text-xl">Connect Wallet</h2>
+        </div>
+        <ConnectWallet userWalletAddress={user?.walletAddress} />
       </div>
     </div>
   );
