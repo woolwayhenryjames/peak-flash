@@ -2,7 +2,7 @@
 # Runs on merge requests to ensure code quality and build integrity
 
 # Use Node.js 20 image (adjust version if needed)
-image: node:20-alpine
+image: node:22
 
 # Only run on merge requests and main branch
 workflow:
