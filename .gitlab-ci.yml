@@ -1,12 +1,15 @@
 # GitLab CI/CD Pipeline for Peak AI
 # Runs on merge requests to ensure code quality and build integrity
 
-# Use Node.js 20 image (adjust version if needed)
+# Use Node.js 22 image
 image: node:22-alpine
 
-# Only run on merge requests and main branch
+# Run on merge requests and pushes to main branch
 workflow:
   rules:
+    # Run on merge requests
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Run on main branch
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 # Cache dependencies between jobs
@@ -35,6 +38,13 @@ variables:
   # Dummy DATABASE_URL for Prisma client generation in CI
   DATABASE_URL: "mysql://dummy:dummy@localhost:3306/dummy"
 
+# Default setup for pnpm (inherited by all jobs)
+default:
+  before_script:
+    - export "PATH=$PNPM_HOME:$PATH"
+    - corepack enable
+    - corepack prepare pnpm@10.19.0 --activate
+
 # Install dependencies and generate Prisma client
 install:
   stage: setup
@@ -59,6 +69,7 @@ install:
     paths:
       - node_modules/
       - .pnpm-store
+      - .prisma/
     expire_in: 1 day
 
 # Lint code using Biome (ultracite)
