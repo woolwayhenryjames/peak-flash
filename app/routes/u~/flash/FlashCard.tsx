@@ -200,6 +200,9 @@ export default function FlashCard({
           ))
         )}
       </div>
+      <div className="mt-6 text-center font-light text-[#68ffa7] text-xs">
+        Prize will be distributed after the task ends.
+      </div>
     </div>
   );
 }
