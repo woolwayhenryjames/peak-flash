@@ -1,0 +1,97 @@
+# GitLab CI/CD Pipeline for Peak AI
+# Runs on merge requests to ensure code quality and build integrity
+
+# Use Node.js 20 image (adjust version if needed)
+image: node:20-alpine
+
+# Only run on merge requests and main branch
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Cache dependencies between jobs
+cache:
+  key:
+    files:
+      - pnpm-lock.yaml
+  paths:
+    - .pnpm-store
+    - node_modules/
+  policy: pull
+
+# Define stages
+stages:
+  - setup
+  - quality
+  - build
+
+# Variables
+variables:
+  PNPM_HOME: "/pnpm"
+  PATH: "$PNPM_HOME:$PATH"
+  # Skip Husky install in CI
+  HUSKY: "0"
+  # Disable Prisma telemetry in CI
+  CHECKPOINT_DISABLE: "1"
+
+# Install dependencies and generate Prisma client
+install:
+  stage: setup
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+      - node_modules/
+    policy: pull-push
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@10.19.0 --activate
+    - pnpm config set store-dir .pnpm-store
+  script:
+    - pnpm install --frozen-lockfile
+    # Generate Prisma client once for all quality jobs
+    - pnpm prisma generate
+  artifacts:
+    paths:
+      - node_modules/
+      - .pnpm-store
+    expire_in: 1 day
+
+# Lint code using Biome (ultracite)
+lint:
+  stage: quality
+  needs: [install]
+  script:
+    - pnpm lint
+
+# Type checking
+typecheck:
+  stage: quality
+  needs: [install]
+  script:
+    - pnpm typecheck
+
+# Prisma schema validation
+prisma-validate:
+  stage: quality
+  needs: [install]
+  script:
+    - pnpm prisma validate
+    - pnpm prisma format --check
+
+# Build the application (staging mode for MR)
+build:
+  stage: build
+  needs: [install, lint, typecheck, prisma-validate]
+  script:
+    - pnpm build:staging
+  artifacts:
+    paths:
+      - build/
+    expire_in: 1 day
+  # Optional: Add size reporting
+  after_script:
+    - echo "Build size:"
+    - du -sh build/ || true
