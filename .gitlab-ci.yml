@@ -2,7 +2,7 @@
 # Runs on merge requests to ensure code quality and build integrity
 
 # Use Node.js 20 image (adjust version if needed)
-image: node:22
+image: node:22-alpine
 
 # Only run on merge requests and main branch
 workflow:
@@ -32,6 +32,8 @@ variables:
   HUSKY: "0"
   # Disable Prisma telemetry in CI
   CHECKPOINT_DISABLE: "1"
+  # Dummy DATABASE_URL for Prisma client generation in CI
+  DATABASE_URL: "mysql://dummy:dummy@localhost:3306/dummy"
 
 # Install dependencies and generate Prisma client
 install:
