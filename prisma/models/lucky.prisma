@@ -1,0 +1,34 @@
+// ========== TreasureBox Models ==========
+
+model TreasureBox {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isOpened          Boolean   @default(false)
+  initialProgress   Float     @default(45) // Base progress (45% base + optional bonuses)
+  inviteProgress    Float     @default(0) // Progress from weekly invites
+  currentProgress   Float     @default(45) // Total progress (initialProgress + inviteProgress)
+  weeklyInviteCount Int       @default(0) // Number of invites this week
+  rewardTier        Int? // 1 = 80%, 2 = 90%, 3 = 100%
+  rewardAmount      Float     @default(0) // USDT amount
+  isClaimed         Boolean   @default(false)
+  claimedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now()) @updatedAt
+
+  @@index([userId])
+  @@index([isClaimed])
+}
+
+model Pool {
+  id                String   @id @default(uuid())
+  totalPool         Float    @default(200) // Total USDT in pool
+  remainingPool     Float    @default(200) // Remaining USDT
+  distributedAmount Float    @default(0) // Already distributed
+  tier1Count        Int      @default(0) // Number of users who reached 80%
+  tier2Count        Int      @default(0) // Number of users who reached 90%
+  tier3Count        Int      @default(0) // Number of users who reached 100%
+  isClosed          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
+}
