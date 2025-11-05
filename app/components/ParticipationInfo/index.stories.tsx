@@ -5,8 +5,12 @@ import ParticipationInfo from "./index";
 
 interface WrapperProps {
   initialExpand?: boolean;
-  campaignUser?: Pick<CampaignUser, "id" | "videoCount" | "score"> | null;
+  campaignUser?: Pick<
+    CampaignUser,
+    "id" | "videoCount" | "score" | "campaignId"
+  > | null;
   userRank?: number | null;
+  campaignId?: string;
 }
 
 // Wrapper component to handle state
@@ -14,10 +18,12 @@ const ParticipationInfoWrapper = ({
   initialExpand,
   campaignUser,
   userRank,
+  campaignId = "test-campaign-id",
 }: WrapperProps) => {
   const [expand, setExpand] = useState(initialExpand ?? false);
   return (
     <ParticipationInfo
+      campaignId={campaignId}
       campaignUser={campaignUser}
       expand={expand}
       setExpand={setExpand}
@@ -68,6 +74,7 @@ const meta = {
       id: 123,
       videoCount: 15,
       score: 85.5,
+      campaignId: "test-campaign-id",
     },
     userRank: 3,
   },
@@ -97,6 +104,7 @@ export const HighPerformer: Story = {
       id: 456,
       videoCount: 42,
       score: 795.8,
+      campaignId: "test-campaign-id",
     },
     userRank: 1,
     initialExpand: true,

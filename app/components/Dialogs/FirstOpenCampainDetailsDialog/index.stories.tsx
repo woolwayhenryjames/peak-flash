@@ -11,10 +11,6 @@ const meta = {
     },
   },
   argTypes: {
-    tags: {
-      control: "object",
-      description: "The tags to display in the dialog",
-    },
     forceShow: {
       control: "boolean",
       description: "Force the dialog to show (useful for Storybook)",
@@ -23,9 +19,13 @@ const meta = {
       control: "text",
       description: "The ID of the campaign",
     },
+    joinRequirement: {
+      control: "object",
+      description: "The join requirement object containing tags",
+    },
   },
   args: {
-    tags: ["AI", "Web3", "TikTok"],
+    joinRequirement: { tags: ["AI", "Web3", "TikTok"] },
     forceShow: true,
     id: "campaign-1",
   },
