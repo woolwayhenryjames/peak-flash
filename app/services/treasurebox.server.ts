@@ -150,6 +150,7 @@ export async function getOrCreateTreasureBox(
 
 /**
  * 更新TreasureBox的邀请进度
+ * 当用户达到奖励门槛时，立即从奖池扣除并预留奖励
  */
 export async function updateTreasureBoxProgress(
   userId: string,
@@ -199,6 +200,59 @@ export async function updateTreasureBoxProgress(
 
   const reward = calculateReward(currentProgress);
 
+  // 🔥 新增逻辑：如果用户达到新的奖励档位，且还没领取过，立即从奖池扣除
+  const oldRewardAmount = treasureBox.rewardAmount || 0;
+  const newRewardAmount = reward.amount;
+  const rewardDifference = newRewardAmount - oldRewardAmount;
+
+  // 如果奖励增加了，且用户还没领取过，从奖池扣除差额
+  if (rewardDifference > 0 && !treasureBox.isClaimed) {
+    const pool = await getOrCreatePool();
+
+    // 检查奖池是否足够
+    if (pool.isClosed || pool.remainingPool < rewardDifference) {
+      // 奖池不足，不更新奖励
+      console.log(
+        `[updateTreasureBoxProgress] Pool insufficient for user ${userId}, cannot allocate ${rewardDifference} USDT`
+      );
+
+      return await prisma.treasureBox.update({
+        where: { userId },
+        data: {
+          initialProgress: Number.parseFloat(initialProgress.toFixed(2)),
+          inviteProgress: Number.parseFloat(inviteProgress.toFixed(2)),
+          currentProgress,
+          weeklyInviteCount,
+          // 保持原有奖励不变
+        },
+      });
+    }
+
+    // 奖池足够，扣除差额并更新
+    await prisma.pool.update({
+      where: { id: pool.id },
+      data: {
+        remainingPool: pool.remainingPool - rewardDifference,
+        distributedAmount: pool.distributedAmount + rewardDifference,
+        isClosed: pool.remainingPool - rewardDifference <= 0,
+        // 更新对应档位计数
+        ...(reward.tier === 1 && oldRewardAmount === 0
+          ? { tier1Count: pool.tier1Count + 1 }
+          : {}),
+        ...(reward.tier === 2 && treasureBox.rewardTier !== 2
+          ? { tier2Count: pool.tier2Count + 1 }
+          : {}),
+        ...(reward.tier === 3 && treasureBox.rewardTier !== 3
+          ? { tier3Count: pool.tier3Count + 1 }
+          : {}),
+      },
+    });
+
+    console.log(
+      `[updateTreasureBoxProgress] Allocated ${rewardDifference} USDT from pool for user ${userId}`
+    );
+  }
+
   return await prisma.treasureBox.update({
     where: { userId },
     data: {
@@ -213,10 +267,11 @@ export async function updateTreasureBoxProgress(
 }
 
 /**
- * 打开TreasureBox（并从奖池分配奖励）
+ * 打开TreasureBox
+ * 仅用于改变宝箱的打开状态，不进行奖池扣除
+ * 奖池扣除在 updateTreasureBoxProgress 中完成
  */
 export async function openTreasureBox(userId: string) {
-  // 获取宝箱信息
   const treasureBox = await prisma.treasureBox.findUnique({
     where: { userId },
   });
@@ -230,20 +285,7 @@ export async function openTreasureBox(userId: string) {
     return treasureBox;
   }
 
-  // 如果有奖励档位，从奖池分配奖励
-  if (treasureBox.rewardTier && treasureBox.rewardAmount > 0) {
-    const result = await distributeReward(
-      userId,
-      treasureBox.rewardTier,
-      treasureBox.rewardAmount
-    );
-
-    if (!result.success) {
-      throw new Error(result.message);
-    }
-  }
-
-  // 更新宝箱状态为已打开
+  // 仅更新宝箱状态为已打开，不进行奖励分配
   return await prisma.treasureBox.update({
     where: { userId },
     data: {
