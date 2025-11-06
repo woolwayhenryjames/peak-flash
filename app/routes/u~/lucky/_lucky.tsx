@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/style/noNestedTernary: not written by dev team */
 import { useEffect, useState } from "react";
-import { redirect } from "react-router";
+import { Link, redirect } from "react-router";
 import ConnectWallet from "~/components/ConnectWallet";
 import GlowContainer from "~/components/GlowContainer";
 import InviteeCampaigns from "~/components/inviteeCampaigns";
@@ -668,74 +668,85 @@ export default function Lucky({
       <div className="flex flex-col gap-7">
         <div className="flex gap-1">
           <h2 className="font-semibold text-white text-xl">
-            🎁 PeakAI TreasureBox
+            🎁 PeakAI TreasureBox Weekly Event
           </h2>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 p-6">
           <div className="space-y-6 text-white">
-            {/* Event Info */}
+            {/* Main Title - Enlarged */}
             <div className="space-y-3 text-center">
-              <p className="text-[#C0C0C0] text-sm">
-                Progressive Treasure Box Reward Event
+              <p className="font-bold text-base text-white leading-tight md:text-lg">
+                Invite new creators & Increase treasure box progress
               </p>
             </div>
 
             {/* Event Info */}
             <div className="rounded-xl border border-white/20 bg-black/30 p-4">
-              <div className="space-y-3 text-center">
-                <p className="font-bold text-sm text-white">
-                  Invite new users to register and increase your treasure box
-                  progress
-                </p>
-
-                {/* Rewards Info - No Border */}
-                <div className="space-y-2 py-2">
-                  <p className="font-semibold text-[#6CFBD3] text-xs uppercase tracking-wider">
-                    Rewards
+              <div className="space-y-4 text-center">
+                {/* Rewards Info - More Prominent */}
+                <div className="space-y-3 rounded-lg border border-[#6CFBD3]/30 bg-[#6CFBD3]/5 px-3 py-4">
+                  <p className="font-bold text-[#6CFBD3] text-sm uppercase tracking-wider">
+                    🎁 REWARDS
                   </p>
-                  <div className="flex justify-center gap-4 text-xs">
+                  <div className="flex justify-center gap-6 text-sm">
                     <span className="text-white">
                       80% ={" "}
-                      <span className="font-bold text-[#6CFBD3]">1 USDT</span>
+                      <span className="font-bold text-[#6CFBD3] text-base">
+                        1 USDT
+                      </span>
                     </span>
                     <span className="text-white">
                       90% ={" "}
-                      <span className="font-bold text-[#6CFBD3]">5 USDT</span>
+                      <span className="font-bold text-[#6CFBD3] text-base">
+                        5 USDT
+                      </span>
                     </span>
                     <span className="text-white">
                       100% ={" "}
-                      <span className="font-bold text-[#6CFBD3]">10 USDT</span>
+                      <span className="font-bold text-[#6CFBD3] text-base">
+                        10 USDT
+                      </span>
                     </span>
                   </div>
                 </div>
 
-                <p className="text-[#A7A7A7] text-xs">
-                  Event Period: Nov 3, 2025 - Nov 9, 2025 (UTC)
-                </p>
-                <p className="text-[#A7A7A7] text-xs">
-                  Draw Date: November 10, 2025 (UTC)
-                </p>
-
-                {/* Prize Pool Info */}
-                <div className="mt-4 border-white/10 border-t pt-3">
-                  <p className="mb-2 text-sm text-white">
-                    💰 Total Prize Pool:{" "}
-                    <span className="font-bold text-[#6CFBD3] text-lg">
-                      {pool.remainingPool.toFixed(0)}
-                    </span>{" "}
-                    /{" "}
-                    <span className="text-white/60">{pool.totalPool} USDT</span>
+                {/* Event Period and Prize Pool */}
+                <div className="space-y-2 pt-2">
+                  <p className="text-[#A7A7A7] text-xs">
+                    Event Period: Nov 3, 2025 - Nov 9, 2025 (UTC)
                   </p>
-                  {pool.isClosed ? (
-                    <p className="font-medium text-red-400 text-xs">
-                      🔒 Pool has been depleted - Event closed
+                  <p className="text-[#A7A7A7] text-xs">
+                    Draw Date: November 10, 2025 (UTC)
+                  </p>
+
+                  {/* Prize Pool Info */}
+                  <div className="mt-4 border-white/10 border-t pt-3">
+                    <p className="mb-2 text-sm text-white">
+                      💰 Total Prize Pool:{" "}
+                      <span className="font-bold text-[#6CFBD3] text-lg">
+                        {pool.remainingPool.toFixed(0)}
+                      </span>{" "}
+                      /{" "}
+                      <span className="text-white/60">
+                        {pool.totalPool} USDT
+                      </span>
                     </p>
-                  ) : (
-                    <p className="font-medium text-xs text-yellow-400">
-                      ⚠️ Pool closes once depleted - Join now!
+                    {pool.isClosed ? (
+                      <p className="font-medium text-red-400 text-xs">
+                        🔒 Pool has been depleted - Event closed
+                      </p>
+                    ) : (
+                      <p className="font-medium text-xs text-yellow-400">
+                        ⚠️ Pool closes once depleted - Join now!
+                      </p>
+                    )}
+                    <p className="mt-3 text-blue-300 text-xs italic leading-relaxed">
+                      ✨ This is an ongoing weekly distribution event!
+                      Participate actively each week for your chance to win
+                      rewards. New opportunities every week!
                     </p>
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -756,6 +767,35 @@ export default function Lucky({
                     tier3Reached={tier3Reached}
                     totalProgress={totalProgress}
                   />
+
+                  {/* SPARK Points Tip - Only show when user doesn't have SPARK Points */}
+                  {!hasSparkPoints && (
+                    <div className="rounded-xl border border-blue-500/50 bg-blue-900/20 p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="text-2xl">💡</div>
+                        <div className="flex-1 space-y-2">
+                          <p className="font-semibold text-blue-300 text-sm">
+                            Boost Your Progress
+                          </p>
+                          <p className="text-blue-200 text-xs leading-relaxed">
+                            Participate in Campaign activities and earn SPARK
+                            Points to get an extra{" "}
+                            <span className="font-bold text-[#6CFBD3]">5%</span>{" "}
+                            progress boost!
+                          </p>
+                          <Link
+                            className="inline-block"
+                            to="/u/ascent"
+                            viewTransition
+                          >
+                            <div className="mt-2 w-fit rounded-lg border border-blue-400/50 bg-blue-500/20 px-4 py-2 text-blue-300 text-xs transition hover:bg-blue-500/30">
+                              Join Campaigns →
+                            </div>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <button

@@ -213,9 +213,37 @@ export async function updateTreasureBoxProgress(
 }
 
 /**
- * 打开TreasureBox
+ * 打开TreasureBox（并从奖池分配奖励）
  */
 export async function openTreasureBox(userId: string) {
+  // 获取宝箱信息
+  const treasureBox = await prisma.treasureBox.findUnique({
+    where: { userId },
+  });
+
+  if (!treasureBox) {
+    throw new Error("TreasureBox not found");
+  }
+
+  // 如果已经打开过，直接返回
+  if (treasureBox.isOpened) {
+    return treasureBox;
+  }
+
+  // 如果有奖励档位，从奖池分配奖励
+  if (treasureBox.rewardTier && treasureBox.rewardAmount > 0) {
+    const result = await distributeReward(
+      userId,
+      treasureBox.rewardTier,
+      treasureBox.rewardAmount
+    );
+
+    if (!result.success) {
+      throw new Error(result.message);
+    }
+  }
+
+  // 更新宝箱状态为已打开
   return await prisma.treasureBox.update({
     where: { userId },
     data: {
