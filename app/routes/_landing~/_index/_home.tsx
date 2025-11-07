@@ -162,9 +162,9 @@ export default function Index({ loaderData }: Route.ComponentProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center bg-black">
+    <div className="flex flex-col items-center justify-center overflow-x-hidden bg-black">
       <div
-        className="contents w-full items-center bg-[image:var(--bg-top)] bg-cover md:flex md:aspect-[1728/923]"
+        className="bg-(image:--bg-top) contents w-full items-center bg-cover md:flex md:aspect-1728/923"
         style={
           {
             "--bg-top": `url("${bgTop}")`,
@@ -176,10 +176,10 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           <div className="flex flex-col gap-5 p-5 md:gap-20 lg:flex-1">
             <div className="flex flex-col gap-12">
               <div className="space-y-6">
-                <h1 className="font-normal text-white text-xl leading-[1.5] md:text-6xl">
+                <h1 className="font-normal text-white text-xl leading-normal md:text-6xl">
                   Ascend Influence. Attain the Peak. Amplify Results.
                 </h1>
-                <p className="font-light text-[#CBCBCB] text-xs leading-[1.5] md:max-w-[37.5rem] md:text-xl">
+                <p className="font-light text-[#CBCBCB] text-xs leading-normal md:max-w-150 md:text-xl">
                   Experience the AI-powered Distribution OS that transforms
                   content into measurable results—for brands seeking reach, and
                   creators chasing recognition.
@@ -196,7 +196,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                   onClick={signInEnterprise}
                   type="button"
                 >
-                  <GlowContainer className="h-auto w-full gap-2 overflow-hidden bg-gradient-to-r from-[#080C0D] to-[#3C5E66] px-2 py-2 md:w-auto md:gap-4 md:px-7 md:py-5">
+                  <GlowContainer className="h-auto w-full gap-2 overflow-hidden bg-linear-to-r from-[#080C0D] to-[#3C5E66] px-2 py-2 md:w-auto md:gap-4 md:px-7 md:py-5">
                     <img
                       alt="Logo"
                       className="size-4 md:size-6"
@@ -257,7 +257,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
 
           {/* Screenshot carousel */}
           <div
-            className="flex aspect-[390/400] items-end justify-center gap-8 bg-[image:var(--bg-top-mobile)] md:contents"
+            className="bg-(image:--bg-top-mobile) flex aspect-39/40 items-end justify-center gap-8 md:contents"
             style={
               {
                 "--bg-top-mobile": `url("${bgTopM}")`,
@@ -301,7 +301,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
 
       {/* Product Highlight Section */}
       <div
-        className="relative flex aspect-[390/658] w-full flex-col items-center overflow-hidden bg-[image:var(--bg-bottom-mobile)] bg-cover px-5 max-md:mt-12 md:aspect-[1728/1006] md:bg-[image:var(--bg-bottom)]"
+        className="bg-(image:--bg-bottom-mobile) md:bg-(image:--bg-bottom) relative flex aspect-390/658 w-full flex-col items-center overflow-hidden bg-cover px-5 max-md:mt-12 md:aspect-1728/1006"
         style={
           {
             "--bg-bottom": `url("${bgBottom}")`,
@@ -360,7 +360,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           width="148"
         />
         <div
-          className="container relative z-10 flex flex-col items-center gap-8 bg-[image:var(--bg-highlight-mobile)] bg-cover bg-no-repeat max-md:mt-7 max-md:border max-md:border-white/15 max-md:p-7 md:mx-auto md:gap-16 md:bg-[image:var(--bg-highlight)] md:pt-11"
+          className="bg-(image:--bg-highlight-mobile) md:bg-(image:--bg-highlight) container relative z-10 flex flex-col items-center gap-8 bg-cover bg-no-repeat max-md:mt-7 max-md:border max-md:border-white/15 max-md:p-7 md:mx-auto md:gap-16 md:pt-11"
           style={
             {
               "--bg-highlight": `url("${bgHighlight}")`,
@@ -379,7 +379,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-20 md:p-20">
             {productHighlights.map((highlight) => (
               <div
-                className="flex max-w-[15.5rem] flex-col items-center gap-4 md:gap-8"
+                className="flex max-w-62 flex-col items-center gap-4 md:gap-8"
                 key={highlight.id}
               >
                 {/* Icon Container */}
@@ -390,15 +390,15 @@ export default function Index({ loaderData }: Route.ComponentProps) {
                     src={highlight.icon}
                   />
                   {/* Gradient overlay effect */}
-                  <div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-br from-white/100 via-white/14 to-transparent opacity-[0.98] blur-sm" />
+                  <div className="pointer-events-none absolute inset-0 rounded-lg bg-linear-to-br from-white via-white/14 to-transparent opacity-[0.98] blur-sm" />
                 </GlowContainer>
 
                 {/* Text Content */}
                 <div className="flex flex-col gap-2 text-center md:gap-4">
-                  <h3 className="font-medium text-sm text-white md:text-2xl md:leading-[1.5]">
+                  <h3 className="font-medium text-sm text-white md:text-2xl md:leading-normal">
                     {highlight.title}
                   </h3>
-                  <p className="font-normal text-[#979797] text-[10px] md:text-base md:leading-[1.5]">
+                  <p className="font-normal text-[#979797] text-[10px] md:text-base md:leading-normal">
                     {highlight.description}
                   </p>
                 </div>
@@ -434,7 +434,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
         </Marquee>
       </div>
       <div
-        className="w-full bg-[image:var(--bg-peekaboos-mobile)] md:bg-[image:var(--bg-peekaboos)]"
+        className="bg-(image:--bg-peekaboos-mobile) md:bg-(image:--bg-peekaboos) w-full"
         style={
           {
             "--bg-peekaboos-mobile":

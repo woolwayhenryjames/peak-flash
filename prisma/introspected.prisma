@@ -1,0 +1,149 @@
+model Flash {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.Text
+  message          String?            @db.Text
+  description      String?            @db.Text
+  status           Flash_status       @default(ACTIVE)
+  prizePool        Decimal?           @db.Decimal(18, 2)
+  prizeCurrency    String?            @db.VarChar(10)
+  perUserPrize     Decimal?           @db.Decimal(18, 2)
+  participantLimit Int?
+  startAt          DateTime           @default(now())
+  endAt            DateTime?
+  trackingMode     Flash_trackingMode @default(TIME)
+  ownerId          String
+  bannerImage      String?            @db.Text
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @default(now())
+  User             User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  Task             Task[]
+
+  @@index([id])
+  @@index([ownerId])
+  @@index([startAt])
+  @@index([status])
+  @@index([trackingMode])
+}
+
+model Pool {
+  id                String   @id
+  totalPool         Float    @default(200)
+  remainingPool     Float    @default(200)
+  distributedAmount Float    @default(0)
+  tier1Count        Int      @default(0)
+  tier2Count        Int      @default(0)
+  tier3Count        Int      @default(0)
+  isClosed          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  flashId     Int
+  name        String     @db.Text
+  description String?    @db.Text
+  iconUrl     String?    @db.Text
+  actionLabel String     @default("GO") @db.Text
+  actionUrl   String?    @db.Text
+  type        Task_type  @default(CUSTOM)
+  isRequired  Boolean    @default(false)
+  order       Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  Flash       Flash      @relation(fields: [flashId], references: [id], onDelete: Cascade)
+  TaskUser    TaskUser[]
+
+  @@index([flashId])
+  @@index([id])
+  @@index([isRequired])
+  @@index([type])
+}
+
+model TaskUser {
+  id                 Int                         @id @default(autoincrement())
+  taskId             Int
+  userId             String
+  completed          Boolean                     @default(false)
+  completedAt        DateTime?
+  verificationStatus TaskUser_verificationStatus @default(NOT_REQUIRED)
+  verificationData   String?                     @db.LongText
+  claimedReward      Boolean                     @default(false)
+  createdAt          DateTime                    @default(now())
+  updatedAt          DateTime                    @default(now())
+  Task               Task                        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  User               User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+  @@index([taskId])
+  @@index([userId])
+  @@index([verificationStatus])
+}
+
+model TreasureBox {
+  id                String    @id
+  userId            String    @unique
+  isOpened          Boolean   @default(false)
+  initialProgress   Float     @default(45)
+  inviteProgress    Float     @default(0)
+  currentProgress   Float     @default(45)
+  weeklyInviteCount Int       @default(0)
+  rewardTier        Int?
+  rewardAmount      Float     @default(0)
+  isClaimed         Boolean   @default(false)
+  claimedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now())
+  User              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([isClaimed])
+  @@index([userId])
+}
+
+model UserVideo {
+  id               Int          @id @default(autoincrement())
+  videoId          String       @unique
+  videoUrl         String?      @db.Text
+  coverUrl         String?      @db.Text
+  createTime       DateTime?
+  description      String?      @db.Text
+  viewCount        Int
+  likeCount        Int
+  commentCount     Int
+  shareCount       Int
+  collectCount     Int
+  keywordScore     Float?
+  originalityScore Float?
+  clarityScore     Float?
+  spamScore        Float?
+  promotionScore   Float?
+  totalScore       Float?
+  campaignUserId   Int
+  active           Boolean      @default(true)
+  CampaignUser     CampaignUser @relation(fields: [campaignUserId], references: [id], onDelete: Cascade)
+
+  @@index([campaignUserId])
+  @@index([videoId])
+}
+
+enum Flash_status {
+  ACTIVE
+  ENDED
+}
+
+enum TaskUser_verificationStatus {
+  NOT_REQUIRED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum Task_type {
+  CUSTOM
+  FOLLOW_X
+}
+
+enum Flash_trackingMode {
+  TIME
+  PARTICIPANTS
+}

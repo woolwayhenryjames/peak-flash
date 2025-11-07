@@ -1,0 +1,5 @@
+{
+  "buildCommand": "pnpm build:prod",
+  "installCommand": "pnpm install",
+  "outputDirectory": "build/client"
+}

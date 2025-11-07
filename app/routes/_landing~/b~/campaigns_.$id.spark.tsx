@@ -2,7 +2,7 @@ import SparkPointsPage from "~/components/SparkPointsPage";
 import { getDbUser } from "~/services/auth.server";
 import { getCampaignLeaderboard } from "~/services/campaign.server";
 import { db } from "~/services/db.server";
-import type { Route } from "./+types/campaigns.$id.spark";
+import type { Route } from "./+types/campaigns_.$id.spark";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await getDbUser(request);

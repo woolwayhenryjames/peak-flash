@@ -368,6 +368,12 @@ export async function loader({ request }: Route.LoaderArgs) {
   console.log("[Lucky Page] 步骤4: 获取奖池信息...");
   const pool = await getOrCreatePool();
 
+  // 检查活动是否已结束（基于时间）
+  // 活动截止时间: Nov 9, 2025 23:59:59 UTC
+  const eventEndDate = new Date("2025-11-09T23:59:59Z");
+  const now = new Date();
+  const isEventEnded = now > eventEndDate;
+
   console.log("[Lucky Page] 步骤5: 最终返回数据");
   console.log("[Lucky Page] TreasureBox数据:", {
     isOpened: treasureBox.isOpened,
@@ -380,6 +386,11 @@ export async function loader({ request }: Route.LoaderArgs) {
     remainingPool: pool.remainingPool,
     isClosed: pool.isClosed,
   });
+  console.log("[Lucky Page] 活动状态:", {
+    isEventEnded,
+    currentTime: now.toISOString(),
+    eventEndDate: eventEndDate.toISOString(),
+  });
 
   logger.info("[Lucky Page] Final data being returned:", {
     userId: user.id,
@@ -387,6 +398,7 @@ export async function loader({ request }: Route.LoaderArgs) {
     weeklyInviteRecordsCount: weeklyInviteRecords.length,
     treasureBoxProgress: treasureBox.currentProgress,
     poolRemaining: pool.remainingPool,
+    isEventEnded,
   });
 
   console.log("[Lucky Page] ===== 页面加载完成 =====");
@@ -396,11 +408,12 @@ export async function loader({ request }: Route.LoaderArgs) {
     weeklyInviteRecords,
     treasureBox,
     pool,
+    isEventEnded,
   };
 }
 
 export default function Lucky({
-  loaderData: { user, inviteRecords, weeklyInviteRecords, treasureBox, pool },
+  loaderData: { user, inviteRecords, weeklyInviteRecords, treasureBox, pool, isEventEnded },
 }: Route.ComponentProps) {
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedTikTok, setCopiedTikTok] = useState(false);
@@ -674,11 +687,14 @@ export default function Lucky({
 
         <div className="rounded-2xl border border-white/10 bg-linear-124 from-[#292929]/60 to-[#191616]/60 p-6">
           <div className="space-y-6 text-white">
-            {/* Main Title - Enlarged */}
-            <div className="space-y-3 text-center">
-              <p className="font-bold text-base text-white leading-tight md:text-lg">
-                Invite new creators & Increase treasure box progress
-              </p>
+            {/* Main Title - Enlarged and Split into Two Lines */}
+            <div className="space-y-2 text-center">
+              <h2 className="font-bold text-xl text-white leading-tight md:text-2xl">
+                <span className="text-[#FFD700]">Invite</span> new creators
+              </h2>
+              <h2 className="font-bold text-xl text-white leading-tight md:text-2xl">
+                Increase treasure box progress
+              </h2>
             </div>
 
             {/* Event Info */}
@@ -753,7 +769,72 @@ export default function Lucky({
 
             {/* Treasure Box Display */}
             <div className="relative">
-              {treasureBox.isOpened ? (
+              {pool.isClosed || isEventEnded ? (
+                /* Event Ended / Pool Depleted Display */
+                <div className="rounded-xl border border-red-500/30 bg-gradient-to-b from-red-900/20 to-black/40 p-8">
+                  <div className="space-y-6 text-center">
+                    <div className="space-y-3">
+                      <p className="font-bold text-2xl text-red-400">
+                        Event Closed
+                      </p>
+                      <p className="text-red-300/80 text-sm leading-relaxed">
+                        {isEventEnded 
+                          ? "This week's TreasureBox event has ended. The event period has concluded."
+                          : "This week's TreasureBox event has ended. The prize pool has been fully distributed."}
+                      </p>
+                    </div>
+                    
+                    {treasureBox.isOpened && (
+                      <div className="mt-6 rounded-lg border border-white/20 bg-black/40 p-6">
+                        <p className="mb-4 text-sm text-white/80">Your Final Progress:</p>
+                        <div className="mb-4">
+                          <span className="font-bold text-4xl text-white">
+                            {totalProgress.toFixed(1)}%
+                          </span>
+                        </div>
+                        {tier1Reached ? (
+                          <div className="space-y-2">
+                            <div className="rounded-lg border border-green-500/50 bg-green-900/20 p-4">
+                              <p className="font-semibold text-green-300 text-sm">
+                                🎉 Congratulations!
+                              </p>
+                              <p className="mt-2 text-green-200 text-xs">
+                                You reached {tier3Reached ? "100%" : tier2Reached ? "90%" : "80%"} and earned{" "}
+                                <span className="font-bold text-[#6CFBD3] text-lg">
+                                  {treasureBox.rewardAmount} USDT
+                                </span>
+                              </p>
+                              {treasureBox.isClaimed && (
+                                <p className="mt-2 text-green-300/70 text-xs">
+                                  ✓ Reward has been distributed to your wallet
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="rounded-lg border border-orange-500/50 bg-orange-900/20 p-4">
+                            <p className="text-orange-300 text-sm">
+                              You didn't reach the 80% threshold this time.
+                            </p>
+                            <p className="mt-2 text-orange-200/70 text-xs">
+                              Better luck next week!
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    <div className="mt-6 rounded-lg border border-blue-500/30 bg-blue-900/10 p-4">
+                      <p className="font-semibold text-blue-300 text-sm">
+                        ✨ New Event Every Week!
+                      </p>
+                      <p className="mt-2 text-blue-200/80 text-xs leading-relaxed">
+                        Don't miss out! A new TreasureBox event starts every week with fresh rewards. Come back soon!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : treasureBox.isOpened ? (
                 <div className="space-y-6">
                   <ProgressBar
                     tier1Reached={tier1Reached}
@@ -854,6 +935,11 @@ export default function Lucky({
               {eventRulesExpanded && (
                 <div className="rounded-xl border border-white/20 bg-black/30 p-4 text-[#A7A7A7] text-sm">
                   <ul className="list-inside list-disc space-y-2">
+                    <li>
+                      <span className="text-[#FFD700] font-semibold">
+                        TreasureBox rewards are based on invites. More invites = higher progress. Reach 80% to unlock rewards.
+                      </span>
+                    </li>
                     <li>
                       Each user has an exclusive treasure box with a base
                       progress of 45%

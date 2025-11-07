@@ -17,42 +17,50 @@ const {
   AWS_SECRET_ACCESS_KEY,
 } = process.env;
 
-if (!AWS_S3_BUCKET_NAME) {
+// 开发环境暂时允许没有 AWS 配置
+const isDevelopment = process.env.NODE_ENV === "development";
+
+if (!AWS_S3_BUCKET_NAME && !isDevelopment) {
   throw new Error(
     `Storage is missing required configuration. ${JSON.stringify(process.env)}`
   );
 }
 
-if (!AWS_S3_REGION_NAME) {
+if (!AWS_S3_REGION_NAME && !isDevelopment) {
   throw new Error("Storage is missing required configuration.");
 }
 
-if (!AWS_ACCESS_KEY_ID) {
+if (!AWS_ACCESS_KEY_ID && !isDevelopment) {
   throw new Error("Storage is missing required configuration.");
 }
 
-if (!AWS_SECRET_ACCESS_KEY) {
+if (!AWS_SECRET_ACCESS_KEY && !isDevelopment) {
   throw new Error("Storage is missing required configuration.");
 }
 
-const storage = new S3Client({
-  credentials: {
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
-  },
-  region: AWS_S3_REGION_NAME,
-  requestHandler: {
-    httpsAgent: { maxSockets: 150, keepAlive: false },
-  },
-});
+const storage = isDevelopment && !AWS_ACCESS_KEY_ID
+  ? null // 开发环境没有配置时返回 null
+  : new S3Client({
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID!,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY!,
+      },
+      region: AWS_S3_REGION_NAME!,
+      requestHandler: {
+        httpsAgent: { maxSockets: 150, keepAlive: false },
+      },
+    });
 
 export const uploadHandler = async (fileUpload: FileUpload) => {
+  if (!storage) {
+    throw new Error("Storage is not configured. Please set AWS environment variables.");
+  }
   const fileName = `user-upload/${Date.now()}-${fileUpload.name}`;
   const upload = await new Upload({
     client: storage,
     leavePartsOnError: false,
     params: {
-      Bucket: AWS_S3_BUCKET_NAME,
+      Bucket: AWS_S3_BUCKET_NAME!,
       Key: `peakai/${fileName}`,
       Body: fileUpload.stream(),
     },
@@ -66,8 +74,11 @@ export const uploadHandler = async (fileUpload: FileUpload) => {
 };
 
 export const getAsset = async (s3Key: string) => {
+  if (!storage) {
+    throw new Response("Storage not configured", { status: 500 });
+  }
   const command = new GetObjectCommand({
-    Bucket: AWS_S3_BUCKET_NAME,
+    Bucket: AWS_S3_BUCKET_NAME!,
     Key: `peakai/${s3Key}`,
   });
 
@@ -86,8 +97,12 @@ export const getAsset = async (s3Key: string) => {
 };
 
 export const deleteAsset = async (fullPath: string) => {
+  if (!storage) {
+    logger.warn("Storage not configured, skipping delete");
+    return;
+  }
   const command = new DeleteObjectCommand({
-    Bucket: AWS_S3_BUCKET_NAME,
+    Bucket: AWS_S3_BUCKET_NAME!,
     Key: fullPath,
   });
 
@@ -99,6 +114,10 @@ export const deleteAsset = async (fullPath: string) => {
 };
 
 export const deleteFolder = async (prefix: string) => {
+  if (!storage) {
+    logger.warn("Storage not configured, skipping folder delete");
+    return;
+  }
   // Ensure the prefix ends with a slash to avoid deleting files with similar prefixes
   const folderPrefix = prefix.endsWith("/") ? prefix : `${prefix}/`;
 
@@ -108,7 +127,7 @@ export const deleteFolder = async (prefix: string) => {
     do {
       // List objects with the folder prefix
       const listCommand = new ListObjectsV2Command({
-        Bucket: AWS_S3_BUCKET_NAME,
+        Bucket: AWS_S3_BUCKET_NAME!,
         Prefix: folderPrefix,
         ContinuationToken: continuationToken,
       });
@@ -118,7 +137,7 @@ export const deleteFolder = async (prefix: string) => {
       if (listResponse.Contents && listResponse.Contents.length > 0) {
         // Delete up to 1000 objects at a time (S3 limit for batch operations)
         const deleteCommand = new DeleteObjectsCommand({
-          Bucket: AWS_S3_BUCKET_NAME,
+          Bucket: AWS_S3_BUCKET_NAME!,
           Delete: {
             Objects: listResponse.Contents.map((object) => ({
               Key: object.Key,
@@ -145,6 +164,9 @@ export const uploadFilesToS3 = async (
   prefix: string,
   mimeType: string
 ) => {
+  if (!storage) {
+    throw new Error("Storage not configured");
+  }
   const folderPrefix = prefix.endsWith("/") ? prefix : `${prefix}/`;
   await Promise.all(
     files.map(async (file) => {
@@ -154,10 +176,10 @@ export const uploadFilesToS3 = async (
         ? Buffer.from(file.content, "base64")
         : file.content;
       const upload = await new Upload({
-        client: storage,
+        client: storage!,
         leavePartsOnError: false,
         params: {
-          Bucket: AWS_S3_BUCKET_NAME,
+          Bucket: AWS_S3_BUCKET_NAME!,
           Key: `${folderPrefix}${file.path}`,
           Body: body,
           ContentType,
@@ -173,12 +195,15 @@ export const uploadFilesToS3 = async (
 export const listFilesInS3Folder = async (
   prefix: string
 ): Promise<string[]> => {
+  if (!storage) {
+    throw new Error("Storage not configured");
+  }
   const folderPrefix = prefix.endsWith("/") ? prefix : `${prefix}/`;
   let continuationToken: string | undefined;
   let allKeys: string[] = [];
   do {
     const listCommand = new ListObjectsV2Command({
-      Bucket: AWS_S3_BUCKET_NAME,
+      Bucket: AWS_S3_BUCKET_NAME!,
       Prefix: folderPrefix,
       ContinuationToken: continuationToken,
     });
@@ -197,8 +222,12 @@ export const deleteFilesFromS3 = async (keys: string[]) => {
   if (keys.length === 0) {
     return;
   }
+  if (!storage) {
+    logger.warn("Storage not configured, skipping files delete");
+    return;
+  }
   const command = new DeleteObjectsCommand({
-    Bucket: AWS_S3_BUCKET_NAME,
+    Bucket: AWS_S3_BUCKET_NAME!,
     Delete: {
       Objects: keys.map((Key) => ({ Key })),
       Quiet: true,
@@ -211,6 +240,9 @@ export const uploadImageFromUrl = async (
   imageUrl: string,
   userId: string
 ): Promise<string> => {
+  if (!storage) {
+    throw new Error("Storage not configured");
+  }
   try {
     // Fetch the image from the URL
     const response = await fetch(imageUrl);
@@ -231,10 +263,10 @@ export const uploadImageFromUrl = async (
 
     // Upload to S3
     const upload = await new Upload({
-      client: storage,
+      client: storage!,
       leavePartsOnError: false,
       params: {
-        Bucket: AWS_S3_BUCKET_NAME,
+        Bucket: AWS_S3_BUCKET_NAME!,
         Key: `peakai/${fileName}`,
         Body: Buffer.from(imageBuffer),
         ContentType: contentType,

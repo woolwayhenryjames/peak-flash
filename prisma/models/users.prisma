@@ -1,43 +1,35 @@
 model User {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  campaignUsers CampaignUser[]
-
-  name          String    @db.Text
-  email         String
-  emailVerified Boolean
-  image         String?   @db.Text
-  kindleScore   Float?
-  sessions      Session[]
-  accounts      Account[]
-
-  // Invitation relationships
-  inviterId String?
-  inviter   User?   @relation("UserInvitations", fields: [inviterId], references: [id], onDelete: SetNull)
-  invitees  User[]  @relation("UserInvitations")
-
-  walletAddress String? @db.Text
-  twitterHandle String? @db.Text
-  rank          Int?
-  isBusiness    Boolean @default(false)
-  isAdmin       Boolean @default(false)
-
-  // TikTok profile data
-  bio                String?      @db.Text
+  id                 String         @id @default(uuid())
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @default(now()) @updatedAt
+  name               String         @db.Text
+  email              String         @unique
+  emailVerified      Boolean
+  image              String?        @db.Text
+  kindleScore        Float?
+  inviterId          String?
+  walletAddress      String?        @db.Text
+  rank               Int?
+  isBusiness         Boolean        @default(false)
+  bio                String?        @db.Text
   followerCount      Int?
   followingCount     Int?
-  isStar             Boolean      @default(false)
-  visibleVideosCount Int?
+  isStar             Boolean        @default(false)
   likeCount          Int?
-  Campaign           Campaign[]   @relation("CampaignOwner")
-  Flash              Flash[]      @relation("FlashOwner")
-  firstComerBadge    Boolean      @default(false)
+  visibleVideosCount Int?
+  isAdmin            Boolean        @default(false)
+  firstComerBadge    Boolean        @default(false)
+  twitterHandle      String?        @db.Text
+  accounts           Account[]
+  Campaign           Campaign[]
+  campaignUsers      CampaignUser[]
+  Flash              Flash[]
+  sessions           Session[]
   TaskUser           TaskUser[]
   TreasureBox        TreasureBox?
+  inviter            User?          @relation("UserInvitations", fields: [inviterId], references: [id])
+  invitees           User[]         @relation("UserInvitations")
 
-  @@unique([email])
   @@index([id])
   @@index([kindleScore])
   @@index([inviterId])
@@ -46,7 +38,7 @@ model User {
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime
   updatedAt DateTime
   ipAddress String?  @db.Text
@@ -54,7 +46,7 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
+  @@index([userId], map: "Session_userId_fkey")
 }
 
 model Account {
@@ -62,7 +54,6 @@ model Account {
   accountId             String    @db.Text
   providerId            String    @db.Text
   userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?   @db.Text
   refreshToken          String?   @db.Text
   idToken               String?   @db.Text
@@ -72,6 +63,9 @@ model Account {
   password              String?   @db.Text
   createdAt             DateTime
   updatedAt             DateTime
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Verification {

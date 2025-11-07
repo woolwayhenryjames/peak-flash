@@ -1,7 +1,7 @@
 import KindleScoresPage from "~/components/KindleScoresPage";
 import bg from "~/routes/u~/leaderboard/assets/bg.avif";
 import { getCampaignUsersByUserRank } from "~/services/campaign.server";
-import type { Route } from "./+types/campaigns.$id.kindle";
+import type { Route } from "./+types/campaigns_.$id.kindle";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   if (!params.id) {
