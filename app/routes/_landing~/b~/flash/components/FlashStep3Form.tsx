@@ -9,6 +9,9 @@ interface Task {
   actionUrl?: string;
   type: TaskType;
   isRequired: boolean;
+  displayOrder?: number;
+  iconUrl?: string;
+  uploadedIcon?: string; // For file upload
 }
 
 interface FlashStep3FormProps {
@@ -59,6 +62,7 @@ export default function FlashStep3Form({
       name: "",
       type: "CUSTOM",
       isRequired: false,
+      displayOrder: formData.tasks.length,
     };
     onChange({ tasks: [...formData.tasks, newTask] });
   };
@@ -265,6 +269,83 @@ function TaskCard({
               </option>
             ))}
           </select>
+        </div>
+      </div>
+
+      {/* Display Order */}
+      <div className="mt-4 flex flex-col gap-2">
+        <label
+          className="font-['Poppins'] font-semibold text-sm text-white"
+          htmlFor={fieldId("displayOrder")}
+        >
+          Display Order
+        </label>
+        <input
+          className="rounded-lg border border-[#565656] bg-transparent px-4 py-3 font-['Poppins'] font-light text-[#818181] text-sm placeholder:text-[#818181] focus:border-white focus:text-white focus:outline-none"
+          id={fieldId("displayOrder")}
+          onChange={(event) =>
+            onUpdate(task.clientId, {
+              displayOrder: Number.parseInt(event.target.value, 10) || 0,
+            })
+          }
+          placeholder="0"
+          type="number"
+          value={task.displayOrder ?? 0}
+        />
+      </div>
+
+      {/* Icon URL and Upload Icon */}
+      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <label
+            className="font-['Poppins'] font-semibold text-sm text-white"
+            htmlFor={fieldId("iconUrl")}
+          >
+            Icon URL <span className="text-[#818181] text-xs">(Optional)</span>
+          </label>
+          <input
+            className="rounded-lg border border-[#565656] bg-transparent px-4 py-3 font-['Poppins'] font-light text-[#818181] text-sm placeholder:text-[#818181] focus:border-white focus:text-white focus:outline-none"
+            id={fieldId("iconUrl")}
+            onChange={(event) =>
+              onUpdate(task.clientId, { iconUrl: event.target.value })
+            }
+            placeholder="https://example.com/icon.png"
+            type="url"
+            value={task.iconUrl ?? ""}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label
+            className="font-['Poppins'] font-semibold text-sm text-white"
+            htmlFor={fieldId("uploadIcon")}
+          >
+            Upload Icon <span className="text-[#818181] text-xs">(Optional)</span>
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              accept="image/*"
+              className="hidden"
+              id={fieldId("uploadIcon")}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) {
+                  // In a real app, you would upload the file here
+                  onUpdate(task.clientId, { uploadedIcon: file.name });
+                }
+              }}
+              type="file"
+            />
+            <label
+              className="flex h-[46px] flex-1 cursor-pointer items-center justify-center rounded-lg border border-[#565656] bg-transparent px-4 font-['Poppins'] font-light text-[#818181] text-sm hover:border-white"
+              htmlFor={fieldId("uploadIcon")}
+            >
+              {task.uploadedIcon || "Choose file"}
+            </label>
+          </div>
+          <p className="font-['Poppins'] font-light text-[#818181] text-xs">
+            Uploading overrides the icon URL.
+          </p>
         </div>
       </div>
 
