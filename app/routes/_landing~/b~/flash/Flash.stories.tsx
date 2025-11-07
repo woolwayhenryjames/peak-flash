@@ -42,36 +42,40 @@ export const MyFlashEmpty: Story = {
   ),
 };
 
+// Wrapper component for FullPage to use hooks properly
+function FullPageWrapper() {
+  const [showCreate, setShowCreate] = React.useState(false);
+
+  return (
+    <div className="min-h-screen bg-[#0A0B0D] p-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="font-['Orbitron'] text-3xl font-bold text-white">
+            Flash
+          </h1>
+          <button
+            type="button"
+            onClick={() => setShowCreate(!showCreate)}
+            className="rounded-lg bg-gradient-to-b from-[#68FEF5] to-[#4E9095] px-6 py-3 font-semibold text-black transition-opacity hover:opacity-90"
+          >
+            {showCreate ? "View My Flash" : "Create New Flash"}
+          </button>
+        </div>
+        
+        {showCreate ? (
+          <CreateFlash />
+        ) : (
+          <MyFlash flashes={[]} />
+        )}
+      </div>
+    </div>
+  );
+}
+
 // Story 3: Full Page with Both Components
 export const FullPage: Story = {
-  render: () => {
-    const [showCreate, setShowCreate] = React.useState(false);
-
-    return (
-      <div className="min-h-screen bg-[#0A0B0D] p-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex items-center justify-between">
-            <h1 className="font-['Orbitron'] text-3xl font-bold text-white">
-              Flash
-            </h1>
-            <button
-              type="button"
-              onClick={() => setShowCreate(!showCreate)}
-              className="rounded-lg bg-gradient-to-b from-[#68FEF5] to-[#4E9095] px-6 py-3 font-semibold text-black transition-opacity hover:opacity-90"
-            >
-              {showCreate ? "View My Flash" : "Create New Flash"}
-            </button>
-          </div>
-          
-          {showCreate ? (
-            <CreateFlash />
-          ) : (
-            <MyFlash flashes={[]} />
-          )}
-        </div>
-      </div>
-    );
-  },
+  render: () => <FullPageWrapper />,
 };
+
 
 
