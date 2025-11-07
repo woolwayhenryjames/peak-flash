@@ -1,13 +1,14 @@
 import type { Preview } from "@storybook/react-vite";
-import { initialize, mswLoader } from "msw-storybook-addon";
+// Removed msw imports to fix GitHub Pages deployment
+// import { initialize, mswLoader } from "msw-storybook-addon";
 
 import "../app/app.css";
 import { createRoutesStub } from "react-router";
 import { INITIAL_VIEWPORTS } from "storybook/viewport";
 import getVideosMockData from "./getVideos.mockData";
 
-// Initialize MSW
-initialize();
+// Removed MSW initialization for GitHub Pages compatibility
+// initialize();
 
 const preview: Preview = {
   parameters: {
@@ -36,7 +37,8 @@ const preview: Preview = {
       ],
     },
   },
-  loaders: [mswLoader],
+  // Removed mswLoader to fix GitHub Pages deployment
+  loaders: [],
   decorators: [
     (Story) => {
       const RoutesStub = createRoutesStub([
