@@ -26,12 +26,18 @@ interface MyFlashProps {
 }
 
 export default function MyFlash({
-  flashesPromise = Promise.resolve([]),
+  flashesPromise,
   flashes: flashesProp,
   onCreateNew,
 }: MyFlashProps) {
-  const flashesFromPromise = flashesPromise ? use(flashesPromise) : [];
-  const flashes = flashesProp ?? flashesFromPromise;
+  // Use flashes prop directly if provided, otherwise use promise
+  let flashes: Flash[] = [];
+  
+  if (flashesProp !== undefined) {
+    flashes = flashesProp;
+  } else if (flashesPromise) {
+    flashes = use(flashesPromise);
+  }
   
   return (
     <div className="flex flex-1 flex-col">
