@@ -80,14 +80,14 @@ export default function FlashStep1Form({
               {formData.bannerImage ? formData.bannerImage.name : "No file"}
             </span>
           </div>
-          {/* Details button */}
+          {/* Upload button - centered */}
           <button
-            className="group relative mt-4 flex h-11 w-48 items-center justify-center overflow-hidden rounded-xl border border-gradient-to-b from-[#B8B8B8] to-[#4E4E4E]"
+            className="group relative mx-auto mt-4 flex h-11 w-48 items-center justify-center overflow-hidden rounded-xl border border-gradient-to-b from-[#B8B8B8] to-[#4E4E4E]"
             type="button"
           >
             <div className="absolute inset-x-1.5 top-0.5 h-1.5 bg-gradient-to-r from-[34%] from-white to-[99%] to-white/[0.14] blur-sm" />
             <span className="font-['Poppins'] font-normal text-sm text-white">
-              Details
+              Upload
             </span>
           </button>
         </div>
