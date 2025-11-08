@@ -96,7 +96,10 @@ export default function Flash({ loaderData }: Route.ComponentProps) {
           </div>
         }
       >
-        <MyFlash flashesPromise={loaderData.flashesPromise} />
+        <MyFlash 
+          flashesPromise={loaderData.flashesPromise} 
+          onCreateNew={() => setShowCreateFlash(true)}
+        />
       </Suspense>
     </div>
   );

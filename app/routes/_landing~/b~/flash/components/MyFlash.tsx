@@ -21,12 +21,17 @@ interface Flash {
 
 interface MyFlashProps {
   flashesPromise?: Promise<Flash[]>;
+  flashes?: Flash[];
+  onCreateNew?: () => void;
 }
 
 export default function MyFlash({
   flashesPromise = Promise.resolve([]),
+  flashes: flashesProp,
+  onCreateNew,
 }: MyFlashProps) {
-  const flashes = use(flashesPromise);
+  const flashesFromPromise = flashesPromise ? use(flashesPromise) : [];
+  const flashes = flashesProp ?? flashesFromPromise;
   
   return (
     <div className="flex flex-1 flex-col">
@@ -61,12 +66,51 @@ export default function MyFlash({
         {flashes.length > 0 && <div>Manage and track your active Flash tasks</div>}
       </div>
       <div className="flex flex-1 flex-wrap items-center gap-x-5 gap-y-10 pt-14 pb-30 max-md:min-h-50">
-        {/* Flash list would go here */}
+        {/* Empty State - Ready to create */}
         {flashes.length === 0 && (
-          <div className="px-2 py-5 font-medium text-[#ababab] text-base max-md:border max-md:border-dashed">
-            You haven't created any Flash tasks yet.
+          <div className="flex w-full flex-col items-center justify-center py-20">
+            <h2 className="mb-4 font-['Orbitron'] font-bold text-4xl text-white md:text-5xl">
+              Ready to create a new Flash?
+            </h2>
+            <p className="mb-8 text-[#8a8f98] text-base md:text-lg">
+              Create a new Flash to quickly engage users and grow your community
+            </p>
+            <button
+              className="group relative flex h-14 w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-b from-[#68FEF5] to-[#4E9095] transition-opacity hover:opacity-90 md:h-16"
+              onClick={onCreateNew}
+              type="button"
+            >
+              <svg
+                className="size-6"
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>Plus Icon</title>
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+                <path
+                  d="M12 8V16M8 12H16"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                />
+              </svg>
+              <span className="font-['Poppins'] font-semibold text-black text-lg">
+                Start New Flash
+              </span>
+            </button>
           </div>
         )}
+        
+        {/* Flash Cards */}
         {flashes.map((flash) => {
           const isActive = flash.status === "ACTIVE";
           const statusText = isActive ? "Active" : "Ended";

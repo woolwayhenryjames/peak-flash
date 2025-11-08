@@ -30,16 +30,40 @@ export const CreateFlashForm: Story = {
 
 // Story 2: My Flash List (Empty State)
 export const MyFlashEmpty: Story = {
-  render: () => (
-    <div className="min-h-screen bg-[#0A0B0D] p-8">
-      <div className="mx-auto max-w-7xl">
-        <h1 className="mb-8 font-['Orbitron'] text-3xl font-bold text-white">
-          My Flash
-        </h1>
-        <MyFlash flashes={[]} />
+  render: () => {
+    const [showCreate, setShowCreate] = React.useState(false);
+    
+    if (showCreate) {
+      return (
+        <div className="min-h-screen bg-[#0A0B0D] p-8">
+          <div className="mx-auto max-w-7xl">
+            <button
+              type="button"
+              onClick={() => setShowCreate(false)}
+              className="mb-4 text-[#68FEF5] hover:underline"
+            >
+              ← Back to My Flash
+            </button>
+            <h1 className="mb-8 font-['Orbitron'] text-3xl font-bold text-white">
+              Create Flash
+            </h1>
+            <CreateFlash />
+          </div>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="min-h-screen bg-[#0A0B0D] p-8">
+        <div className="mx-auto max-w-7xl">
+          <h1 className="mb-8 font-['Orbitron'] text-3xl font-bold text-white">
+            My Flash
+          </h1>
+          <MyFlash flashes={[]} onCreateNew={() => setShowCreate(true)} />
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
 };
 
 // Wrapper component for FullPage to use hooks properly
