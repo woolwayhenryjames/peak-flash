@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script>
+    // GitHub Pages 404 处理：重定向到首页并保留路径
+    (function() {
+      var path = window.location.pathname.replace('/peak-flash/', '');
+      var search = window.location.search;
+      var hash = window.location.hash;
+      var redirectTarget = path ? '?redirect=' + encodeURIComponent(path + search + hash) : '';
+      window.location.replace('/peak-flash/' + redirectTarget);
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting...</p>
+</body>
+</html>
